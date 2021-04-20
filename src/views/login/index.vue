@@ -1,9 +1,10 @@
 <template>
-  <div class="login-container">
+  <div class="login-container" :style="isTestDev?'background-color:#b1c452':''">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 v-if="isTestDev" class="title">Test Admin Login</h3>
+        <h3 v-if="!isTestDev" class="title">Admin Login</h3>
       </div>
 
       <el-form-item prop="username">
@@ -12,7 +13,7 @@
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.username"
+          v-model="loginForm.admin_name"
           placeholder="Username"
           name="username"
           type="text"
@@ -29,7 +30,7 @@
           <el-input
             :key="passwordType"
             ref="password"
-            v-model="loginForm.password"
+            v-model="loginForm.admin_pwd"
             :type="passwordType"
             placeholder="Password"
             name="password"
@@ -47,20 +48,20 @@
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
-      <div style="position:relative">
-        <div class="tips">
-          <span>Username : admin</span>
-          <span>Password : any</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
-          <span>Password : any</span>
-        </div>
+      <!--      <div style="position:relative">-->
+      <!--        <div class="tips">-->
+      <!--          <span>Username : admin</span>-->
+      <!--          <span>Password : any</span>-->
+      <!--        </div>-->
+      <!--        <div class="tips">-->
+      <!--          <span style="margin-right:18px;">Username : editor</span>-->
+      <!--          <span>Password : any</span>-->
+      <!--        </div>-->
 
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          Or connect with
-        </el-button>
-      </div>
+      <!--        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">-->
+      <!--          Or connect with-->
+      <!--        </el-button>-->
+      <!--      </div>-->
     </el-form>
 
     <el-dialog title="Or connect with" :visible.sync="showDialog">
@@ -97,19 +98,20 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        admin_name: 'admin',
+        admin_pwd: 'eslpassport@'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        admin_name: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        admin_pwd: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      isTestDev: false
     }
   },
   watch: {
@@ -128,9 +130,15 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    if (this.loginForm.username === '') {
+    console.log(process.env.VUE_APP_ENV)
+    console.log(process.env.NODE_ENV)
+    const myEnv = process.env.VUE_APP_ENV
+    if (myEnv === 'development' || myEnv === 'staging') {
+      this.isTestDev = true
+    }
+    if (this.loginForm.admin_name === '') {
       this.$refs.username.focus()
-    } else if (this.loginForm.password === '') {
+    } else if (this.loginForm.admin_pwd === '') {
       this.$refs.password.focus()
     }
   },

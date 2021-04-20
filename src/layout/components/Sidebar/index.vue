@@ -5,7 +5,7 @@
       <el-menu
         :default-active="activeMenu"
         :collapse="isCollapse"
-        :background-color="variables.menuBg"
+        :background-color="isTestDev? '#01043d' :variables.menuBg"
         :text-color="variables.menuText"
         :unique-opened="false"
         :active-text-color="variables.menuActiveText"
@@ -23,6 +23,8 @@ import { mapGetters } from 'vuex'
 import Logo from './Logo'
 import SidebarItem from './SidebarItem'
 import variables from '@/styles/variables.scss'
+import store from '@/store'
+import router from '@/router'
 
 export default {
   components: { SidebarItem, Logo },
@@ -31,6 +33,10 @@ export default {
       'permission_routes',
       'sidebar'
     ]),
+    isTestDev() {
+      const env = process.env.VUE_APP_ENV
+      return env !== 'production'
+    },
     activeMenu() {
       const route = this.$route
       const { meta, path } = route
@@ -49,6 +55,11 @@ export default {
     isCollapse() {
       return !this.sidebar.opened
     }
+  },
+  async created() {
+    const roles = await this.$store.getters.roles
+    const accessRoutes = await this.$store.dispatch('permission/generateRoutes', roles)
+    this.$router.addRoutes(accessRoutes)
   }
 }
 </script>

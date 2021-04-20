@@ -86,12 +86,13 @@ export const constantRoutes = [
   {
     path: '/documentation',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
         component: () => import('@/views/documentation/index'),
         name: 'Documentation',
-        meta: { title: 'Documentation', icon: 'documentation', affix: true }
+        meta: { title: 'Documentation', icon: 'documentation', affix: false }
       }
     ]
   },
@@ -99,6 +100,7 @@ export const constantRoutes = [
     path: '/guide',
     component: Layout,
     redirect: '/guide/index',
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -121,7 +123,224 @@ export const constantRoutes = [
         meta: { title: 'Profile', icon: 'user', noCache: true }
       }
     ]
+  },
+  {
+    path: '/ads',
+    component: Layout,
+    redirect: '/ads/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Ads',
+    meta: {
+      title: 'Ads',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/ads/list'),
+        name: 'listAds',
+        meta: {
+          title: 'Ads List'
+        }
+      },
+      {
+        path: 'article',
+        component: () => import('@/views/ads/article/list'),
+        name: 'article',
+        hidden: true,
+        meta: {
+          title: 'Article List'
+        }
+      },
+      {
+        path: 'article/add',
+        hidden: true,
+        component: () => import('@/views/ads/article/add'),
+        name: 'add',
+        meta: {
+          title: 'Add Article'
+        }
+      }
+    ]
+  },
+  {
+    path: '/category',
+    component: Layout,
+    redirect: '/category/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Category',
+    meta: {
+      title: 'Category',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/category/list'),
+        name: 'listCategory',
+        meta: {
+          title: 'Category List'
+        }
+      }
+    ]
+  },
+  {
+    path: '/users',
+    component: Layout,
+    redirect: '/users/index',
+    alwaysShow: true, // will always show the root menu
+    name: 'Users',
+    meta: {
+      title: 'Users',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/users/index'),
+        name: 'listUsers',
+        meta: {
+          title: 'Users List'
+        }
+      },
+      {
+        path: 'educator',
+        component: () => import('@/views/users/edu/list'),
+        name: 'listEducator',
+        meta: {
+          title: 'Educator List'
+        }
+      },
+      {
+        path: 'editEducator',
+        component: () => import('@/views/users/edu/edit'),
+        name: 'EditEducator',
+        meta: { title: 'Edit Educator', noCache: true, activeMenu: '/users/educator' },
+        hidden: true
+      },
+      {
+        path: 'business',
+        component: () => import('@/views/users/business/list'),
+        name: 'listBusiness',
+        meta: {
+          title: 'Business List'
+        }
+      },
+      {
+        path: 'editBusiness',
+        component: () => import('@/views/users/business/edit'),
+        name: 'EditBusiness',
+        meta: { title: 'Edit Business', noCache: true, activeMenu: '/users/business' },
+        hidden: true
+      },
+      {
+        path: 'vendor',
+        component: () => import('@/views/users/vendor/list'),
+        name: 'listVendor',
+        meta: {
+          title: 'Vendor List'
+        }
+      },
+      {
+        path: 'editVendor',
+        component: () => import('@/views/users/vendor/edit'),
+        name: 'EditVendor',
+        meta: { title: 'Edit Vendor', noCache: true, activeMenu: '/users/vendor' },
+        hidden: true
+      }
+
+    ]
+  },
+  {
+    path: '/jobs',
+    component: Layout,
+    redirect: '/jobs/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Jobs',
+    meta: {
+      title: 'Jobs',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/jobs/list'),
+        name: 'listJobs',
+        meta: {
+          title: 'Jobs List'
+        }
+      },
+      {
+        path: 'service/list',
+        component: () => import('@/views/jobs/service/list'),
+        name: 'listService',
+        meta: {
+          title: 'Services List'
+        }
+      },
+      {
+        path: 'editJobs',
+        component: () => import('@/views/jobs/edit'),
+        hidden: true,
+        name: 'EditJobs',
+        meta: {
+          title: 'Edit Jobs', noCache: true, activeMenu: '/jobs/list'
+        }
+      },
+      {
+        path: 'addJobs',
+        component: () => import('@/views/jobs/edit'),
+        hidden: true,
+        name: 'AddJobs',
+        meta: {
+          title: 'Add Jobs', noCache: true, activeMenu: '/users/business'
+        }
+      }
+    ]
+  },
+  {
+    path: '/deals',
+    component: Layout,
+    redirect: '/deals/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Deals',
+    meta: {
+      title: 'Deals',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/deals/list'),
+        name: 'listDeals',
+        meta: {
+          title: 'Deals List'
+        }
+      }
+    ]
+  },
+  {
+    path: '/events',
+    component: Layout,
+    redirect: '/events/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Events',
+    meta: {
+      title: 'Events',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/events/list'),
+        name: 'listEvents',
+        meta: {
+          title: 'Events List'
+        }
+      }
+    ]
   }
+
 ]
 
 /**
@@ -129,16 +348,17 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+
   {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',
-    alwaysShow: true, // will always show the root menu
+    hidden: true,
+    alwaysShow: false, // will always show the root menu
     name: 'Permission',
     meta: {
       title: 'Permission',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
+      icon: 'lock'
     },
     children: [
       {
@@ -146,8 +366,7 @@ export const asyncRoutes = [
         component: () => import('@/views/permission/page'),
         name: 'PagePermission',
         meta: {
-          title: 'Page Permission',
-          roles: ['admin'] // or you can only set roles in sub nav
+          title: 'Page Permission'
         }
       },
       {
@@ -195,6 +414,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/example/list',
     name: 'Example',
+    hidden: true,
     meta: {
       title: 'Example',
       icon: 'el-icon-s-help'
@@ -225,6 +445,7 @@ export const asyncRoutes = [
   {
     path: '/tab',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -240,6 +461,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: 'noRedirect',
     name: 'ErrorPages',
+    hidden: true,
     meta: {
       title: 'Error Pages',
       icon: '404'
@@ -263,6 +485,10 @@ export const asyncRoutes = [
   {
     path: '/error-log',
     component: Layout,
+    meta: {
+      roles: ['lei']
+    },
+    hidden: true,
     children: [
       {
         path: 'log',
@@ -278,6 +504,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/excel/export-excel',
     name: 'Excel',
+    hidden: true,
     meta: {
       title: 'Excel',
       icon: 'excel'
@@ -316,6 +543,7 @@ export const asyncRoutes = [
     redirect: '/zip/download',
     alwaysShow: true,
     name: 'Zip',
+    hidden: true,
     meta: { title: 'Zip', icon: 'zip' },
     children: [
       {
@@ -331,6 +559,7 @@ export const asyncRoutes = [
     path: '/pdf',
     component: Layout,
     redirect: '/pdf/index',
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -349,6 +578,7 @@ export const asyncRoutes = [
   {
     path: '/theme',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -362,6 +592,7 @@ export const asyncRoutes = [
   {
     path: '/clipboard',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -374,6 +605,7 @@ export const asyncRoutes = [
 
   {
     path: 'external-link',
+    hidden: true,
     component: Layout,
     children: [
       {

@@ -5,7 +5,7 @@
 <script>
 export default {
   created() {
-    this.b = b // eslint-disable-line
+    // eslint-disable-line
   }
 }
 </script>

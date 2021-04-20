@@ -1,54 +1,67 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
+      <div class="card-panel" @click="handleSetLineChartData('newUsers')">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            New Visits
+            New Users
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="newUsers" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('messages')">
+      <div class="card-panel" @click="handleSetLineChartData('userCount')">
+        <div class="card-panel-icon-wrapper icon-people">
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            User Count
+          </div>
+          <count-to :start-val="0" :end-val="userCount" :duration="2600" class="card-panel-num" />
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('deal')">
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="message" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Messages
+            Deal
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="dealCount" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
+      <div class="card-panel" @click="handleSetLineChartData('event')">
         <div class="card-panel-icon-wrapper icon-money">
           <svg-icon icon-class="money" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Purchases
+            Event
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="eventCount" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
+      <div class="card-panel" @click="handleSetLineChartData('job')">
         <div class="card-panel-icon-wrapper icon-shopping">
           <svg-icon icon-class="shopping" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Shoppings
+            Job
           </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="jobCount" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -57,14 +70,43 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import { indexCount } from '@/api/admin'
 
 export default {
   components: {
     CountTo
   },
+  data() {
+    return {
+      dealCount: undefined,
+      eventCount: undefined,
+      jobCount: undefined,
+      newUsers: undefined,
+      userCount: undefined
+    }
+  },
+  created() {
+    this.getIndexCount()
+  },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
+    },
+    getIndexCount() {
+      indexCount().then(res => {
+        console.log(res)
+        if (res.code === 200) {
+          this.dealCount = res.message.deal_count
+          this.eventCount = res.message.event_count
+          this.jobCount = res.message.job_count
+          this.newUsers = res.message.new_users
+          this.userCount = res.message.user_count
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }
@@ -160,7 +202,7 @@ export default {
   }
 }
 
-@media (max-width:550px) {
+@media (max-width: 550px) {
   .card-panel-description {
     display: none;
   }

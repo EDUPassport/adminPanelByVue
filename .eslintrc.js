@@ -47,7 +47,7 @@ module.exports = {
     'curly': [2, 'multi-line'],
     'dot-location': [2, 'property'],
     'eol-last': 2,
-    'eqeqeq': ["error", "always", {"null": "ignore"}],
+    'eqeqeq': [0],
     'generator-star-spacing': [2, {
       'before': true,
       'after': true
@@ -142,7 +142,7 @@ module.exports = {
     }],
     'no-unreachable': 2,
     'no-unsafe-finally': 2,
-    'no-unused-vars': [2, {
+    'no-unused-vars': [0, {
       'vars': 'all',
       'args': 'none'
     }],

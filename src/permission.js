@@ -1,9 +1,10 @@
+// import router, { resetRouter } from './router'
 import router from './router'
 import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken } from '@/utils/auth' // get token from cookie
+import { getRoles, getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
@@ -34,11 +35,9 @@ router.beforeEach(async(to, from, next) => {
         try {
           // get user info
           // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
-          const { roles } = await store.dispatch('user/getInfo')
-
+          const roles = await getRoles()
           // generate accessible routes map based on roles
           const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
-
           // dynamically add accessible routes
           router.addRoutes(accessRoutes)
 
