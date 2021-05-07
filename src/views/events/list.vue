@@ -355,7 +355,7 @@ export default {
         pay_money: undefined,
         status: undefined
       },
-      statusOptions: [{ label: 'pending', value: 0 }, { label: 'passed', value: 1 }, { label: 'refuse', value: 2 }],
+      statusOptions: [{ label: 'Pending', value: 0 }, { label: 'Successful', value: 1 }, { label: 'Rejected', value: 2 }],
       temp: {
         event_id: undefined,
         reason: '',

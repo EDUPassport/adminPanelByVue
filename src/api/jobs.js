@@ -68,9 +68,23 @@ export function addServices(data) {
     data
   })
 }
+export function refreshJobs(data) {
+  return request({
+    url: 'admin/refreshJobs',
+    method: 'post',
+    data
+  })
+}
 export function uploadExcel(data) {
   return request({
     url: 'admin/upload',
+    method: 'post',
+    data
+  })
+}
+export function uploadJobs(data) {
+  return request({
+    url: 'admin/uploadJobs',
     method: 'post',
     data
   })

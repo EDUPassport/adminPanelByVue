@@ -146,6 +146,9 @@
             <el-form-item v-if="props.row.video_url != '' " label="Video">
               <video width="200" :src="props.row.video_url" controls />
             </el-form-item>
+            <el-form-item v-if="props.row.proposed_deal != '' " label="Proposed Deal">
+              <span>{{ props.row.proposed_deal }}</span>
+            </el-form-item>
           </el-form>
         </template>
       </el-table-column>

@@ -1,10 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        Add
-      </el-button>
-    </div>
+    <div class="filter-container" />
 
     <el-tabs value="All" style="margin-top:15px;" type="border-card" @tab-click="tabClickJobs">
       <el-tab-pane v-for="item in adsTypeOptions2" :key="item.value" :label="item.label" :name="item.label">
@@ -25,9 +21,7 @@
                   <span><a :href="props.row.file">{{ props.row.file }}</a></span>
                 </el-form-item>
                 <el-form-item label="Desc" style="word-break: break-all;">
-                  <pre>
-                       {{ props.row.desc }}
-                    </pre>
+                  <pre>{{ props.row.desc }}</pre>
                 </el-form-item>
                 <el-form-item label="Education">
                   <span>{{ props.row.education }}</span>
@@ -171,11 +165,7 @@
               <span>{{ row.job_location }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="Age" width="110px" align="center">
-            <template slot-scope="{row}">
-              <span>{{ row.age }}</span>
-            </template>
-          </el-table-column>
+
           <el-table-column label="Due Date" width="110px" align="center">
             <template slot-scope="{row}">
               <span>{{ row.apply_due_date }}</span>
@@ -198,17 +188,20 @@
                 Pending
               </el-tag>
               <el-tag v-if="row.status === 1" :type="row.status | statusFilter">
-                Passed
+                Successful
               </el-tag>
               <el-tag v-if="row.status === 2" :type="row.status | statusFilter">
-                Refuse
+                Rejected
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="Actions" align="center" width="300" class-name="small-padding fixed-width">
+          <el-table-column label="Actions" align="center" width="400" class-name="small-padding fixed-width">
             <template slot-scope="{row,$index}">
               <el-button type="primary" size="mini" @click="handleAds(row)">
                 Ads
+              </el-button>
+              <el-button type="primary" size="mini" @click="handleRefresh(row.id)">
+                Refresh
               </el-button>
               <el-button type="primary" size="mini" @click="handleReview(row)">
                 Review
@@ -305,7 +298,7 @@
 </template>
 
 <script>
-import { jobList, approveJobs, delJobs, setJobFeature } from '@/api/jobs'
+import { jobList, approveJobs, delJobs, setJobFeature, refreshJobs } from '@/api/jobs'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { format } from 'date-fns'
@@ -337,7 +330,7 @@ export default {
       },
       importanceOptions: [1, 2, 3],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: [{ label: 'Pending', value: 0 }, { label: 'passed', value: 1 }, { label: 'refuse', value: 2 }],
+      statusOptions: [{ label: 'Pending', value: 0 }, { label: 'Successful', value: 1 }, { label: 'Rejected', value: 2 }],
       showReviewer: false,
       temp: {
         job_id: undefined,
@@ -488,6 +481,31 @@ export default {
     handleAds(row) {
       this.dialogAdsFormVisible = true
       this.adsTemp.job_id = row.id
+    },
+    handleRefresh(jobId) {
+      const data = {
+        job_id: jobId
+      }
+      refreshJobs(data).then(res => {
+        console.log(res)
+        if (res.code === 200) {
+          this.$notify({
+            title: 'Success',
+            message: 'Refresh Successfully',
+            type: 'success',
+            duration: 2000
+          })
+          this.getList()
+        } else {
+          this.$notify({
+            title: res.msg,
+            message: res.msg,
+            type: 'error'
+          })
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     },
     adsDueDateChange(e) {
       console.log(format(e, 'yyyy-MM-dd HH:mm:ss'))

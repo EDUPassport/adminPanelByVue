@@ -98,8 +98,8 @@ export default {
     }
     return {
       loginForm: {
-        admin_name: 'admin',
-        admin_pwd: 'eslpassport@'
+        admin_name: '',
+        admin_pwd: ''
       },
       loginRules: {
         admin_name: [{ required: true, trigger: 'blur', validator: validateUsername }],

@@ -214,13 +214,16 @@
           <span v-if="scope.row.level==3">Plus</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="280" class-name="small-padding fixed-width">
+      <el-table-column label="Actions" align="center" width="340" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
           </el-button>
           <el-button type="primary" size="mini" @click="handleCreateJobs(row)">
             Jobs
+          </el-button>
+          <el-button type="primary" size="mini" @click="handleMultiCreateJobs(row)">
+            Multi Posts
           </el-button>
           <el-button size="mini" type="primary" @click="handleMemberLevel(row,$index)">Upgrade</el-button>
         </template>
@@ -269,18 +272,34 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="Multi Posts" width="80%" :visible.sync="dialogFormMultiPosts">
+      <upload-excel-component :on-success="handleExcelSuccess" :before-upload="beforeExcelUpload" />
+      <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px;">
+        <el-table-column v-for="item of tableHeader" :key="item" :prop="item" :label="item" />
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormMultiPosts = false">
+          Cancel
+        </el-button>
+        <el-button type="primary" @click="updateMultiPosts()">
+          Post
+        </el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-
+import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 import { vipList, changeVipLevel, businessList } from '@/api/member'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
+import { uploadExcel, uploadJobs } from '@/api/jobs'
 
 export default {
   name: 'Index',
-  components: { Pagination },
+  components: { Pagination, UploadExcelComponent },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -331,7 +350,15 @@ export default {
         username: [{ required: true, message: 'username is required', trigger: 'change' }],
         birthday: [{ type: 'date', required: true, message: 'birthday is required', trigger: 'change' }],
         nickname: [{ required: true, message: 'nickname is required', trigger: 'blur' }]
-      }
+      },
+      dialogFormMultiPosts: false,
+      tempMultiPosts: {
+        job_file: undefined,
+        user_id: undefined
+      },
+      multiPostsFile: undefined,
+      tableData: [],
+      tableHeader: []
     }
   },
   computed: {
@@ -349,6 +376,57 @@ export default {
     this.getVipList()
   },
   methods: {
+    updateMultiPosts() {
+      const data = Object.assign({}, this.tempMultiPosts)
+      const form = new FormData()
+      form.append('job_file', this.multiPostsFile)
+      form.append('user_id', data.user_id)
+
+      uploadJobs(form).then(res => {
+        console.log(res)
+        if (res.code == 200) {
+          this.$message({
+            message: 'Success',
+            type: 'success'
+          })
+          this.$router.push({ path: '/jobs/list', query: {}})
+          this.dialogFormMultiPosts = false
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          })
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    beforeExcelUpload(file) {
+      console.log(file)
+      const isLt20M = file.size / 1024 / 1024 < 20
+
+      if (isLt20M) {
+        // return true
+        this.multiPostsFile = file
+        return true
+      }
+
+      this.$message({
+        message: 'Please do not upload files larger than 20m in size.',
+        type: 'warning'
+      })
+      return false
+    },
+    handleExcelSuccess({ results, header }) {
+      console.log(results)
+      console.log(header)
+      this.$message({
+        message: 'Upload Success.',
+        type: 'success'
+      })
+      this.tableData = results
+      this.tableHeader = header
+    },
     getList() {
       this.listLoading = true
       businessList(this.listQuery).then(response => {
@@ -391,6 +469,10 @@ export default {
     },
     handleCreateJobs(row) {
       this.$router.push({ path: '/jobs/addJobs', query: { uid: row.user_id, business_id: row.id, business_name: row.business_name }})
+    },
+    handleMultiCreateJobs(row) {
+      this.tempMultiPosts.user_id = row.user_id
+      this.dialogFormMultiPosts = true
     },
     handleUpdate(row) {
       this.$router.push({ path: '/users/editBusiness', query: { uid: row.user_id }})

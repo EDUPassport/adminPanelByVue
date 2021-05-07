@@ -1,8 +1,6 @@
 <template>
   <div class="container">
-    <div class="excel">
-      <upload-excel-component :on-success="handleExcelSuccess" :before-upload="beforeExcelUpload" />
-    </div>
+
     <el-form :model="jobForm" label-width="200px">
       <div class="container-item">
         <div class="title">Job Details</div>
@@ -74,7 +72,7 @@
       </div>
 
       <div class="container-item">
-        <div class="title">General Position Info</div>
+        <div class="title">General Information</div>
         <el-form-item label="Job Title" prop="job_title">
           <el-input v-model="jobForm.job_title" />
         </el-form-item>
@@ -292,23 +290,7 @@
           </el-select>
 
         </el-form-item>
-        <el-form-item label="Age">
-          <el-select
-            v-model="jobForm.age"
-            filterable
-            allow-create
-            default-first-option
-            placeholder="Age"
-          >
-            <el-option
-              v-for="item in ageOptions"
-              :key="item.id"
-              :label="item.object_en"
-              :value="item.object_en"
-            />
-          </el-select>
 
-        </el-form-item>
         <el-form-item label="Min Age" prop="age_min">
           <el-input v-model="jobForm.age_min" type="number" />
         </el-form-item>
@@ -326,90 +308,90 @@
         </el-form-item>
       </div>
 
-      <div class="container-item">
-        <div class="title">Contact Person Info</div>
-        <el-form-item label="Will you be doing the interview?">
-          <el-switch
-            v-model="jobForm.is_interview"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            :active-value="1"
-            :inactive-value="0"
-            @change="interviewChange"
-          />
-        </el-form-item>
-        <el-form-item label="Name" prop="interview_name">
-          <el-input v-model="jobForm.interview_name" />
-        </el-form-item>
-        <el-form-item label="Nationality">
-          <el-select v-model="jobForm.interview_nationlity">
-            <el-option v-for="item in nationalityList" :key="item.code" :label="item.name" :value="item.name" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Photo">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="photoSuccess"
-            :file-list="photoFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
-          </el-upload>
-        </el-form-item>
-      </div>
+      <!--      <div class="container-item">-->
+      <!--        <div class="title">Contact Person Info</div>-->
+      <!--        <el-form-item label="Will you be doing the interview?">-->
+      <!--          <el-switch-->
+      <!--            v-model="jobForm.is_interview"-->
+      <!--            active-color="#13ce66"-->
+      <!--            inactive-color="#ff4949"-->
+      <!--            :active-value="1"-->
+      <!--            :inactive-value="0"-->
+      <!--            @change="interviewChange"-->
+      <!--          />-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="Name" prop="interview_name">-->
+      <!--          <el-input v-model="jobForm.interview_name" />-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="Nationality">-->
+      <!--          <el-select v-model="jobForm.interview_nationlity">-->
+      <!--            <el-option v-for="item in nationalityList" :key="item.code" :label="item.name" :value="item.name" />-->
+      <!--          </el-select>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="Photo">-->
+      <!--          <el-upload-->
+      <!--            class="upload-demo"-->
+      <!--            drag-->
+      <!--            :headers="uploadHeaders"-->
+      <!--            name="file[]"-->
+      <!--            :action="uploadRequestUrl"-->
+      <!--            multiple-->
+      <!--            list-type="picture"-->
+      <!--            :limit="1"-->
+      <!--            :on-success="photoSuccess"-->
+      <!--            :file-list="photoFileList"-->
+      <!--          >-->
+      <!--            <i class="el-icon-upload" />-->
+      <!--            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>-->
+      <!--          </el-upload>-->
+      <!--        </el-form-item>-->
+      <!--      </div>-->
 
-      <div class="container-item">
-        <div class="title">Third Info (第三方信息)</div>
+      <!--      <div class="container-item">-->
+      <!--        <div class="title">Third Info (第三方信息)</div>-->
 
-        <el-form-item label="Third Logo">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="uploadThirdLogoSuccess"
-            :file-list="thirdLogoFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
-            <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
-          </el-upload>
-        </el-form-item>
+      <!--        <el-form-item label="Third Logo">-->
+      <!--          <el-upload-->
+      <!--            class="upload-demo"-->
+      <!--            drag-->
+      <!--            :headers="uploadHeaders"-->
+      <!--            name="file[]"-->
+      <!--            :action="uploadRequestUrl"-->
+      <!--            multiple-->
+      <!--            list-type="picture"-->
+      <!--            :limit="1"-->
+      <!--            :on-success="uploadThirdLogoSuccess"-->
+      <!--            :file-list="thirdLogoFileList"-->
+      <!--          >-->
+      <!--            <i class="el-icon-upload" />-->
+      <!--            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>-->
+      <!--            &lt;!&ndash;            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>&ndash;&gt;-->
+      <!--          </el-upload>-->
+      <!--        </el-form-item>-->
 
-        <el-form-item label="Third Header Photo">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="uploadThirdHeaderPhotoSuccess"
-            :file-list="thirdHeaderPhotoFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
-            <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
-          </el-upload>
-        </el-form-item>
+      <!--        <el-form-item label="Third Header Photo">-->
+      <!--          <el-upload-->
+      <!--            class="upload-demo"-->
+      <!--            drag-->
+      <!--            :headers="uploadHeaders"-->
+      <!--            name="file[]"-->
+      <!--            :action="uploadRequestUrl"-->
+      <!--            multiple-->
+      <!--            list-type="picture"-->
+      <!--            :limit="1"-->
+      <!--            :on-success="uploadThirdHeaderPhotoSuccess"-->
+      <!--            :file-list="thirdHeaderPhotoFileList"-->
+      <!--          >-->
+      <!--            <i class="el-icon-upload" />-->
+      <!--            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>-->
+      <!--            &lt;!&ndash;            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>&ndash;&gt;-->
+      <!--          </el-upload>-->
+      <!--        </el-form-item>-->
 
-        <el-form-item label="Third Company Name">
-          <el-input v-model="jobForm.third_com_name" class="filter-item" placeholder="Please input " />
-        </el-form-item>
-      </div>
+      <!--        <el-form-item label="Third Company Name">-->
+      <!--          <el-input v-model="jobForm.third_com_name" class="filter-item" placeholder="Please input " />-->
+      <!--        </el-form-item>-->
+      <!--      </div>-->
 
       <div class="container-item">
         <el-form-item>
@@ -422,7 +404,7 @@
 </template>
 
 <script>
-import UploadExcelComponent from '@/components/UploadExcel/index.vue'
+
 import { userObjectList, userInfo } from '@/api/member'
 import { addJobs, addJobProfile, jobDetail, uploadExcel } from '@/api/jobs'
 import nationality from '@/views/users/nationality'
@@ -431,7 +413,7 @@ import { getAreas } from '@/api/location'
 
 export default {
   name: 'Edit',
-  components: { UploadExcelComponent },
+  components: {},
   data() {
     return {
       provinceList: [],
@@ -586,37 +568,7 @@ export default {
     })
   },
   methods: {
-    beforeExcelUpload(file) {
-      console.log(file)
-      const isLt20M = file.size / 1024 / 1024 < 20
 
-      if (isLt20M) {
-        // return true
-        const form = new FormData()
-        form.append('file[]', file)
-        form.append('token', this.token)
-        uploadExcel(form).then(res => {
-          console.log(res)
-          if (res.code === 200) {
-            const excelUrl = res.data[0]['file_url']
-            console.log(excelUrl)
-          }
-        })
-        return true
-      }
-
-      this.$message({
-        message: 'Please do not upload files larger than 20m in size.',
-        type: 'warning'
-      })
-      return false
-    },
-    handleExcelSuccess({ results, header }) {
-      console.log(results)
-      console.log(header)
-      // this.tableData = results
-      // this.tableHeader = header
-    },
     getAreas() {
       const params = {}
       getAreas(params).then(res => {
