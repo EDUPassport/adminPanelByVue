@@ -96,7 +96,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
         <el-form-item label="Category" prop="cate">
           <el-select v-model="temp.cate" class="filter-item" placeholder="Please select">
             <el-option v-for="item in categoryList" :key="item.value" :label="item.label" :value="item.value" />
@@ -132,7 +132,7 @@
         <el-form-item label="Sort">
           <el-input v-model="temp.sort" type="number" />
         </el-form-item>
-        <el-form-item label="Url">
+        <el-form-item label="Image">
           <el-upload
             class="upload-demo"
             drag
