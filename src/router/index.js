@@ -125,6 +125,27 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/config',
+    component: Layout,
+    redirect: '/config/system/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Config',
+    meta: {
+      title: 'Config',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'system/list',
+        component: () => import('@/views/config/system/list'),
+        name: 'listSystem',
+        meta: {
+          title: 'System'
+        }
+      }
+    ]
+  },
+  {
     path: '/ads',
     component: Layout,
     redirect: '/ads/list',

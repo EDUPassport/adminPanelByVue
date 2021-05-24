@@ -187,6 +187,11 @@
           {{ scope.row.first_name }} {{ scope.row.last_name }}
         </template>
       </el-table-column>
+      <el-table-column label="Number of Jobs posted" width="160">
+        <template slot-scope="scope">
+          {{ scope.row.job_num }}
+        </template>
+      </el-table-column>
       <el-table-column label="Wechat Id" width="120">
         <template slot-scope="scope">
           {{ scope.row.wx_id }}

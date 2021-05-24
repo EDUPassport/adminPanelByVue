@@ -4,12 +4,7 @@
       <el-select v-model="listQuery.cate" placeholder="Category" clearable class="filter-item">
         <el-option v-for="item in categoryList" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-select v-model="listQuery.position" placeholder="Position" clearable class="filter-item">
-        <el-option v-for="item in positionList" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
-      <el-select v-model="listQuery.identity" placeholder="Identity" clearable class="filter-item">
-        <el-option v-for="item in identityList" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
+
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="getList()">
         Search
       </el-button>
@@ -18,8 +13,8 @@
       </el-button>
     </div>
 
-    <el-tabs value="Guest" style="margin-top:15px;" type="border-card" @tab-click="tabClickJobs">
-      <el-tab-pane v-for="item in adsTabsList" :key="item.value" :label="item.label" :name="item.label">
+    <el-tabs value="APP" style="margin-top:15px;" type="border-card" @tab-click="tabClickJobs">
+      <el-tab-pane v-for="item in categoryList" :key="item.value" :label="item.label" :name="item.label">
         <el-table
           :key="tableKey"
           v-loading="listLoading"
@@ -37,41 +32,39 @@
           </el-table-column>
           <el-table-column label="Category" width="110px" align="center">
             <template slot-scope="{row}">
-              <span v-if="row.cate==1" class="link-type">Home Page</span>
-              <span v-if="row.cate==2" class="link-type">Jobs Page</span>
-              <span v-if="row.cate==3" class="link-type">Deals Page</span>
-              <span v-if="row.cate==4" class="link-type">Me Page</span>
-              <span v-if="row.cate==5" class="link-type">Discount Card</span>
-              <span v-if="row.cate==6" class="link-type">Contact Qrcode</span>
-              <span v-if="row.cate==7" class="link-type">Discount Page</span>
+              <span v-if="row.cate==1" class="link-type">APP</span>
+              <span v-if="row.cate==2" class="link-type">Admin Panel</span>
             </template>
           </el-table-column>
-          <el-table-column label="Position" width="110px" align="center">
+          <el-table-column label="System Key" width="110px" align="center">
             <template slot-scope="{row}">
-              <span v-if="row.position == 1">Top</span>
-              <span v-if="row.position == 2">Mid</span>
-              <span v-if="row.position == 3">Bottom</span>
-              <span v-if="row.position == 4">Article</span>
-              <span v-if="row.position == 5">Deals</span>
-              <span v-if="row.position == 6">Events</span>
-              <span v-if="row.position == 7">Jobs</span>
+              <span v-if="row.sys_key == 1">Vendor Qrcode</span>
+              <span v-if="row.sys_key == 2">Discount Card</span>
+              <span v-if="row.sys_key == 3">Contact Qrcode</span>
+              <span v-if="row.sys_key == 4">Esl Logo</span>
+              <span v-if="row.sys_key == 5">Discount_Sample</span>
+              <span v-if="row.sys_key == 6">Educator_Upgrade_Basic</span>
+              <span v-if="row.sys_key == 7">Educator_Upgrade_Pro</span>
+              <span v-if="row.sys_key == 8">Educator_Upgrade_Plus</span>
+              <span v-if="row.sys_key == 9">Business_Upgrade_Basic</span>
+              <span v-if="row.sys_key == 10">Business_Upgrade_Pro</span>
+              <span v-if="row.sys_key == 11">Business_Upgrade_Plus</span>
+              <span v-if="row.sys_key == 12">Vendor_Upgrade_Basic</span>
+              <span v-if="row.sys_key == 13">Vendor_Upgrade_Pro</span>
+              <span v-if="row.sys_key == 14">Vendor_Upgrade_Plus</span>
             </template>
           </el-table-column>
-          <el-table-column label="Link" width="200px" align="center">
+          <el-table-column label="Comment" width="200px" align="center">
             <template slot-scope="{row}">
-              <span>{{ row.link }}</span>
+              <span>{{ row.comment }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="Title" width="210px" align="center">
-            <template slot-scope="{row}">
-              <span>{{ row.title }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Image" width="110px" align="center">
+
+          <el-table-column label="System Value" width="110px" align="center">
             <template slot-scope="{row}">
               <el-image
                 style="width: 100px; height: 50px"
-                :src=" row.url "
+                :src=" row.sys_value "
                 fit="contain"
               />
             </template>
@@ -96,43 +89,22 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="top" style="width: 400px; margin-left:50px;">
         <el-form-item label="Category" prop="cate">
           <el-select v-model="temp.cate" class="filter-item" placeholder="Please select">
             <el-option v-for="item in categoryList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Position" prop="position">
-          <el-select v-model="temp.position" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in positionList" :key="item.value" :label="item.label" :value="item.value" />
+        <el-form-item label="System Key" prop="sys_key">
+          <el-select v-model="temp.sys_key" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in sysKeyList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Identity" prop="identity">
-          <el-select v-model="temp.identity" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in identityList" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
+        <el-form-item label="Comment" prop="comment">
+          <el-input v-model="temp.comment" type="textarea" />
         </el-form-item>
-        <el-form-item label="Title" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item label="Link">
-          <el-input v-model="temp.link" />
-        </el-form-item>
-        <el-form-item label="Relative Link">
-          <el-input v-model="temp.relative_link" />
-        </el-form-item>
-        <el-form-item label="Due Time">
-          <el-date-picker
-            v-model="temp.due_time"
-            type="datetime"
-            placeholder="Please pick a date"
-            @change="adsDueDateChange"
-          />
-        </el-form-item>
-        <el-form-item label="Sort">
-          <el-input v-model="temp.sort" type="number" />
-        </el-form-item>
-        <el-form-item label="Url">
+
+        <el-form-item label="System Value">
           <el-upload
             class="upload-demo"
             drag
@@ -165,9 +137,8 @@
 </template>
 
 <script>
-import { add, adList } from '@/api/ads'
+import { addSystem, getSystemInfo } from '@/api/system.js'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
 import { format } from 'date-fns'
@@ -195,57 +166,39 @@ export default {
       listLoading: true,
       listQuery: {
         cate: undefined,
-        position: undefined,
-        identity: 0,
         page: 1,
         limit: 20
       },
       importanceOptions: [1, 2, 3],
       categoryList: [
-        { label: 'Home Page', value: 1 },
-        { label: 'Jobs Page', value: 2 },
-        { label: 'Deals Page', value: 3 },
-        { label: 'Me Page', value: 4 },
-        { label: 'Discount Card', value: 5 },
-        { label: 'Contact Qrcode', value: 6 },
-        { label: 'Discount Page', value: 7 }
+        { label: 'APP', value: 1 },
+        { label: 'Admin Panel', value: 2 }
       ],
-      positionList: [
-        { label: 'Top', value: 1 },
-        { label: 'Mid', value: 2 },
-        { label: 'Bottom', value: 3 },
-        { label: 'Article', value: 4 },
-        { label: 'Deals', value: 5 },
-        { label: 'Events', value: 6 },
-        { label: 'Jobs', value: 7 }
-      ],
-      identityList: [
-        { label: 'Guest', value: 0 },
-        { label: 'Educator', value: 1 },
-        { label: 'Business', value: 2 },
-        { label: 'Vendor', value: 3 }
-      ],
-      adsTabsList: [
-        { label: 'Guest', value: 0 },
-        { label: 'Educator', value: 1 },
-        { label: 'Business', value: 2 },
-        { label: 'Vendor', value: 3 }
+      sysKeyList: [
+        { label: 'Vendor_Qrcode', value: 1 },
+        { label: 'Discount_Card', value: 2 },
+        { label: 'Contact_Qrcode', value: 3 },
+        { label: 'Esl_Logo', value: 4 },
+        { label: 'Discount_Sample', value: 5 },
+        { label: 'Educator_Upgrade_Basic', value: 6 },
+        { label: 'Educator_Upgrade_Pro', value: 7 },
+        { label: 'Educator_Upgrade_Plus', value: 8 },
+        { label: 'Business_Upgrade_Basic', value: 9 },
+        { label: 'Business_Upgrade_Pro', value: 10 },
+        { label: 'Business_Upgrade_Plus', value: 11 },
+        { label: 'Vendor_Upgrade_Basic', value: 12 },
+        { label: 'Vendor_Upgrade_Pro', value: 13 },
+        { label: 'Vendor_Upgrade_Plus', value: 14 }
+
       ],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
-        id: undefined,
-        title: '',
-        url: '',
-        link: '',
-        cate: undefined,
-        position: undefined,
-        identity: undefined,
-        sort: undefined,
-        ad_id: undefined,
-        due_time: undefined,
-        relative_link: undefined
+        sys_key: undefined,
+        sys_value: undefined,
+        comment: undefined,
+        sys_id: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -257,9 +210,7 @@ export default {
       pvData: [],
       rules: {
         cate: [{ required: true, message: 'category is required', trigger: 'change' }],
-        position: [{ required: true, message: 'position is required', trigger: 'change' }],
-        identity: [{ required: true, message: 'identity is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        sys_key: [{ required: true, message: 'position is required', trigger: 'change' }]
       },
       downloadLoading: false,
       // uploadHeaders:undefined,
@@ -284,29 +235,17 @@ export default {
     tabClickJobs(e) {
       console.log(e)
       if (e.index == 0) {
-        this.listQuery.identity = 0
+        this.listQuery.cate = 1
         this.getList()
       }
       if (e.index == 1) {
-        this.listQuery.identity = 1
+        this.listQuery.cate = 2
         this.getList()
       }
-      if (e.index == 2) {
-        this.listQuery.identity = 2
-        this.getList()
-      }
-      if (e.index == 3) {
-        this.listQuery.identity = 3
-        this.getList()
-      }
-    },
-    adsDueDateChange(e) {
-      console.log(format(e, 'yyyy-MM-dd HH:mm:ss'))
-      this.temp.due_time = format(e, 'yyyy-MM-dd HH:mm:ss')
     },
     getList() {
       this.listLoading = true
-      adList(this.listQuery).then(response => {
+      getSystemInfo(this.listQuery).then(response => {
         console.log(response)
         // this.list = response.message.data
         this.list = response.message.data.filter(item => item.is_delete === 0)
@@ -345,14 +284,10 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        id: undefined,
-        title: '',
-        url: '',
-        link: '',
-        cate: undefined,
-        position: undefined,
-        sort: undefined,
-        ad_id: undefined
+        sys_key: undefined,
+        sys_value: undefined,
+        comment: undefined,
+        sys_id: undefined
       }
     },
     handleCreate() {
@@ -369,8 +304,8 @@ export default {
         if (valid) {
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           // this.temp.author = 'vue-element-admin'
-          this.temp.url = this.fileUrl
-          add(this.temp).then((res) => {
+          this.temp.sys_value = this.fileUrl
+          addSystem(this.temp).then((res) => {
             console.log(res)
             // this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -388,9 +323,9 @@ export default {
     handleUpdate(row) {
       console.log(row)
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.ad_id = row.id
-      this.temp.position = Number(row.position)
-      this.fileList = [{ name: '', url: row.url }]
+      this.temp.sys_id = row.id
+
+      this.fileList = [{ name: '', url: row.sys_value }]
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -401,10 +336,10 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.url = this.fileUrl
+          this.temp.sys_value = this.fileUrl
           const tempData = Object.assign({}, this.temp)
-          // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          add(tempData).then((res) => {
+
+          addSystem(tempData).then((res) => {
             console.log(res)
             if (res.code == 200) {
               this.dialogFormVisible = false
@@ -429,7 +364,7 @@ export default {
         duration: 2000
       })
       // this.list.splice(index, 1)
-      add({ is_delete: 1, ad_id: row.id }).then(res => {
+      addSystem({ is_delete: 1, sys_id: row.id }).then(res => {
         console.log(res)
         this.getList()
       }).catch(error => {
@@ -437,36 +372,12 @@ export default {
       })
     },
     handleRecover(row) {
-      add({ is_delete: 0, ad_id: row.id }).then(res => {
+      addSystem({ is_delete: 0, sys_id: row.id }).then(res => {
         console.log(res)
         this.getList()
       }).catch(error => {
         console.log(error)
       })
-    },
-
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
     },
     getSortClass: function(key) {
       const sort = this.listQuery.sort
