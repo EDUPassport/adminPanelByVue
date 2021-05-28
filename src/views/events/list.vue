@@ -240,7 +240,7 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item label="Event Logo">
+        <el-form-item label="Event Logo ( Only for Non-ESL Passport Users)">
           <el-upload
             class="upload-demo"
             drag
@@ -259,7 +259,7 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item label="Event Header Photo">
+        <el-form-item label="Event Header Photo ( Only for Non-ESL Passport Users)">
           <el-upload
             class="upload-demo"
             drag
@@ -278,7 +278,7 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item label="Event Company Name">
+        <el-form-item label="Event Company Name ( Only for Non-ESL Passport Users)">
           <el-input v-model="eventsTempData.third_com_name" class="filter-item" placeholder="Please input " />
         </el-form-item>
 
