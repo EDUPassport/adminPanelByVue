@@ -42,8 +42,33 @@
               :value="{id:item.id,name:item.Pinyin}"
             />
           </el-select>
+
+        </el-form-item>
+        <el-form-item label="Class Size" prop="class_size">
+          <el-input v-model="jobForm.class_size" type="number" />
         </el-form-item>
 
+        <el-form-item label="Working Hours" prop="working_hours">
+          <el-time-select
+            v-model="workingStartTime"
+            placeholder="Start Time"
+            :picker-options="{
+              start: '00:00',
+              step: '00:01',
+              end: '24:00'
+            }"
+          />
+          <el-time-select
+            v-model="workingEndTime"
+            placeholder="End Time"
+            :picker-options="{
+              start: '00:00',
+              step: '00:01',
+              end: '24:00',
+              minTime: workingStartTime
+            }"
+          />
+        </el-form-item>
         <el-form-item label="Job Detail Address" prop="job_location">
           <el-input v-model="jobForm.job_location" />
         </el-form-item>
@@ -253,9 +278,9 @@
             :inactive-value="0"
           />
         </el-form-item>
-        <el-form-item label="Native Speaker" prop="is_native">
+        <el-form-item label="Native Speaker" prop="is_mom_language">
           <el-switch
-            v-model="jobForm.is_native"
+            v-model="jobForm.is_mom_language"
             active-color="#13ce66"
             inactive-color="#ff4949"
             :active-value="1"
@@ -405,11 +430,11 @@
 
 <script>
 
-import { userObjectList, userInfo } from '@/api/member'
-import { addJobs, addJobProfile, jobDetail, uploadExcel } from '@/api/jobs'
+import {userObjectList, userInfo} from '@/api/member'
+import {addJobs, addJobProfile, jobDetail, uploadExcel} from '@/api/jobs'
 import nationality from '@/views/users/nationality'
-import { randomString } from '@/utils'
-import { getAreas } from '@/api/location'
+import {randomString} from '@/utils'
+import {getAreas} from '@/api/location'
 
 export default {
   name: 'Edit',
@@ -433,8 +458,8 @@ export default {
         label: 'Seasonal'
       }],
       ynOptions: [
-        { label: 'Yes', value: 1 },
-        { label: 'No', value: 0 }
+        {label: 'Yes', value: 1},
+        {label: 'No', value: 0}
       ],
       genderOptions: [
         {
@@ -497,7 +522,9 @@ export default {
         third_com_name: undefined,
         third_com_logo: undefined,
         third_com_bg: undefined,
-        version_time: undefined
+        version_time: undefined,
+        class_size: undefined,
+        working_hours: undefined
       },
       studentsAge: undefined,
       studentsAgeOptions: undefined,
@@ -526,7 +553,9 @@ export default {
       businessUserInfo: undefined,
 
       thirdLogoFileList: undefined,
-      thirdHeaderPhotoFileList: undefined
+      thirdHeaderPhotoFileList: undefined,
+      workingStartTime: '10:00',
+      workingEndTime: '19:00'
 
     }
   },
@@ -632,6 +661,7 @@ export default {
       this.$forceUpdate()
     },
     updateJob() {
+      this.jobForm.working_hours = this.workingStartTime + '-' + this.workingEndTime
       const data = Object.assign({}, this.jobForm)
 
       addJobs(data).then(res => {
@@ -875,7 +905,20 @@ export default {
           this.jobForm.job_title = res.message.job_title
           this.jobForm.desc = res.message.desc
           this.jobForm.apply_due_date = res.message.apply_due_date
+          this.jobForm.class_size = res.message.class_size
+          this.jobForm.working_hours = res.message.working_hours
 
+          const workHours = res.message.working_hours
+          if (workHours) {
+            const workHoursArr = workHours.split('-')
+            console.log(workHoursArr)
+            if (workHoursArr[0] && workHoursArr[1] !== 'undefined') {
+              this.workingStartTime = workHoursArr[0]
+            }
+            if (workHoursArr[1] && workHoursArr[1] !== 'undefined') {
+              this.workingEndTime = workHoursArr[1]
+            }
+          }
           this.jobForm.salary_min = res.message.salary_min
           this.jobForm.salary_max = res.message.salary_max
 
@@ -884,6 +927,7 @@ export default {
           this.jobForm.is_first_aide = res.message.is_first_aide
           this.jobForm.is_teaching_license = res.message.is_teaching_license
           this.jobForm.is_native = res.message.is_native
+          this.jobForm.is_mom_language = res.message.is_mom_language
           this.jobForm.is_equal = res.message.is_equal
 
           this.jobForm.is_interview = res.message.is_interview
@@ -983,19 +1027,19 @@ export default {
 
           const interviewImg = res.message.interview_imgurl
           if (interviewImg !== '') {
-            this.photoFileList = [{ name: '', url: interviewImg }]
+            this.photoFileList = [{name: '', url: interviewImg}]
           } else {
             this.photoFileList = undefined
           }
 
           if (res.message.third_com_logo !== '') {
-            this.thirdLogoFileList = [{ name: '', url: res.message.third_com_logo }]
+            this.thirdLogoFileList = [{name: '', url: res.message.third_com_logo}]
           } else {
             this.thirdLogoFileList = undefined
           }
 
           if (res.message.third_com_bg !== '') {
-            this.thirdHeaderPhotoFileList = [{ name: '', url: res.message.third_com_bg }]
+            this.thirdHeaderPhotoFileList = [{name: '', url: res.message.third_com_bg}]
           } else {
             this.thirdHeaderPhotoFileList = undefined
           }
@@ -1011,7 +1055,7 @@ export default {
     },
     photoSuccess(response) {
       if (response.code === 200) {
-        this.photoFileList = [{ name: '', url: response.data[0].file_url }]
+        this.photoFileList = [{name: '', url: response.data[0].file_url}]
         this.jobForm.interview_imgurl = response.data[0].file_url
         // const file_name = response.data[0].file_name
       } else {
@@ -1023,7 +1067,7 @@ export default {
       // console.log(file)
       // console.log(fileList)
       if (response.code == 200) {
-        this.thirdLogoFileList = [{ name: '', url: response.data[0].file_url }]
+        this.thirdLogoFileList = [{name: '', url: response.data[0].file_url}]
         this.jobForm.third_com_logo = response.data[0].file_url
       } else {
         console.log(response.msg)
@@ -1034,7 +1078,7 @@ export default {
       // console.log(file)
       // console.log(fileList)
       if (response.code == 200) {
-        this.thirdHeaderPhotoFileList = [{ name: '', url: response.data[0].file_url }]
+        this.thirdHeaderPhotoFileList = [{name: '', url: response.data[0].file_url}]
         this.jobForm.third_com_bg = response.data[0].file_url
       } else {
         console.log(response.msg)
@@ -1062,7 +1106,7 @@ export default {
         this.jobForm.interview_nationlity = this.businessUserInfo.nationality
         this.jobForm.interview_imgurl = this.businessUserInfo.profile_photo
         if (this.jobForm.interview_imgurl !== '') {
-          this.photoFileList = [{ name: '', url: this.jobForm.interview_imgurl }]
+          this.photoFileList = [{name: '', url: this.jobForm.interview_imgurl}]
         } else {
           this.photoFileList = undefined
         }
