@@ -36,8 +36,19 @@
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
-      <el-input v-model="listQuery.phone" placeholder="Phone" style="width: 200px;" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-input
+        v-model="listQuery.phone"
+        placeholder="Phone"
+        style="width: 200px;"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        @click="handleFilter"
+      >
         Search
       </el-button>
     </div>
@@ -54,7 +65,11 @@
     >
       <el-table-column type="expand">
         <template slot-scope="props">
-          <el-form label-position="left" inline class="demo-table-expand">
+          <el-form
+            label-position="left"
+            inline
+            class="demo-table-expand"
+          >
             <el-form-item label="Nickname">
               <span>{{ props.row.nickname }}</span>
             </el-form-item>
@@ -70,7 +85,10 @@
             <el-form-item label="District">
               <span>{{ props.row.district }}</span>
             </el-form-item>
-            <el-form-item v-if="props.row.address !=''" label="Address">
+            <el-form-item
+              v-if="props.row.address !=''"
+              label="Address"
+            >
               <span>{{ props.row.address }}</span>
             </el-form-item>
             <el-form-item label="First Language">
@@ -112,41 +130,70 @@
             <el-form-item label="Company Wechat">
               <span>{{ props.row.wechat_public_name }}</span>
             </el-form-item>
-            <el-form-item v-if="props.row.busin_reg_img !='' " label="Business Reg img">
+            <el-form-item
+              v-if="props.row.busin_reg_img !='' "
+              label="Business Reg img"
+            >
               <el-image
                 style="width: 100px;height: 100px;"
                 :src="props.row.busin_reg_img"
                 :preview-src-list="[props.row.busin_reg_img]"
               />
             </el-form-item>
-            <el-form-item v-if="props.row.profile_photo != '' " label="Profile Photo">
+            <el-form-item
+              v-if="props.row.profile_photo != '' "
+              label="Profile Photo"
+            >
               <el-image
                 style="width: 100px;height: 100px;"
                 :src="props.row.profile_photo"
                 :preview-src-list="[props.row.profile_photo]"
               />
             </el-form-item>
-            <el-form-item v-if="props.row.header_photo != '' " label="Header Photo">
+            <el-form-item
+              v-if="props.row.header_photo != '' "
+              label="Header Photo"
+            >
               <el-image
                 style="width: 100px;height: 100px;"
                 :src="props.row.header_photo"
                 :preview-src-list="[props.row.header_photo]"
               />
             </el-form-item>
-            <el-form-item v-if="props.row.logo != '' " label="Logo">
-              <el-image style="width: 100px;height: 100px;" :src="props.row.logo" :preview-src-list="[props.row.logo]" />
+            <el-form-item
+              v-if="props.row.logo != '' "
+              label="Logo"
+            >
+              <el-image
+                style="width: 100px;height: 100px;"
+                :src="props.row.logo"
+                :preview-src-list="[props.row.logo]"
+              />
             </el-form-item>
-            <el-form-item v-if="props.row.wechat_public_qrcode !='' " label="Wechat Qrcode">
+            <el-form-item
+              v-if="props.row.wechat_public_qrcode !='' "
+              label="Wechat Qrcode"
+            >
               <el-image
                 style="width: 100px;height: 100px;"
                 :src="props.row.wechat_public_qrcode"
                 :preview-src-list="[props.row.wechat_public_qrcode]"
               />
             </el-form-item>
-            <el-form-item v-if="props.row.video_url != '' " label="Video">
-              <video width="200" :src="props.row.video_url" controls />
+            <el-form-item
+              v-if="props.row.video_url != '' "
+              label="Video"
+            >
+              <video
+                width="200"
+                :src="props.row.video_url"
+                controls
+              />
             </el-form-item>
-            <el-form-item v-if="props.row.proposed_deal != '' " label="Proposed Deal">
+            <el-form-item
+              v-if="props.row.proposed_deal != '' "
+              label="Proposed Deal"
+            >
               <span>{{ props.row.proposed_deal }}</span>
             </el-form-item>
           </el-form>
@@ -164,64 +211,125 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="User Id" prop="user_id" width="110">
+      <el-table-column
+        label="User Id"
+        prop="user_id"
+        width="110"
+      >
         <template slot-scope="{row}">
           <span>{{ row.user_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="First&&Last Name" width="160">
+      <el-table-column
+        label="First&&Last Name"
+        width="160"
+      >
         <template slot-scope="scope">
           {{ scope.row.first_name }} {{ scope.row.last_name }}
         </template>
       </el-table-column>
-      <el-table-column label="Company Name(EN)" width="150">
+      <el-table-column
+        label="Company Name(EN)"
+        width="150"
+      >
         <template slot-scope="scope">
           {{ scope.row.vendor_name_en }}
         </template>
       </el-table-column>
-      <el-table-column label="Wechat Id" width="110">
+      <el-table-column
+        label="Wechat Id"
+        width="110"
+      >
         <template slot-scope="scope">
           {{ scope.row.wx_id }}
         </template>
       </el-table-column>
-      <el-table-column label="Phone" width="110" align="center">
+      <el-table-column
+        label="Phone"
+        width="110"
+        align="center"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Membership Level" width="110">
+      <el-table-column
+        label="Membership Level"
+        width="110"
+      >
         <template slot-scope="scope">
           <span v-if="scope.row.level == 1">Basic </span>
           <span v-if="scope.row.level == 2">Pro </span>
           <span v-if="scope.row.level == 3">Plus </span>
         </template>
       </el-table-column>
-      <el-table-column label="Deals(Count/Number)" align="center" width="100" class-name="small-padding fixed-width">
+      <el-table-column
+        label="Deals(Count/Number)"
+        align="center"
+        width="100"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="{row}">
-          <el-tag type="success">{{ row.deals_count }}</el-tag>
+          <el-tag type="success">
+            {{ row.deals_count }}
+          </el-tag>
           /
-          <el-tag type="info">{{ row.deals_num }}</el-tag>
-          <el-button type="primary" size="mini" @click="handleAddDeals(row)">
+          <el-tag type="info">
+            {{ row.deals_num }}
+          </el-tag>
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleAddDeals(row)"
+          >
             Add
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="Events(Count/Number)" align="center" width="100" class-name="small-padding fixed-width">
+      <el-table-column
+        label="Events(Count/Number)"
+        align="center"
+        width="100"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="{row}">
-          <el-tag type="success">{{ row.event_count }}</el-tag>
+          <el-tag type="success">
+            {{ row.event_count }}
+          </el-tag>
           /
-          <el-tag type="info">{{ row.events_num }}</el-tag>
-          <el-button type="primary" size="mini" @click="handleAddEvents(row)">
+          <el-tag type="info">
+            {{ row.events_num }}
+          </el-tag>
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleAddEvents(row)"
+          >
             Add
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="280" class-name="small-padding fixed-width">
+      <el-table-column
+        label="Actions"
+        align="center"
+        width="280"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleUpdate(row)"
+          >
             Edit
           </el-button>
-          <el-button size="mini" type="primary" @click="handleMemberLevel(row,$index)">Upgrade</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handleMemberLevel(row,$index)"
+          >
+            Upgrade
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -233,11 +341,28 @@
       :limit.sync="listQuery.limit"
       @pagination="getList"
     />
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormDealsVisible">
-      <el-form ref="dataForm" :model="dealsTempData" label-position="top" label-width="200px">
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormDealsVisible"
+    >
+      <el-form
+        ref="dataForm"
+        :model="dealsTempData"
+        label-position="top"
+        label-width="200px"
+      >
         <el-form-item label="Deal or Discount">
-          <el-select v-model="dealsTempData.type" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in dealsType" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="dealsTempData.type"
+            class="filter-item"
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="item in dealsType"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Deal/Discount Name">
@@ -257,8 +382,17 @@
           />
         </el-form-item>
         <el-form-item label="Multiple Locations or 1">
-          <el-select v-model="dealsTempData.is_all" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in dealsTwo" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="dealsTempData.is_all"
+            class="filter-item"
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="item in dealsTwo"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Location">
@@ -299,18 +433,60 @@
             />
           </el-select>
         </el-form-item>
-
-        <el-form-item label="Detail Address">
-          <el-input v-model="dealsTempData.location" class="filter-item" placeholder="Please input" />
+        <el-form-item label="Add Location Pin">
+          <div class="amap-page-container">
+            <!--使用element UI作为输入框-->
+            <el-input
+              v-model="mapInfo.address"
+              placeholder="请输入内容"
+            />
+            <el-amap
+              vid="amapDemo"
+              :center="mapInfo.lnglat"
+              :amap-manager="amapManager"
+              :zoom="zoom"
+              :events="events"
+              class="amap-demo"
+              style="height: 300px"
+            >
+              <el-amap-marker
+                ref="marker"
+                vid="component-marker"
+                :position="mapInfo.lnglat"
+              />
+            </el-amap>
+            <p>标记点：{{ mapInfo.address }}，经度：{{ mapInfo.lng }}，纬度：{{ mapInfo.lat }}</p>
+          </div>
         </el-form-item>
+        <!--        <el-form-item label="Detail Address">-->
+        <!--          <el-input v-model="dealsTempData.location" class="filter-item" placeholder="Please input" />-->
+        <!--        </el-form-item>-->
         <el-form-item label="Deal/Discount Duration">
-          <el-select v-model="dealsTempData.due_contract" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in dealsThree" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="dealsTempData.due_contract"
+            class="filter-item"
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="item in dealsThree"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Dog Friendly">
-          <el-select v-model="dealsTempData.allowed_dog" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in allowedDogOptions" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="dealsTempData.allowed_dog"
+            class="filter-item"
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="item in allowedDogOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
 
@@ -328,44 +504,92 @@
             :file-list="fileList"
           >
             <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            <div class="el-upload__text">
+              Drag the file here, or <em>click to upload</em>
+            </div>
             <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
           </el-upload>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogFormDealsVisible = false">
           Cancel
         </el-button>
-        <el-button type="primary" @click="createDeals">
+        <el-button
+          type="primary"
+          @click="createDeals"
+        >
           Confirm
         </el-button>
       </div>
     </el-dialog>
 
     <!--events-->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormEventsVisible">
-      <el-form ref="dataForm" :model="eventsTempData" label-position="top" label-width="200px">
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormEventsVisible"
+    >
+      <el-form
+        ref="dataForm"
+        :model="eventsTempData"
+        label-position="top"
+        label-width="200px"
+      >
         <el-form-item label="Event Type">
-          <el-select v-model="eventsTempData.is_all" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in eventsOne" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="eventsTempData.is_all"
+            class="filter-item"
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="item in eventsOne"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Event Name">
-          <el-input v-model="eventsTempData.name" class="filter-item" placeholder="Please input" />
+          <el-input
+            v-model="eventsTempData.name"
+            class="filter-item"
+            placeholder="Please input"
+          />
         </el-form-item>
         <el-form-item label="Deal/Discount For ESL Passport Members">
-          <el-input v-model="eventsTempData.type_desc" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+          <el-input
+            v-model="eventsTempData.type_desc"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            type="textarea"
+            placeholder="Please input"
+          />
         </el-form-item>
         <el-form-item label="Event Description">
-          <el-input v-model="eventsTempData.desc" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+          <el-input
+            v-model="eventsTempData.desc"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            type="textarea"
+            placeholder="Please input"
+          />
         </el-form-item>
 
         <el-form-item label="Event Price">
-          <el-input v-model="eventsTempData.pay_money" type="number" class="filter-item" placeholder="Please select" />
+          <el-input
+            v-model="eventsTempData.pay_money"
+            type="number"
+            class="filter-item"
+            placeholder="Please select"
+          />
         </el-form-item>
         <el-form-item label="Place/Shop">
-          <el-input v-model="eventsTempData.event_place" class="filter-item" placeholder="Please select" />
+          <el-input
+            v-model="eventsTempData.event_place"
+            class="filter-item"
+            placeholder="Please select"
+          />
         </el-form-item>
         <el-form-item label="Location">
           <el-select
@@ -405,10 +629,35 @@
             />
           </el-select>
         </el-form-item>
-
-        <el-form-item label="Event Detail Address">
-          <el-input v-model="eventsTempData.location" class="filter-item" placeholder="Please input " />
+        <el-form-item label="Add Location Pin">
+          <div class="amap-page-container">
+            <!--使用element UI作为输入框-->
+            <el-input
+              v-model="mapInfo.address"
+              placeholder="请输入内容"
+            />
+            <el-amap
+              vid="amapDemo"
+              :center="mapInfo.lnglat"
+              :amap-manager="amapManager"
+              :zoom="zoom"
+              :events="events"
+              class="amap-demo"
+              style="height: 300px"
+            >
+              <el-amap-marker
+                ref="marker"
+                vid="component-marker"
+                :position="mapInfo.lnglat"
+              />
+            </el-amap>
+            <p>标记点：{{ mapInfo.address }}，经度：{{ mapInfo.lng }}，纬度：{{ mapInfo.lat }}</p>
+          </div>
         </el-form-item>
+
+        <!--        <el-form-item label="Event Detail Address">-->
+        <!--          <el-input v-model="eventsTempData.location" class="filter-item" placeholder="Please input "/>-->
+        <!--        </el-form-item>-->
 
         <el-form-item label="Event Date">
           <!--          <el-input v-model="temp.birthday" />-->
@@ -457,7 +706,9 @@
             :file-list="eventsFileList"
           >
             <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            <div class="el-upload__text">
+              Drag the file here, or <em>click to upload</em>
+            </div>
             <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
           </el-upload>
         </el-form-item>
@@ -476,7 +727,9 @@
             :file-list="eventsLogoFileList"
           >
             <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            <div class="el-upload__text">
+              Drag the file here, or <em>click to upload</em>
+            </div>
             <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
           </el-upload>
         </el-form-item>
@@ -495,27 +748,41 @@
             :file-list="eventsHeaderPhotoFileList"
           >
             <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            <div class="el-upload__text">
+              Drag the file here, or <em>click to upload</em>
+            </div>
             <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
           </el-upload>
         </el-form-item>
 
         <el-form-item label="Event Company Name">
-          <el-input v-model="eventsTempData.third_com_name" class="filter-item" placeholder="Please input " />
+          <el-input
+            v-model="eventsTempData.third_com_name"
+            class="filter-item"
+            placeholder="Please input "
+          />
         </el-form-item>
-
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogFormEventsVisible = false">
           Cancel
         </el-button>
-        <el-button type="primary" @click="createEvents">
+        <el-button
+          type="primary"
+          @click="createEvents"
+        >
           Confirm
         </el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormUpgrade">
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormUpgrade"
+    >
       <!--      :rules="rules"-->
       <el-form
         ref="dataForm"
@@ -524,32 +791,57 @@
         label-width="90px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="Identity" prop="identity">
+        <el-form-item
+          label="Identity"
+          prop="identity"
+        >
           <el-select
             v-model="tempUpgrade.identity"
             class="filter-item"
             placeholder="Choose Identity"
             @change="changeIdentity"
           >
-            <el-option v-for="item in identityOptions" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option
+              v-for="item in identityOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item label="Level" prop="levelId">
-          <el-select v-model="tempUpgrade.levelId" class="filter-item" placeholder="Choose Level">
-            <el-option v-for="item in levelOptions" :key="item.id" :label="item.level_en" :value="item.id" />
+        <el-form-item
+          label="Level"
+          prop="levelId"
+        >
+          <el-select
+            v-model="tempUpgrade.levelId"
+            class="filter-item"
+            placeholder="Choose Level"
+          >
+            <el-option
+              v-for="item in levelOptions"
+              :key="item.id"
+              :label="item.level_en"
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogFormUpgrade = false">
           Cancel
         </el-button>
-        <el-button type="primary" @click="upgradeLevel()">
+        <el-button
+          type="primary"
+          @click="upgradeLevel()"
+        >
           Confirm
         </el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
@@ -564,17 +856,19 @@ import {
   addVendorBasic
 } from '@/api/member'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
+import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'
-import { addDeals } from '@/api/deals' // secondary package based on el-pagination
-import { addEvent } from '@/api/events'
-import { format } from 'date-fns'
-import { getAreas } from '@/api/location'
+import {addDeals} from '@/api/deals' // secondary package based on el-pagination
+import {addEvent} from '@/api/events'
+import {format} from 'date-fns'
+import {getAreas} from '@/api/location'
+import {AMapManager} from 'vue-amap'
 
+const amapManager = new AMapManager()
 export default {
   name: 'Index',
-  components: { Pagination },
-  directives: { waves },
+  components: {Pagination},
+  directives: {waves},
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -588,17 +882,36 @@ export default {
   },
   data() {
     return {
+      mapInfo: {
+        // 初始值默认为天安门
+        address: '北京市东城区东华门街道天安门',
+        lng: 116.397451,
+        lat: 39.909187,
+        lnglat: [116.397451, 39.909187]
+      },
+      zoom: 12,
+      amapManager,
+      events: {
+        click: (e) => {
+          this.mapInfo.lng = e.lnglat.lng
+          this.mapInfo.lat = e.lnglat.lat
+          this.mapInfo.lnglat = [e.lnglat.lng, e.lnglat.lat]
+          this.getFormattedAddress()
+        }
+      },
+      dealsLoading: false,
+      eventsLoading: false,
       provinceList: [],
       cityList: [],
       districtList: [],
 
       uploadRequestUrl: process.env.VUE_APP_UPLOAD_API,
-      dealsType: [{ label: 'Deal', value: 1 }, { label: 'Discount', value: 2 }],
-      dealsTwo: [{ label: 'All Locations', value: 1 }, { label: 'Limited', value: 0 }],
-      dealsThree: [{ label: '1 year', value: 1 }, { label: '2 year', value: 2 }],
-      dealsFour: [{ label: 'Shanghai', value: 1 }, { label: 'Other', value: 0 }],
-      eventsOne: [{ label: 'Social', value: 1 }, { label: 'Professional', value: 2 }],
-      allowedDogOptions: [{ label: 'Yes', value: 1 }, { label: 'No', value: 0 }],
+      dealsType: [{label: 'Deal', value: 1}, {label: 'Discount', value: 2}],
+      dealsTwo: [{label: 'All Locations', value: 1}, {label: 'Limited', value: 0}],
+      dealsThree: [{label: '1 year', value: 1}, {label: '2 year', value: 2}],
+      dealsFour: [{label: 'Shanghai', value: 1}, {label: 'Other', value: 0}],
+      eventsOne: [{label: 'Social', value: 1}, {label: 'Professional', value: 2}],
+      allowedDogOptions: [{label: 'Yes', value: 1}, {label: 'No', value: 0}],
       userListData: [],
       popuCityList: [],
       dialogFormDealsVisible: false,
@@ -620,7 +933,9 @@ export default {
         district_name: undefined,
         location: undefined,
         identity: undefined,
-        file_name: undefined
+        file_name: undefined,
+        lat: undefined,
+        lng: undefined
       },
       fileUrl: undefined,
       fileList: undefined,
@@ -655,7 +970,9 @@ export default {
         file_name: undefined,
         third_com_name: undefined,
         third_com_logo: undefined,
-        third_com_bg: undefined
+        third_com_bg: undefined,
+        lat: undefined,
+        lng: undefined
       },
       tableKey: 0,
       list: null,
@@ -675,14 +992,14 @@ export default {
         sex: undefined
       },
       percentOptions: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      seekingOptions: [{ label: 'no', value: 0 }, { label: 'Yes', value: 1 }],
-      sexOptions: [{ label: 'unco', value: 0 }, { label: 'Male', value: 1 }, { label: 'Female', value: 2 }],
-      identityOptions: [{ label: 'Educator', value: 1 }, { label: 'Business', value: 2 }, { label: 'Vendor', value: 3 }],
+      seekingOptions: [{label: 'no', value: 0}, {label: 'Yes', value: 1}],
+      sexOptions: [{label: 'unco', value: 0}, {label: 'Male', value: 1}, {label: 'Female', value: 2}],
+      identityOptions: [{label: 'Educator', value: 1}, {label: 'Business', value: 2}, {label: 'Vendor', value: 3}],
       levelOptions: [],
       vipList: [],
 
       importanceOptions: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
+      sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
@@ -738,7 +1055,42 @@ export default {
     this.getVipList()
     this.getUserObjList()
   },
+  mounted() {
+    this.initMapByInput()
+  },
   methods: {
+    getFormattedAddress() {
+      AMap.plugin('AMap.Geocoder', () => {
+        const GeocoderOptions = {
+          city: '全国'
+        }
+        const geocoder = new AMap.Geocoder(GeocoderOptions)
+        geocoder.getAddress(this.mapInfo.lnglat, (status, result) => {
+          console.log('通过经纬度拿到的地址', result)
+          if (status === 'complete' && result.info === 'OK') {
+            this.mapInfo.address = result.regeocode.formattedAddress
+          } else {
+            this.mapInfo.address = '无法获取地址'
+          }
+        })
+      })
+    },
+    initMapByInput() {
+      AMap.plugin('AMap.Autocomplete', () => {
+        const autoOptions = {
+          city: '全国',
+          input: 'tipinput'
+        }
+        const autoComplete = new AMap.Autocomplete(autoOptions)
+        AMap.event.addListener(autoComplete, 'select', (e) => {
+          console.log('通过输入拿到的地址', e)
+          this.mapInfo.lat = e.poi.location.lat
+          this.mapInfo.lng = e.poi.location.lng
+          this.mapInfo.lnglat = [e.poi.location.lng, e.poi.location.lat]
+          this.getFormattedAddress()
+        })
+      })
+    },
     getAreas() {
       const params = {}
       getAreas(params).then(res => {
@@ -837,16 +1189,31 @@ export default {
       this.eventEndTime = this.eventsTempData.date + ' ' + e + ':00'
     },
     getUserObjList() {
-      userObjectList({ pid: 71 }).then(res => {
+      userObjectList({pid: 71}).then(res => {
         console.log(res)
         this.popuCityList = res.message
       })
     },
     handleAddDeals(row) {
-      this.dialogFormDealsVisible = true
+      var self = this
       this.dealsTempData.user_id = row.user_id
+      this.mapInfo = {
+        // 初始值默认为天安门
+        address: '北京市东城区东华门街道天安门',
+        lng: 116.397451,
+        lat: 39.909187,
+        lnglat: [116.397451, 39.909187]
+      }
+      this.listLoading = true
+      setTimeout(function() {
+        self.listLoading = false
+        self.dialogFormDealsVisible = true
+      }, 1200)
     },
     createDeals() {
+      this.dealsTempData.location = this.mapInfo.address
+      this.dealsTempData.lng = this.mapInfo.lng
+      this.dealsTempData.lat = this.mapInfo.lat
       addDeals(this.dealsTempData).then(response => {
         console.log(response)
         if (response.code == 200) {
@@ -868,14 +1235,28 @@ export default {
             city: undefined,
             location: undefined,
             identity: undefined,
-            file_name: undefined
+            file_name: undefined,
+            lng: undefined,
+            lat: undefined
           }
         }
       })
     },
     handleAddEvents(row) {
-      this.dialogFormEventsVisible = true
+      var self = this
+      this.mapInfo = {
+        // 初始值默认为天安门
+        address: '北京市东城区东华门街道天安门',
+        lng: 116.397451,
+        lat: 39.909187,
+        lnglat: [116.397451, 39.909187]
+      }
       this.eventsTempData.user_id = row.user_id
+      this.listLoading = true
+      setTimeout(function() {
+        self.dialogFormEventsVisible = true
+        self.listLoading = false
+      }, 1200)
     },
     createEvents() {
       // console.log(this.eventsTempData)
@@ -886,6 +1267,9 @@ export default {
       if (this.eventEndTime != undefined) {
         this.eventsTempData.end_time = this.eventEndTime
       }
+      this.eventsTempData.location = this.mapInfo.address
+      this.eventsTempData.lat = this.mapInfo.lat
+      this.eventsTempData.lng = this.mapInfo.lng
       addEvent(this.eventsTempData).then(response => {
         // console.log(response)
         if (response.code == 200) {
@@ -915,7 +1299,9 @@ export default {
             district_name: undefined,
             third_com_name: undefined,
             third_com_logo: undefined,
-            third_com_bg: undefined
+            third_com_bg: undefined,
+            lng: undefined,
+            lat: undefined
           }
         }
       })
@@ -949,7 +1335,7 @@ export default {
       // console.log(file)
       // console.log(fileList)
       if (response.code == 200) {
-        this.eventsLogoFileList = [{ name: '', url: response.data[0].file_url }]
+        this.eventsLogoFileList = [{name: '', url: response.data[0].file_url}]
         this.eventsTempData.third_com_logo = response.data[0].file_url
       } else {
         console.log(response.msg)
@@ -960,7 +1346,7 @@ export default {
       // console.log(file)
       // console.log(fileList)
       if (response.code == 200) {
-        this.eventsHeaderPhotoFileList = [{ name: '', url: response.data[0].file_url }]
+        this.eventsHeaderPhotoFileList = [{name: '', url: response.data[0].file_url}]
         this.eventsTempData.third_com_bg = response.data[0].file_url
       } else {
         console.log(response.msg)
@@ -1015,7 +1401,7 @@ export default {
       row.status = status
     },
     sortChange(data) {
-      const { prop, order } = data
+      const {prop, order} = data
       if (prop === 'id') {
         this.sortByID(order)
       }
@@ -1048,7 +1434,7 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.$router.push({ path: '/users/editVendor', query: { uid: row.user_id }})
+      this.$router.push({path: '/users/editVendor', query: {uid: row.user_id}})
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -1127,15 +1513,13 @@ export default {
           changeVipLevel(data).then(response => {
             console.log(response)
             if (response.code == 200) {
-              setTimeout(function() {
-                that.$notify({
-                  title: 'Success',
-                  message: 'Upgrade Successfully',
-                  type: 'success',
-                  duration: 2000
-                })
-                that.dialogFormUpgrade = false
-              }, 2000)
+              that.$notify({
+                title: 'Success',
+                message: 'Upgrade Successfully',
+                type: 'success',
+                duration: 2000
+              })
+              that.dialogFormUpgrade = false
             }
           })
           // console.log(tempData)

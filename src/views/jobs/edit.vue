@@ -1,9 +1,13 @@
 <template>
   <div class="container">
-
-    <el-form :model="jobForm" label-width="200px">
+    <el-form
+      :model="jobForm"
+      label-width="200px"
+    >
       <div class="container-item">
-        <div class="title">Job Details</div>
+        <div class="title">
+          Job Details
+        </div>
 
         <el-form-item label="Job Location">
           <el-select
@@ -18,6 +22,7 @@
               :value="{id:item.id,name:item.Pinyin}"
             />
           </el-select>
+
           <el-select
             v-model="jobForm.city_name"
             placeholder="City"
@@ -42,13 +47,49 @@
               :value="{id:item.id,name:item.Pinyin}"
             />
           </el-select>
-
-        </el-form-item>
-        <el-form-item label="Class Size" prop="class_size">
-          <el-input v-model="jobForm.class_size" type="number" />
         </el-form-item>
 
-        <el-form-item label="Working Hours" prop="working_hours">
+        <el-form-item label="Add Location Pin">
+          <div class="amap-page-container">
+            <!--使用element UI作为输入框-->
+            <el-input
+              id="tipinput"
+              v-model="mapInfo.address"
+              placeholder="请输入内容"
+            />
+            <el-amap
+              vid="amapDemo"
+              :center="mapInfo.lnglat"
+              :amap-manager="amapManager"
+              :zoom="zoom"
+              :events="events"
+              class="amap-demo"
+              style="height: 300px"
+            >
+              <el-amap-marker
+                ref="marker"
+                vid="component-marker"
+                :position="mapInfo.lnglat"
+              />
+            </el-amap>
+            <p>标记点：{{ mapInfo.address }}，经度：{{ mapInfo.lng }}，纬度：{{ mapInfo.lat }}</p>
+          </div>
+        </el-form-item>
+
+        <el-form-item
+          label="Class Size"
+          prop="class_size"
+        >
+          <el-input
+            v-model="jobForm.class_size"
+            type="number"
+          />
+        </el-form-item>
+
+        <el-form-item
+          label="Working Hours"
+          prop="working_hours"
+        >
           <el-time-select
             v-model="workingStartTime"
             placeholder="Start Time"
@@ -69,13 +110,25 @@
             }"
           />
         </el-form-item>
-        <el-form-item label="Job Detail Address" prop="job_location">
+        <el-form-item
+          label="Job Detail Address"
+          prop="job_location"
+        >
           <el-input v-model="jobForm.job_location" />
         </el-form-item>
-        <el-form-item label="Number of Vacancies" prop="numbers">
-          <el-input v-model="jobForm.numbers" type="number" />
+        <el-form-item
+          label="Number of Vacancies"
+          prop="numbers"
+        >
+          <el-input
+            v-model="jobForm.numbers"
+            type="number"
+          />
         </el-form-item>
-        <el-form-item label="Employment Type" prop="employment_type">
+        <el-form-item
+          label="Employment Type"
+          prop="employment_type"
+        >
           <el-select v-model="jobForm.employment_type">
             <el-option
               v-for="(item,i) in employmentTypeOptions"
@@ -85,7 +138,10 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Online Job" prop="is_online">
+        <el-form-item
+          label="Online Job"
+          prop="is_online"
+        >
           <el-switch
             v-model="jobForm.is_online"
             active-color="#13ce66"
@@ -97,17 +153,37 @@
       </div>
 
       <div class="container-item">
-        <div class="title">General Information</div>
-        <el-form-item label="Job Title" prop="job_title">
+        <div class="title">
+          General Information
+        </div>
+        <el-form-item
+          label="Job Title"
+          prop="job_title"
+        >
           <el-input v-model="jobForm.job_title" />
         </el-form-item>
-        <el-form-item label="Position Description" prop="desc">
-          <el-input v-model="jobForm.desc" type="textarea" />
+        <el-form-item
+          label="Position Description"
+          prop="desc"
+        >
+          <el-input
+            v-model="jobForm.desc"
+            type="textarea"
+          />
         </el-form-item>
-        <el-form-item label="Application Due Date" prop="apply_due_date">
-          <el-input v-model="jobForm.apply_due_date" placeholder="yyyy-MM-dd" />
+        <el-form-item
+          label="Application Due Date"
+          prop="apply_due_date"
+        >
+          <el-input
+            v-model="jobForm.apply_due_date"
+            placeholder="yyyy-MM-dd"
+          />
         </el-form-item>
-        <el-form-item label="Start Date" prop="entry_date">
+        <el-form-item
+          label="Start Date"
+          prop="entry_date"
+        >
           <el-select
             v-model="jobForm.entry_date"
             filterable
@@ -139,7 +215,6 @@
               :value="item.id"
             />
           </el-select>
-
         </el-form-item>
         <el-form-item label="Subject(s)">
           <el-select
@@ -161,14 +236,31 @@
       </div>
 
       <div class="container-item">
-        <div class="title">Compensation</div>
-        <el-form-item label="Min Salary" prop="salary_min">
-          <el-input v-model="jobForm.salary_min" type="number" />
+        <div class="title">
+          Compensation
+        </div>
+        <el-form-item
+          label="Min Salary"
+          prop="salary_min"
+        >
+          <el-input
+            v-model="jobForm.salary_min"
+            type="number"
+          />
         </el-form-item>
-        <el-form-item label="Max Salary" prop="salary_max">
-          <el-input v-model="jobForm.salary_max" type="number" />
+        <el-form-item
+          label="Max Salary"
+          prop="salary_max"
+        >
+          <el-input
+            v-model="jobForm.salary_max"
+            type="number"
+          />
         </el-form-item>
-        <el-form-item label="Currency" prop="currency">
+        <el-form-item
+          label="Currency"
+          prop="currency"
+        >
           <el-select
             v-model="jobForm.currency"
             filterable
@@ -183,7 +275,6 @@
               :value="item.object_en"
             />
           </el-select>
-
         </el-form-item>
         <el-form-item label="Payment Period">
           <el-select v-model="jobForm.payment_period">
@@ -194,7 +285,6 @@
               :value="item.id"
             />
           </el-select>
-
         </el-form-item>
         <el-form-item label="Benefits">
           <el-select
@@ -212,15 +302,24 @@
               :value="item.id"
             />
           </el-select>
-
         </el-form-item>
       </div>
 
       <div class="container-item">
-        <div class="title">Applicant Requirements</div>
-        <el-form-item label="Gender" prop="sex">
+        <div class="title">
+          Applicant Requirements
+        </div>
+        <el-form-item
+          label="Gender"
+          prop="sex"
+        >
           <el-select v-model="jobForm.sex">
-            <el-option v-for="(item,i) in genderOptions" :key="i" :label="item.label" :value="item.value" />
+            <el-option
+              v-for="(item,i) in genderOptions"
+              :key="i"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Teaching Certificate(s)">
@@ -239,9 +338,11 @@
               :value="item.id"
             />
           </el-select>
-
         </el-form-item>
-        <el-form-item label="CPR Certified" prop="is_cpr">
+        <el-form-item
+          label="CPR Certified"
+          prop="is_cpr"
+        >
           <el-switch
             v-model="jobForm.is_cpr"
             active-color="#13ce66"
@@ -250,7 +351,10 @@
             :inactive-value="0"
           />
         </el-form-item>
-        <el-form-item label="First Aid Certified" prop="is_first_aide">
+        <el-form-item
+          label="First Aid Certified"
+          prop="is_first_aide"
+        >
           <el-switch
             v-model="jobForm.is_first_aide"
             active-color="#13ce66"
@@ -259,7 +363,10 @@
             :inactive-value="0"
           />
         </el-form-item>
-        <el-form-item label="Teaching Experience" prop="teaching_times">
+        <el-form-item
+          label="Teaching Experience"
+          prop="teaching_times"
+        >
           <el-select v-model="jobForm.teaching_times">
             <el-option
               v-for="(item,i) in teachingTimesOptions"
@@ -269,7 +376,10 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Teaching License" prop="is_teaching_license">
+        <el-form-item
+          label="Teaching License"
+          prop="is_teaching_license"
+        >
           <el-switch
             v-model="jobForm.is_teaching_license"
             active-color="#13ce66"
@@ -278,7 +388,10 @@
             :inactive-value="0"
           />
         </el-form-item>
-        <el-form-item label="Native Speaker" prop="is_mom_language">
+        <el-form-item
+          label="Native Speaker"
+          prop="is_mom_language"
+        >
           <el-switch
             v-model="jobForm.is_mom_language"
             active-color="#13ce66"
@@ -287,7 +400,10 @@
             :inactive-value="0"
           />
         </el-form-item>
-        <el-form-item label="Education Level" prop="education">
+        <el-form-item
+          label="Education Level"
+          prop="education"
+        >
           <el-select v-model="jobForm.education">
             <el-option
               v-for="(item,i) in educationOptions"
@@ -313,16 +429,30 @@
               :value="item.id"
             />
           </el-select>
-
         </el-form-item>
 
-        <el-form-item label="Min Age" prop="age_min">
-          <el-input v-model="jobForm.age_min" type="number" />
+        <el-form-item
+          label="Min Age"
+          prop="age_min"
+        >
+          <el-input
+            v-model="jobForm.age_min"
+            type="number"
+          />
         </el-form-item>
-        <el-form-item label="Max Age" prop="age_max">
-          <el-input v-model="jobForm.age_max" label="number" />
+        <el-form-item
+          label="Max Age"
+          prop="age_max"
+        >
+          <el-input
+            v-model="jobForm.age_max"
+            label="number"
+          />
         </el-form-item>
-        <el-form-item label="Equal Opportunity" prop="is_equal">
+        <el-form-item
+          label="Equal Opportunity"
+          prop="is_equal"
+        >
           <el-switch
             v-model="jobForm.is_equal"
             active-color="#13ce66"
@@ -420,10 +550,14 @@
 
       <div class="container-item">
         <el-form-item>
-          <el-button type="primary" @click="updateJob">Update</el-button>
+          <el-button
+            type="primary"
+            @click="updateJob"
+          >
+            Update
+          </el-button>
         </el-form-item>
       </div>
-
     </el-form>
   </div>
 </template>
@@ -436,11 +570,31 @@ import nationality from '@/views/users/nationality'
 import {randomString} from '@/utils'
 import {getAreas} from '@/api/location'
 
+import {AMapManager} from 'vue-amap'
+const amapManager = new AMapManager()
+
 export default {
   name: 'Edit',
   components: {},
   data() {
     return {
+      mapInfo: {
+        // 初始值默认为天安门
+        address: '北京市东城区东华门街道天安门',
+        lng: 116.397451,
+        lat: 39.909187,
+        lnglat: [116.397451, 39.909187]
+      },
+      zoom: 12,
+      amapManager,
+      events: {
+        click: (e) => {
+          this.mapInfo.lng = e.lnglat.lng
+          this.mapInfo.lat = e.lnglat.lat
+          this.mapInfo.lnglat = [e.lnglat.lng, e.lnglat.lat]
+          this.getFormattedAddress()
+        }
+      },
       provinceList: [],
       cityList: [],
       districtList: [],
@@ -524,7 +678,10 @@ export default {
         third_com_bg: undefined,
         version_time: undefined,
         class_size: undefined,
-        working_hours: undefined
+        working_hours: undefined,
+        address: undefined,
+        lng: undefined,
+        lat: undefined
       },
       studentsAge: undefined,
       studentsAgeOptions: undefined,
@@ -596,8 +753,42 @@ export default {
       this.nationalityList = this.nationalityList.concat(item.data)
     })
   },
+  mounted() {
+    this.initMapByInput()
+  },
   methods: {
-
+    getFormattedAddress() {
+      AMap.plugin('AMap.Geocoder', () => {
+        const GeocoderOptions = {
+          city: '全国'
+        }
+        const geocoder = new AMap.Geocoder(GeocoderOptions)
+        geocoder.getAddress(this.mapInfo.lnglat, (status, result) => {
+          console.log('通过经纬度拿到的地址', result)
+          if (status === 'complete' && result.info === 'OK') {
+            this.mapInfo.address = result.regeocode.formattedAddress
+          } else {
+            this.mapInfo.address = '无法获取地址'
+          }
+        })
+      })
+    },
+    initMapByInput() {
+      AMap.plugin('AMap.Autocomplete', () => {
+        const autoOptions = {
+          city: '全国',
+          input: 'tipinput'
+        }
+        const autoComplete = new AMap.Autocomplete(autoOptions)
+        AMap.event.addListener(autoComplete, 'select', (e) => {
+          console.log('通过输入拿到的地址', e)
+          this.mapInfo.lat = e.poi.location.lat
+          this.mapInfo.lng = e.poi.location.lng
+          this.mapInfo.lnglat = [e.poi.location.lng, e.poi.location.lat]
+          this.getFormattedAddress()
+        })
+      })
+    },
     getAreas() {
       const params = {}
       getAreas(params).then(res => {
@@ -662,6 +853,9 @@ export default {
     },
     updateJob() {
       this.jobForm.working_hours = this.workingStartTime + '-' + this.workingEndTime
+      this.jobForm.address = this.mapInfo.address
+      this.jobForm.lat = this.mapInfo.lat
+      this.jobForm.lng = this.mapInfo.lng
       const data = Object.assign({}, this.jobForm)
 
       addJobs(data).then(res => {
@@ -891,6 +1085,7 @@ export default {
       })
     },
     getJobDetail(jobId) {
+      var self = this
       const params = {
         job_id: jobId
       }
@@ -946,6 +1141,11 @@ export default {
 
           this.jobForm.age_min = res.message.age_min
           this.jobForm.age_max = res.message.age_max
+
+          self.mapInfo.address = res.message.address
+          self.mapInfo.lat = res.message.lat
+          self.mapInfo.lng = res.message.lng
+          self.mapInfo.lnglat = [res.message.lng, res.message.lat]
 
           if (res.message.province > 0) {
             this.jobForm.province = res.message.province

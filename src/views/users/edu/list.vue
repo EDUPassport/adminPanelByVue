@@ -1,15 +1,67 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.first_name" placeholder="First Name" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.last_name" placeholder="Last Name" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.nickname" placeholder="Nickname" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.country" placeholder="Country" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.province" placeholder="Province" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.city" placeholder="City" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.phone" placeholder="Phone" style="width: 200px;" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.email" placeholder="Email" style="width: 200px;" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-input
+        v-model="listQuery.first_name"
+        placeholder="First Name"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.last_name"
+        placeholder="Last Name"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.nickname"
+        placeholder="Nickname"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.country"
+        placeholder="Country"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.province"
+        placeholder="Province"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.city"
+        placeholder="City"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.phone"
+        placeholder="Phone"
+        style="width: 200px;"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.email"
+        placeholder="Email"
+        style="width: 200px;"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        @click="handleFilter"
+      >
         Search
       </el-button>
     </div>
@@ -26,111 +78,243 @@
     >
       <el-table-column type="expand">
         <template slot-scope="props">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item v-if="props.row.country != ''" label="Country">
+          <el-form
+            label-position="left"
+            inline
+            class="demo-table-expand"
+          >
+            <el-form-item
+              v-if="props.row.country != ''"
+              label="Country"
+            >
               {{ props.row.country }}
             </el-form-item>
-            <el-form-item v-if="props.row.province != ''" label="Province">
+            <el-form-item
+              v-if="props.row.province != ''"
+              label="Province"
+            >
               {{ props.row.province }}
             </el-form-item>
-            <el-form-item v-if="props.row.city != ''" label="City">
+            <el-form-item
+              v-if="props.row.city != ''"
+              label="City"
+            >
               {{ props.row.city }}
             </el-form-item>
-            <el-form-item v-if="props.row.district != ''" label="District">
+            <el-form-item
+              v-if="props.row.district != ''"
+              label="District"
+            >
               {{ props.row.district }}
             </el-form-item>
-            <el-form-item v-if="props.row.nickname != ''" label="Nickname">
+            <el-form-item
+              v-if="props.row.nickname != ''"
+              label="Nickname"
+            >
               {{ props.row.nickname }}
             </el-form-item>
-            <el-form-item v-if="props.row.profile_photo != '' " label="Profile Photo">
-              <el-image style="width: 100px;height: 100px;" :src="props.row.profile_photo" :preview-src-list="[props.row.profile_photo]" />
+            <el-form-item
+              v-if="props.row.profile_photo != '' "
+              label="Profile Photo"
+            >
+              <el-image
+                style="width: 100px;height: 100px;"
+                :src="props.row.profile_photo"
+                :preview-src-list="[props.row.profile_photo]"
+              />
             </el-form-item>
-            <el-form-item v-if="props.row.header_photo != '' " label="Header Photo">
-              <el-image style="width: 100px;height: 100px;" :src="props.row.header_photo" :preview-src-list="[props.row.header_photo]" />
+            <el-form-item
+              v-if="props.row.header_photo != '' "
+              label="Header Photo"
+            >
+              <el-image
+                style="width: 100px;height: 100px;"
+                :src="props.row.header_photo"
+                :preview-src-list="[props.row.header_photo]"
+              />
             </el-form-item>
-            <el-form-item v-if="props.row.video_url != '' " label="Video">
-              <video width="200" :src="props.row.video_url" controls />
+            <el-form-item
+              v-if="props.row.video_url != '' "
+              label="Video"
+            >
+              <video
+                width="200"
+                :src="props.row.video_url"
+                controls
+              />
             </el-form-item>
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+      <el-table-column
+        label="ID"
+        prop="id"
+        sortable="custom"
+        align="center"
+        width="80"
+        :class-name="getSortClass('id')"
+      >
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="User Id" prop="user_id" width="80">
+      <el-table-column
+        label="User Id"
+        prop="user_id"
+        width="80"
+      >
         <template slot-scope="{row}">
           <span>{{ row.user_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="First&Last Name" width="140">
+      <el-table-column
+        label="First&Last Name"
+        width="140"
+      >
         <template slot-scope="scope">
           {{ scope.row.first_name }} {{ scope.row.last_name }}
         </template>
       </el-table-column>
-      <el-table-column label="Wechat Id" width="140">
+      <el-table-column
+        label="Wechat Id"
+        width="140"
+      >
         <template slot-scope="scope">
           {{ scope.row.wx_id }}
         </template>
       </el-table-column>
-      <el-table-column label="Email" width="110">
+      <el-table-column
+        label="Email"
+        width="110"
+      >
         <template slot-scope="scope">
           {{ scope.row.email }}
         </template>
       </el-table-column>
-      <el-table-column label="Level" width="110">
+      <el-table-column
+        label="Level"
+        width="110"
+      >
         <template slot-scope="scope">
           <span v-if="scope.row.level==1">Basic</span>
           <span v-if="scope.row.level==2">Pro</span>
           <span v-if="scope.row.level==3">Plus</span>
         </template>
       </el-table-column>
-      <el-table-column label="Phone" width="110" align="center">
+      <el-table-column
+        label="Phone"
+        width="110"
+        align="center"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Nationality" width="110" align="center">
+      <el-table-column
+        label="Nationality"
+        width="110"
+        align="center"
+      >
         <template slot-scope="scope">
           {{ scope.row.nationality }}
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="280" class-name="small-padding fixed-width">
+      <el-table-column
+        label="Actions"
+        align="center"
+        width="280"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleUpdate(row)"
+          >
             Edit
           </el-button>
-          <el-button size="mini" type="primary" @click="handleMemberLevel(row,$index)">Upgrade</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handleMemberLevel(row,$index)"
+          >
+            Upgrade
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      @pagination="getList"
+    />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="username" prop="username">
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormVisible"
+    >
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="90px"
+        style="width: 400px; margin-left:50px;"
+      >
+        <el-form-item
+          label="username"
+          prop="username"
+        >
           <el-input v-model="temp.username" />
         </el-form-item>
-        <el-form-item label="nickname" prop="nickname">
+        <el-form-item
+          label="nickname"
+          prop="nickname"
+        >
           <el-input v-model="temp.nickname" />
         </el-form-item>
-        <el-form-item label="truename" prop="truename">
+        <el-form-item
+          label="truename"
+          prop="truename"
+        >
           <el-input v-model="temp.truename" />
         </el-form-item>
-        <el-form-item label="sex" prop="sex">
-          <el-select v-model="temp.sex" class="filter-item" placeholder="Please select gender">
-            <el-option v-for="item in sexOptions" :key="item.value" :label="item.label" :value="item.value" />
+        <el-form-item
+          label="sex"
+          prop="sex"
+        >
+          <el-select
+            v-model="temp.sex"
+            class="filter-item"
+            placeholder="Please select gender"
+          >
+            <el-option
+              v-for="item in sexOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item label="phone" prop="phone">
+        <el-form-item
+          label="phone"
+          prop="phone"
+        >
           <el-input v-model="temp.phone" />
         </el-form-item>
-        <el-form-item label="email" prop="email">
+        <el-form-item
+          label="email"
+          prop="email"
+        >
           <el-input v-model="temp.email" />
         </el-form-item>
-        <el-form-item label="birthday" prop="birthday">
+        <el-form-item
+          label="birthday"
+          prop="birthday"
+        >
           <el-date-picker
             v-model="temp.birthday"
             type="date"
@@ -138,34 +322,80 @@
           />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogFormVisible = false">
           Cancel
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button
+          type="primary"
+          @click="dialogStatus==='create'?createData():updateData()"
+        >
           Confirm
         </el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormUpgrade">
-      <el-form ref="dataForm" :model="tempUpgrade" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Identity" prop="identity">
-          <el-select v-model="tempUpgrade.identity" class="filter-item" placeholder="Choose Identity" @change="changeIdentity">
-            <el-option v-for="item in identityOptions" :key="item.value" :label="item.label" :value="item.value" />
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormUpgrade"
+    >
+      <el-form
+        ref="dataForm"
+        :model="tempUpgrade"
+        label-position="left"
+        label-width="90px"
+        style="width: 400px; margin-left:50px;"
+      >
+        <el-form-item
+          label="Identity"
+          prop="identity"
+        >
+          <el-select
+            v-model="tempUpgrade.identity"
+            class="filter-item"
+            placeholder="Choose Identity"
+            @change="changeIdentity"
+          >
+            <el-option
+              v-for="item in identityOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item label="Level" prop="levelId">
-          <el-select v-model="tempUpgrade.levelId" class="filter-item" placeholder="Choose Level">
-            <el-option v-for="item in levelOptions" :key="item.id" :label="item.level_en" :value="item.id" />
+        <el-form-item
+          label="Level"
+          prop="levelId"
+        >
+          <el-select
+            v-model="tempUpgrade.levelId"
+            class="filter-item"
+            placeholder="Choose Level"
+          >
+            <el-option
+              v-for="item in levelOptions"
+              :key="item.id"
+              :label="item.level_en"
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogFormUpgrade = false">
           Cancel
         </el-button>
-        <el-button type="primary" @click="upgradeLevel()">
+        <el-button
+          type="primary"
+          @click="upgradeLevel()"
+        >
           Confirm
         </el-button>
       </div>
@@ -175,17 +405,17 @@
 
 <script>
 
-import { editUserInfo, deleteUser, vipList, changeVipLevel, userObjectList, educatorList } from '@/api/member'
+import {editUserInfo, deleteUser, vipList, changeVipLevel, userObjectList, educatorList} from '@/api/member'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
+import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'
-import { addDeals } from '@/api/deals' // secondary package based on el-pagination
-import { addEvent } from '@/api/events'
+import {addDeals} from '@/api/deals' // secondary package based on el-pagination
+import {addEvent} from '@/api/events'
 
 export default {
   name: 'Index',
-  components: { Pagination },
-  directives: { waves },
+  components: {Pagination},
+  directives: {waves},
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -199,11 +429,11 @@ export default {
   },
   data() {
     return {
-      dealsType: [{ label: 'Deal', value: 1 }, { label: 'Discount', value: 2 }],
-      dealsTwo: [{ label: 'All Locations', value: 1 }, { label: 'Limited', value: 0 }],
-      dealsThree: [{ label: '1 year', value: 1 }, { label: '2 year', value: 2 }],
-      dealsFour: [{ label: 'Shanghai', value: 1 }, { label: 'Other', value: 0 }],
-      eventsOne: [{ label: 'Social', value: 1 }, { label: 'Professional', value: 2 }],
+      dealsType: [{label: 'Deal', value: 1}, {label: 'Discount', value: 2}],
+      dealsTwo: [{label: 'All Locations', value: 1}, {label: 'Limited', value: 0}],
+      dealsThree: [{label: '1 year', value: 1}, {label: '2 year', value: 2}],
+      dealsFour: [{label: 'Shanghai', value: 1}, {label: 'Other', value: 0}],
+      eventsOne: [{label: 'Social', value: 1}, {label: 'Professional', value: 2}],
       userListData: [],
       popuCityList: [],
       dialogFormDealsVisible: false,
@@ -261,14 +491,14 @@ export default {
         sex: undefined
       },
       percentOptions: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      seekingOptions: [{ label: 'no', value: 0 }, { label: 'Yes', value: 1 }],
-      sexOptions: [{ label: 'unco', value: 0 }, { label: 'Male', value: 1 }, { label: 'Female', value: 2 }],
-      identityOptions: [{ label: 'Educator', value: 1 }, { label: 'Business', value: 2 }, { label: 'Vendor', value: 3 }],
+      seekingOptions: [{label: 'no', value: 0}, {label: 'Yes', value: 1}],
+      sexOptions: [{label: 'unco', value: 0}, {label: 'Male', value: 1}, {label: 'Female', value: 2}],
+      identityOptions: [{label: 'Educator', value: 1}, {label: 'Business', value: 2}, {label: 'Vendor', value: 3}],
       levelOptions: [],
       vipList: [],
 
       importanceOptions: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
+      sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
@@ -296,9 +526,9 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        username: [{ required: true, message: 'username is required', trigger: 'change' }],
-        birthday: [{ type: 'date', required: true, message: 'birthday is required', trigger: 'change' }],
-        nickname: [{ required: true, message: 'nickname is required', trigger: 'blur' }]
+        username: [{required: true, message: 'username is required', trigger: 'change'}],
+        birthday: [{type: 'date', required: true, message: 'birthday is required', trigger: 'change'}],
+        nickname: [{required: true, message: 'nickname is required', trigger: 'blur'}]
       },
       downloadLoading: false,
       dialogUserDetailVisible: false,
@@ -323,7 +553,7 @@ export default {
   },
   methods: {
     getUserObjList() {
-      userObjectList({ pid: 71 }).then(res => {
+      userObjectList({pid: 71}).then(res => {
         console.log(res)
         this.popuCityList = res.message
       })
@@ -464,7 +694,7 @@ export default {
       row.status = status
     },
     sortChange(data) {
-      const { prop, order } = data
+      const {prop, order} = data
       if (prop === 'id') {
         this.sortByID(order)
       }
@@ -497,7 +727,7 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.$router.push({ path: '/users/editEducator', query: { uid: row.user_id }})
+      this.$router.push({path: '/users/editEducator', query: {uid: row.user_id}})
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -595,15 +825,13 @@ export default {
           changeVipLevel(data).then(response => {
             console.log(response)
             if (response.code == 200) {
-              setTimeout(function() {
-                that.$notify({
-                  title: 'Success',
-                  message: 'Upgrade Successfully',
-                  type: 'success',
-                  duration: 2000
-                })
-                that.dialogFormUpgrade = false
-              }, 2000)
+              that.$notify({
+                title: 'Success',
+                message: 'Upgrade Successfully',
+                type: 'success',
+                duration: 2000
+              })
+              that.dialogFormUpgrade = false
             }
           })
 
@@ -677,10 +905,12 @@ export default {
 .demo-table-expand {
   font-size: 0;
 }
+
 .demo-table-expand label {
   /*width: 90px;*/
   color: #99a9bf;
 }
+
 .demo-table-expand .el-form-item {
   margin-right: 0;
   margin-bottom: 0;

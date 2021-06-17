@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-
     <el-table
       :key="tableKey"
       v-loading="listLoading"
@@ -13,7 +12,11 @@
     >
       <el-table-column type="expand">
         <template slot-scope="props">
-          <el-form label-position="left" inline class="demo-table-expand">
+          <el-form
+            label-position="left"
+            inline
+            class="demo-table-expand"
+          >
             <el-form-item label="Deal Description">
               <pre>{{ props.row.desc }}</pre>
             </el-form-item>
@@ -25,7 +28,10 @@
               <span v-if="props.row.type==1">Deal</span>
               <span v-if="props.row.type==2">Discount</span>
             </el-form-item>
-            <el-form-item v-if="props.row.provinces != null && props.row.citys != null && props.row.districts != null" label="Location">
+            <el-form-item
+              v-if="props.row.provinces != null && props.row.citys != null && props.row.districts != null"
+              label="Location"
+            >
               <span>{{ props.row.districts.Pinyin }}, {{ props.row.citys.Pinyin }}, {{ props.row.provinces.Pinyin }}</span>
               <span>{{ props.row.districts.ShortName }}, {{ props.row.citys.ShortName }}, {{ props.row.provinces.ShortName }}</span>
             </el-form-item>
@@ -47,77 +53,154 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+      <el-table-column
+        label="ID"
+        prop="id"
+        sortable="custom"
+        align="center"
+        width="80"
+        :class-name="getSortClass('id')"
+      >
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="User Id" prop="user_id" width="80">
+      <el-table-column
+        label="User Id"
+        prop="user_id"
+        width="80"
+      >
         <template slot-scope="{row}">
           <span>{{ row.user_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="First&&Last Name" width="150">
-        <template v-if="row.user_info" slot-scope="{row}">
+      <el-table-column
+        label="First&&Last Name"
+        width="150"
+      >
+        <template
+          v-if="row.user_info"
+          slot-scope="{row}"
+        >
           {{ row.user_info.first_name }} {{ row.user_info.last_name }}
         </template>
       </el-table-column>
-      <el-table-column label="Deal/Discount Name" width="200px" align="center">
+      <el-table-column
+        label="Deal/Discount Name"
+        width="200px"
+        align="center"
+      >
         <template slot-scope="{row}">
           <span v-if="row.title">{{ row.title }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Participating Locations" width="150px" align="center">
+      <el-table-column
+        label="Participating Locations"
+        width="150px"
+        align="center"
+      >
         <template slot-scope="{row}">
           <a :href="row.file">{{ row.file_name }}</a>
         </template>
       </el-table-column>
-      <el-table-column label="City" width="150px" align="center">
+      <el-table-column
+        label="City"
+        width="150px"
+        align="center"
+      >
         <template slot-scope="{row}">
           <span v-if="row.city>0 && row.citys != null ">{{ row.citys.Pinyin }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Detail address" width="150px" align="center">
+      <el-table-column
+        label="Detail address"
+        width="150px"
+        align="center"
+      >
         <template slot-scope="{row}">
           <span v-if="row.location">{{ row.location }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="Reason" width="150px" align="center">
+      <el-table-column
+        label="Reason"
+        width="150px"
+        align="center"
+      >
         <template slot-scope="{row}">
           <span>{{ row.reason }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="Status" class-name="status-col" width="100">
+      <el-table-column
+        label="Status"
+        class-name="status-col"
+        width="100"
+      >
         <template slot-scope="{row}">
-          <el-tag v-if="row.status === 0" :type="row.status | statusFilter">
+          <el-tag
+            v-if="row.status === 0"
+            :type="row.status | statusFilter"
+          >
             Pending
           </el-tag>
-          <el-tag v-if="row.status === 1" :type="row.status | statusFilter">
+          <el-tag
+            v-if="row.status === 1"
+            :type="row.status | statusFilter"
+          >
             Passed
           </el-tag>
-          <el-tag v-if="row.status === 2" :type="row.status | statusFilter">
+          <el-tag
+            v-if="row.status === 2"
+            :type="row.status | statusFilter"
+          >
             Refuse
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column
+        label="Actions"
+        align="center"
+        width="230"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleReview(row)">
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleReview(row)"
+          >
             Review
           </el-button>
-          <el-button type="primary" size="mini" @click="handleEdit(row)">
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleEdit(row)"
+          >
             Edit
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      @pagination="getList"
+    />
     <!--    deals-->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormDealsVisible">
-      <el-form ref="dataForm" :model="dealsTempData" label-position="top" label-width="240px">
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormDealsVisible"
+    >
+      <el-form
+        ref="dataForm"
+        :model="dealsTempData"
+        label-position="top"
+        label-width="240px"
+      >
         <el-form-item label="Deal Ranking Time">
           <el-date-picker
             v-model="dealsTempData.deal_ranking_time"
@@ -127,19 +210,47 @@
           />
         </el-form-item>
         <el-form-item label="Deal or Discount">
-          <el-select v-model="dealsTempData.type" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in dealsType" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="dealsTempData.type"
+            class="filter-item"
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="item in dealsType"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Deal/Discount Name">
-          <el-input v-model="dealsTempData.title" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+          <el-input
+            v-model="dealsTempData.title"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            type="textarea"
+            placeholder="Please input"
+          />
         </el-form-item>
         <el-form-item label="Deal/Discount Desc">
-          <el-input v-model="dealsTempData.desc" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+          <el-input
+            v-model="dealsTempData.desc"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            type="textarea"
+            placeholder="Please input"
+          />
         </el-form-item>
         <el-form-item label="Multiple Locations or 1">
-          <el-select v-model="dealsTempData.is_all" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in dealsTwo" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="dealsTempData.is_all"
+            class="filter-item"
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="item in dealsTwo"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Location">
@@ -181,17 +292,62 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Detail Address">
-          <el-input v-model="dealsTempData.location" class="filter-item" placeholder="Please select" />
+        <el-form-item label="Add Location Pin">
+          <div class="amap-page-container">
+            <!--使用element UI作为输入框-->
+            <el-input
+              id="tipinput"
+              v-model="mapInfo.address"
+              placeholder="请输入内容"
+            />
+            <el-amap
+              vid="amapDemo"
+              :center="mapInfo.lnglat"
+              :amap-manager="amapManager"
+              :zoom="zoom"
+              :events="events"
+              class="amap-demo"
+              style="height: 300px"
+            >
+              <el-amap-marker
+                ref="marker"
+                vid="component-marker"
+                :position="mapInfo.lnglat"
+              />
+            </el-amap>
+            <p>标记点：{{ mapInfo.address }}，经度：{{ mapInfo.lng }}，纬度：{{ mapInfo.lat }}</p>
+          </div>
         </el-form-item>
+
+        <!--        <el-form-item label="Detail Address">-->
+        <!--          <el-input v-model="dealsTempData.location" class="filter-item" placeholder="Please select" />-->
+        <!--        </el-form-item>-->
         <el-form-item label="Deal/Discount Duration">
-          <el-select v-model="dealsTempData.due_contract" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in dealsThree" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="dealsTempData.due_contract"
+            class="filter-item"
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="item in dealsThree"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Dog Friendly">
-          <el-select v-model="dealsTempData.allowed_dog" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in allowedDogOptions" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="dealsTempData.allowed_dog"
+            class="filter-item"
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="item in allowedDogOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
 
@@ -209,42 +365,79 @@
             :file-list="fileList"
           >
             <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            <div class="el-upload__text">
+              Drag the file here, or <em>click to upload</em>
+            </div>
             <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
           </el-upload>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogFormDealsVisible = false">
           Cancel
         </el-button>
-        <el-button type="primary" @click="editData()">
+        <el-button
+          type="primary"
+          @click="editData()"
+        >
           Confirm
         </el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormVisible"
+    >
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="70px"
+        style="width: 400px; margin-left:50px;"
+      >
         <el-form-item label="Status">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="temp.status"
+            class="filter-item"
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Remark">
-          <el-input v-model="temp.reason" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+          <el-input
+            v-model="temp.reason"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            type="textarea"
+            placeholder="Please input"
+          />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogFormVisible = false">
           Cancel
         </el-button>
-        <el-button type="primary" @click="reviewData">
+        <el-button
+          type="primary"
+          @click="reviewData"
+        >
           Confirm
         </el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
@@ -255,7 +448,8 @@ import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { format } from 'date-fns' // secondary package based on el-pagination
 import { getAreas } from '@/api/location'
-
+import {AMapManager} from 'vue-amap'
+const amapManager = new AMapManager()
 export default {
   name: 'Index',
   components: { Pagination },
@@ -272,6 +466,23 @@ export default {
   },
   data() {
     return {
+      mapInfo: {
+        // 初始值默认为天安门
+        address: '北京市东城区东华门街道天安门',
+        lng: 116.397451,
+        lat: 39.909187,
+        lnglat: [116.397451, 39.909187]
+      },
+      zoom: 12,
+      amapManager,
+      events: {
+        click: (e) => {
+          this.mapInfo.lng = e.lnglat.lng
+          this.mapInfo.lat = e.lnglat.lat
+          this.mapInfo.lnglat = [e.lnglat.lng, e.lnglat.lat]
+          this.getFormattedAddress()
+        }
+      },
       provinceList: [],
       cityList: [],
       districtList: [],
@@ -304,7 +515,9 @@ export default {
         identity: undefined,
         file_name: undefined,
         allowed_dog: undefined,
-        deal_ranking_time: undefined
+        deal_ranking_time: undefined,
+        lng: undefined,
+        lat: undefined
 
       },
       fileUrl: undefined,
@@ -359,7 +572,42 @@ export default {
     // this.getUserList()
     this.getUserObjList()
   },
+  mounted() {
+    this.initMapByInput()
+  },
   methods: {
+    getFormattedAddress() {
+      AMap.plugin('AMap.Geocoder', () => {
+        const GeocoderOptions = {
+          city: '全国'
+        }
+        const geocoder = new AMap.Geocoder(GeocoderOptions)
+        geocoder.getAddress(this.mapInfo.lnglat, (status, result) => {
+          console.log('通过经纬度拿到的地址', result)
+          if (status === 'complete' && result.info === 'OK') {
+            this.mapInfo.address = result.regeocode.formattedAddress
+          } else {
+            this.mapInfo.address = '无法获取地址'
+          }
+        })
+      })
+    },
+    initMapByInput() {
+      AMap.plugin('AMap.Autocomplete', () => {
+        const autoOptions = {
+          city: '全国',
+          input: 'tipinput'
+        }
+        const autoComplete = new AMap.Autocomplete(autoOptions)
+        AMap.event.addListener(autoComplete, 'select', (e) => {
+          console.log('通过输入拿到的地址', e)
+          this.mapInfo.lat = e.poi.location.lat
+          this.mapInfo.lng = e.poi.location.lng
+          this.mapInfo.lnglat = [e.poi.location.lng, e.poi.location.lat]
+          this.getFormattedAddress()
+        })
+      })
+    },
     getAreas() {
       const params = {}
       getAreas(params).then(res => {
@@ -494,6 +742,10 @@ export default {
       }
     },
     handleEdit(row) {
+      this.mapInfo.lat = row.lat
+      this.mapInfo.lng = row.lng
+      this.mapInfo.address = row.location
+      this.mapInfo.lnglat = [row.lng, row.lat]
       this.dealsTempData = Object.assign({}, row) // copy obj
       this.dealsTempData.deal_id = row.id
       if (row.deal_ranking_time === '0000-00-00 00:00:00') {
@@ -517,6 +769,10 @@ export default {
     editData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          this.dealsTempData.lat = this.mapInfo.lat
+          this.dealsTempData.lng = this.mapInfo.lng
+          this.dealsTempData.location = this.mapInfo.address
+
           const tempData = Object.assign({}, this.dealsTempData)
 
           addDeals(tempData).then(() => {
