@@ -82,7 +82,7 @@
         >
           <el-input
             v-model="jobForm.class_size"
-            type="number"
+            type="text"
           />
         </el-form-item>
 
@@ -110,12 +110,7 @@
             }"
           />
         </el-form-item>
-        <el-form-item
-          label="Job Detail Address"
-          prop="job_location"
-        >
-          <el-input v-model="jobForm.job_location" />
-        </el-form-item>
+
         <el-form-item
           label="Number of Vacancies"
           prop="numbers"
@@ -678,7 +673,7 @@ export default {
         third_com_bg: undefined,
         version_time: undefined,
         class_size: undefined,
-        working_hours: undefined,
+        working_hours: '',
         address: undefined,
         lng: undefined,
         lat: undefined
@@ -711,8 +706,8 @@ export default {
 
       thirdLogoFileList: undefined,
       thirdHeaderPhotoFileList: undefined,
-      workingStartTime: '10:00',
-      workingEndTime: '19:00'
+      workingStartTime:'',
+      workingEndTime:''
 
     }
   },
@@ -852,7 +847,10 @@ export default {
       this.$forceUpdate()
     },
     updateJob() {
-      this.jobForm.working_hours = this.workingStartTime + '-' + this.workingEndTime
+      if(this.workingEndTime && this.workingStartTime){
+        this.jobForm.working_hours = this.workingStartTime + '-' + this.workingEndTime
+      }
+      this.jobForm.job_location = this.jobForm.district_name + ', '+this.jobForm.city_name+', '+this.jobForm.province_name
       this.jobForm.address = this.mapInfo.address
       this.jobForm.lat = this.mapInfo.lat
       this.jobForm.lng = this.mapInfo.lng
