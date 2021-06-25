@@ -171,6 +171,11 @@
               <span>{{ row.apply_due_date }}</span>
             </template>
           </el-table-column>
+          <el-table-column label="Refresh Time" width="110px" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.refresh_time | refreshTimeFilter }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="Business Name" width="110px" align="center">
             <template slot-scope="{row}">
               <span>{{ row.business_name }}</span>
@@ -301,7 +306,7 @@
 import { jobList, approveJobs, delJobs, setJobFeature, refreshJobs } from '@/api/jobs'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import { format } from 'date-fns'
+import { format , formatDistanceToNow} from 'date-fns'
 
 export default {
   name: 'ComplexTable',
@@ -315,7 +320,11 @@ export default {
         2: 'danger'
       }
       return statusMap[status]
+    },
+    refreshTimeFilter(a){
+      return  formatDistanceToNow(new Date(a), { addSuffix: true })
     }
+
   },
   data() {
     return {
