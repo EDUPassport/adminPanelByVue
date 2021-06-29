@@ -799,10 +799,18 @@ export default {
     },
     handleUpdate(row) {
       console.log(row)
-      this.mapInfo.lat = row.lat
-      this.mapInfo.lng = row.lng
-      this.mapInfo.address = row.location
-      this.mapInfo.lnglat = [row.lng, row.lat]
+      if(row.lat){
+        this.mapInfo.lat = row.lat
+      }
+      if(row.lng){
+        this.mapInfo.lng = row.lng
+      }
+      if(row.location){
+        this.mapInfo.address = row.location
+      }
+      if(row.lat && row.lng){
+        this.mapInfo.lnglat = [row.lng, row.lat]
+      }
 
       this.eventsTempData = Object.assign({}, row) // copy obj
       this.eventsTempData.event_id = row.id

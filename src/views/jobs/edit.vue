@@ -1140,10 +1140,18 @@ export default {
           this.jobForm.age_min = res.message.age_min
           this.jobForm.age_max = res.message.age_max
 
-          self.mapInfo.address = res.message.address
-          self.mapInfo.lat = res.message.lat
-          self.mapInfo.lng = res.message.lng
-          self.mapInfo.lnglat = [res.message.lng, res.message.lat]
+          if(res.message.address){
+            self.mapInfo.address = res.message.address
+          }
+          if(res.message.lat){
+            self.mapInfo.lat = res.message.lat
+          }
+          if(res.message.lng){
+            self.mapInfo.lng = res.message.lng
+          }
+          if(res.message.lat && res.message.lng){
+            self.mapInfo.lnglat = [res.message.lng, res.message.lat]
+          }
 
           if (res.message.province > 0) {
             this.jobForm.province = res.message.province

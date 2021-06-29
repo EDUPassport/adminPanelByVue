@@ -742,10 +742,19 @@ export default {
       }
     },
     handleEdit(row) {
-      this.mapInfo.lat = row.lat
-      this.mapInfo.lng = row.lng
-      this.mapInfo.address = row.location
-      this.mapInfo.lnglat = [row.lng, row.lat]
+      if(row.lat){
+        this.mapInfo.lat = row.lat
+      }
+      if(row.lng){
+        this.mapInfo.lng = row.lng
+      }
+      if(row.lat && row.lng){
+        this.mapInfo.lnglat = [row.lng, row.lat]
+      }
+      if(row.location){
+        this.mapInfo.address = row.location
+      }
+
       this.dealsTempData = Object.assign({}, row) // copy obj
       this.dealsTempData.deal_id = row.id
       if (row.deal_ranking_time === '0000-00-00 00:00:00') {
