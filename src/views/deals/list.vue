@@ -742,6 +742,9 @@ export default {
       }
     },
     handleEdit(row) {
+
+      this.$router.push({ path: '/deals/editDeals', query: { deal_id: row.id }})
+      return;
       if(row.lat){
         this.mapInfo.lat = row.lat
       }
@@ -828,7 +831,6 @@ export default {
         }
       })
     },
-
     handleDelete(row, index) {
       this.$notify({
         title: 'Success',

@@ -337,6 +337,24 @@ export const constantRoutes = [
         meta: {
           title: 'Deals List'
         }
+      },
+      {
+        path: 'editDeals',
+        component: () => import('@/views/deals/add'),
+        hidden: true,
+        name: 'EditDeals',
+        meta: {
+          title: 'Edit Deals', noCache: true, activeMenu: '/deals/list'
+        }
+      },
+      {
+        path: 'addDeals',
+        component: () => import('@/views/deals/add'),
+        hidden: true,
+        name: 'AddDeals',
+        meta: {
+          title: 'Add Deals', noCache: true, activeMenu: '/deals/list'
+        }
       }
     ]
   },
@@ -357,6 +375,33 @@ export const constantRoutes = [
         name: 'listEvents',
         meta: {
           title: 'Events List'
+        }
+      },
+      {
+        path: 'detail',
+        component: () => import('@/views/events/detail'),
+        hidden: true,
+        name: 'eventDetail',
+        meta: {
+          title: 'Event Detail', noCache: true, activeMenu: '/events/list'
+        }
+      },
+      {
+        path: 'editEvents',
+        component: () => import('@/views/events/add'),
+        hidden: true,
+        name: 'EditEvents',
+        meta: {
+          title: 'Edit Events', noCache: true, activeMenu: '/events/list'
+        }
+      },
+      {
+        path: 'addEvents',
+        component: () => import('@/views/events/add'),
+        hidden: true,
+        name: 'AddEvents',
+        meta: {
+          title: 'Add Events', noCache: true, activeMenu: '/events/list'
         }
       }
     ]
@@ -414,6 +459,7 @@ export const asyncRoutes = [
   {
     path: '/icon',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',

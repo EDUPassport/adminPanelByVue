@@ -23,3 +23,11 @@ export function addEvent(data) {
     data
   })
 }
+
+export function eventDetail(params){
+  return request({
+    url: '/admin/event/detail',
+    method: 'get',
+    params
+  })
+}

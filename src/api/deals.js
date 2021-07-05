@@ -24,3 +24,11 @@ export function addDeals(data) {
     data
   })
 }
+
+export function dealsDetail(params){
+  return request({
+    url:'/admin/deals/detail',
+    method:'get',
+    params
+  })
+}

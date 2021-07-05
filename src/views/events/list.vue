@@ -94,7 +94,7 @@
         align="center"
       >
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
+          <span @click="handleDetail(row)">{{ row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -103,7 +103,12 @@
         align="center"
       >
         <template slot-scope="{row}">
-          <a :href="row.file">{{ row.file_name }}</a>
+          <el-image
+            style="width: 180px; height:80px"
+            :src="row.file"
+            fit="contain"
+          />
+<!--          <a :href="row.file">{{ row.file_name }}</a>-->
           <!--          <span>{{ row.file}}</span>-->
         </template>
       </el-table-column>
@@ -194,307 +199,6 @@
       @pagination="getList"
     />
 
-    <!--    events-->
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormEventsVisible"
-    >
-      <el-form
-        ref="dataForm"
-        :model="eventsTempData"
-        label-position="top"
-        label-width="240px"
-      >
-        <el-form-item label="Event Type">
-          <el-select
-            v-model="eventsTempData.is_all"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in eventsOne"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Event Name">
-          <el-input
-            v-model="eventsTempData.name"
-            class="filter-item"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Deal/Discount For ESL Passport Members">
-          <el-input
-            v-model="eventsTempData.type_desc"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Event Description">
-          <el-input
-            v-model="eventsTempData.desc"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-
-        <el-form-item label="Event Price">
-          <el-input
-            v-model="eventsTempData.pay_money"
-            type="number"
-            class="filter-item"
-            placeholder="Please select"
-          />
-        </el-form-item>
-        <el-form-item label="Place/Shop">
-          <el-input
-            v-model="eventsTempData.event_place"
-            class="filter-item"
-            placeholder="Please select"
-          />
-        </el-form-item>
-        <el-form-item label="Location">
-          <el-select
-            v-model="eventsTempData.province_name"
-            placeholder="Province"
-            @change="chooseProvince($event,2)"
-          >
-            <el-option
-              v-for="item in provinceList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-          <el-select
-            v-model="eventsTempData.city_name"
-            placeholder="City"
-            @change="chooseCity($event,2)"
-          >
-            <el-option
-              v-for="item in cityList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-          <el-select
-            v-model="eventsTempData.district_name"
-            placeholder="District"
-            @change="chooseDistrict($event,2)"
-          >
-            <el-option
-              v-for="item in districtList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="Add Location Pin">
-          <div class="amap-page-container">
-            <!--使用element UI作为输入框-->
-            <el-input
-              id="tipinput"
-              v-model="mapInfo.address"
-              placeholder="请输入内容"
-            />
-            <el-amap
-              vid="amapDemo"
-              :center="mapInfo.lnglat"
-              :amap-manager="amapManager"
-              :zoom="zoom"
-              :events="events"
-              class="amap-demo"
-              style="height: 300px"
-            >
-              <el-amap-marker
-                ref="marker"
-                vid="component-marker"
-                :position="mapInfo.lnglat"
-              />
-            </el-amap>
-            <p>标记点：{{ mapInfo.address }}，经度：{{ mapInfo.lng }}，纬度：{{ mapInfo.lat }}</p>
-          </div>
-        </el-form-item>
-
-        <!--        <el-form-item label="Event Detail Address">-->
-        <!--          <el-input v-model="eventsTempData.location" class="filter-item" placeholder="Please select" />-->
-        <!--        </el-form-item>-->
-
-        <el-form-item label="Event Date">
-          <el-date-picker
-            v-model="eventsTempData.date"
-            type="date"
-            placeholder="Please picker a date"
-            @change="eventsTempDateChange"
-          />
-        </el-form-item>
-        <el-form-item label="Start Time & End Time">
-          <el-time-select
-            v-model="eventsTempData.start_time"
-            placeholder="Start Time"
-            :picker-options="{
-              start: '00:00',
-              step: '00:01',
-              end: '24:00'
-            }"
-            @change="eventStartTimeChange"
-          />
-          <el-time-select
-            v-model="eventsTempData.end_time"
-            placeholder="End Time"
-            :picker-options="{
-              start: '00:00',
-              step: '00:01',
-              end: '24:00',
-              minTime: eventsTempData.start_time
-            }"
-            @change="eventEndTimeChange"
-          />
-        </el-form-item>
-
-        <el-form-item label="Event Flyer">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="uploadEventsFileSuccess"
-            :file-list="eventsFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">
-              Drag the file here, or <em>click to upload</em>
-            </div>
-          </el-upload>
-        </el-form-item>
-
-        <el-form-item label="Event Logo ( Only for Non-ESL Passport Users)">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="uploadEventsLogoSuccess"
-            :file-list="eventsLogoFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">
-              Drag the file here, or <em>click to upload</em>
-            </div>
-            <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
-          </el-upload>
-        </el-form-item>
-
-        <el-form-item label="Event Header Photo ( Only for Non-ESL Passport Users)">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="uploadEventsHeaderPhotoSuccess"
-            :file-list="eventsHeaderPhotoFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">
-              Drag the file here, or <em>click to upload</em>
-            </div>
-            <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
-          </el-upload>
-        </el-form-item>
-
-        <el-form-item label="Event Company Name ( Only for Non-ESL Passport Users)">
-          <el-input
-            v-model="eventsTempData.third_com_name"
-            class="filter-item"
-            placeholder="Please input "
-          />
-        </el-form-item>
-      </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="dialogFormEventsVisible = false">
-          Cancel
-        </el-button>
-        <el-button
-          type="primary"
-          @click="updateData"
-        >
-          Confirm
-        </el-button>
-      </div>
-    </el-dialog>
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormVisible"
-    >
-      <el-form
-        ref="dataForm"
-        :rules="rules"
-        :model="temp"
-        label-position="left"
-        label-width="70px"
-        style="width: 400px; margin-left:50px;"
-      >
-        <el-form-item label="Status">
-          <el-select
-            v-model="temp.status"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in statusOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Remark">
-          <el-input
-            v-model="temp.reason"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-      </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="dialogFormVisible = false">
-          Cancel
-        </el-button>
-        <el-button
-          type="primary"
-          @click="reviewData"
-        >
-          Confirm
-        </el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -505,8 +209,7 @@ import Pagination from '@/components/Pagination'
 import { userObjectList } from '@/api/member' // secondary package based on el-pagination
 import { format } from 'date-fns'
 import { getAreas } from '@/api/location'
-import {AMapManager} from 'vue-amap'
-const amapManager = new AMapManager()
+
 export default {
   name: 'Index',
   components: { Pagination },
@@ -524,23 +227,6 @@ export default {
   },
   data() {
     return {
-      mapInfo: {
-        // 初始值默认为天安门
-        address: '北京市东城区东华门街道天安门',
-        lng: 116.397451,
-        lat: 39.909187,
-        lnglat: [116.397451, 39.909187]
-      },
-      zoom: 12,
-      amapManager,
-      events: {
-        click: (e) => {
-          this.mapInfo.lng = e.lnglat.lng
-          this.mapInfo.lat = e.lnglat.lat
-          this.mapInfo.lnglat = [e.lnglat.lng, e.lnglat.lat]
-          this.getFormattedAddress()
-        }
-      },
       provinceList: [],
       cityList: [],
       districtList: [],
@@ -628,41 +314,9 @@ export default {
     this.getUserObjList()
   },
   mounted() {
-    this.initMapByInput()
+
   },
   methods: {
-    getFormattedAddress() {
-      AMap.plugin('AMap.Geocoder', () => {
-        const GeocoderOptions = {
-          city: '全国'
-        }
-        const geocoder = new AMap.Geocoder(GeocoderOptions)
-        geocoder.getAddress(this.mapInfo.lnglat, (status, result) => {
-          console.log('通过经纬度拿到的地址', result)
-          if (status === 'complete' && result.info === 'OK') {
-            this.mapInfo.address = result.regeocode.formattedAddress
-          } else {
-            this.mapInfo.address = '无法获取地址'
-          }
-        })
-      })
-    },
-    initMapByInput() {
-      AMap.plugin('AMap.Autocomplete', () => {
-        const autoOptions = {
-          city: '全国',
-          input: 'tipinput'
-        }
-        const autoComplete = new AMap.Autocomplete(autoOptions)
-        AMap.event.addListener(autoComplete, 'select', (e) => {
-          console.log('通过输入拿到的地址', e)
-          this.mapInfo.lat = e.poi.location.lat
-          this.mapInfo.lng = e.poi.location.lng
-          this.mapInfo.lnglat = [e.poi.location.lng, e.poi.location.lat]
-          this.getFormattedAddress()
-        })
-      })
-    },
     getAreas() {
       const params = {}
       getAreas(params).then(res => {
@@ -797,56 +451,11 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    handleDetail(row){
+      this.$router.push({ path: '/events/detail', query: { event_id: row.id }})
+    },
     handleUpdate(row) {
-      console.log(row)
-      if(row.lat){
-        this.mapInfo.lat = row.lat
-      }
-      if(row.lng){
-        this.mapInfo.lng = row.lng
-      }
-      if(row.location){
-        this.mapInfo.address = row.location
-      }
-      if(row.lat && row.lng){
-        this.mapInfo.lnglat = [row.lng, row.lat]
-      }
-
-      this.eventsTempData = Object.assign({}, row) // copy obj
-      this.eventsTempData.event_id = row.id
-      if (row.date === '0000-00-00') {
-        this.eventsTempData.date = undefined
-      }
-      if (row.start_time === '0000-00-00 00:00:00') {
-        this.eventsTempData.start_time = undefined
-      }
-      if (row.end_time === '0000-00-00 00:00:00') {
-        this.eventsTempData.end_time = undefined
-      }
-
-      if (row.province > 0 && row.provinces != null) {
-        this.eventsTempData.province_name = row.provinces.Pinyin
-      }
-      if (row.city > 0 && row.citys != null) {
-        this.eventsTempData.city_name = row.citys.Pinyin
-      }
-      if (row.district > 0 && row.districts != null) {
-        this.eventsTempData.district_name = row.districts.Pinyin
-      }
-      this.dialogStatus = 'update'
-      this.dialogFormEventsVisible = true
-      if (row.file !== '') {
-        this.eventsFileList = [{ name: '', url: row.file }]
-      }
-      if (row.third_com_logo !== '') {
-        this.eventsLogoFileList = [{ name: '', url: row.third_com_logo }]
-      }
-      if (row.third_com_bg !== '') {
-        this.eventsHeaderPhotoFileList = [{ name: '', url: row.third_com_bg }]
-      }
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+      this.$router.push({ path: '/events/editEvents', query: { event_id: row.id }})
     },
     eventsTempDateChange(e) {
       this.eventsTempData.date = format(e, 'yyyy-MM-dd')
@@ -862,9 +471,9 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.dealsTempData.lat = this.mapInfo.lat
-          this.dealsTempData.lng = this.mapInfo.lng
-          this.dealsTempData.location = this.mapInfo.address
+          this.eventsTempData.lat = this.mapInfo.lat
+          this.eventsTempData.lng = this.mapInfo.lng
+          this.eventsTempData.location = this.mapInfo.address
 
           if (this.eventStartTime != undefined) {
             this.eventsTempData.start_time = this.eventStartTime
