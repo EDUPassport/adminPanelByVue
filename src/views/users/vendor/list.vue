@@ -9,22 +9,8 @@
         @keyup.enter.native="handleFilter"
       />
       <el-input
-        v-model="listQuery.vendor_name"
+        v-model="listQuery.vendor_name_en"
         placeholder="Vendor Name"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      <el-input
-        v-model="listQuery.country"
-        placeholder="Country"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      <el-input
-        v-model="listQuery.province"
-        placeholder="Province"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
@@ -446,7 +432,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
+        limit: 50,
         nickname: undefined,
         truename: undefined,
         phone: undefined,

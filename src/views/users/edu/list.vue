@@ -479,7 +479,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
+        limit: 50,
         nickname: undefined,
         truename: undefined,
         phone: undefined,

@@ -546,6 +546,7 @@
       <div class="container-item">
         <el-form-item>
           <el-button
+            :loading="updateLoadingStatus"
             type="primary"
             @click="updateJob"
           >
@@ -566,6 +567,7 @@ import {randomString} from '@/utils'
 import {getAreas} from '@/api/location'
 
 import {AMapManager} from 'vue-amap'
+import {addEvent} from "@/api/events";
 const amapManager = new AMapManager()
 
 export default {
@@ -707,9 +709,11 @@ export default {
       thirdLogoFileList: undefined,
       thirdHeaderPhotoFileList: undefined,
       workingStartTime:'',
-      workingEndTime:''
+      workingEndTime:'',
+      updateLoadingStatus:false,
 
     }
+
   },
   computed: {
     token() {
@@ -847,6 +851,7 @@ export default {
       this.$forceUpdate()
     },
     updateJob() {
+      this.updateLoadingStatus = true;
       if(this.workingEndTime && this.workingStartTime){
         this.jobForm.working_hours = this.workingStartTime + '-' + this.workingEndTime
       }
@@ -856,26 +861,46 @@ export default {
       this.jobForm.lng = this.mapInfo.lng
       const data = Object.assign({}, this.jobForm)
 
-      addJobs(data).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          let jobId = this.$route.query.id
-          if (typeof jobId === 'undefined') {
-            jobId = res.data.job_id
+      this.$confirm('Sure you want to perform the operation?', 'Tips', {
+        confirmButtonText: 'Sure',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+        center: true
+      }).then(() => {
+
+        addJobs(data).then(res => {
+          console.log(res)
+          if (res.code === 200) {
+            let jobId = this.$route.query.id
+            if (typeof jobId === 'undefined') {
+              jobId = res.data.job_id
+            }
+            const uid = this.jobForm.user_id
+            this.studentsAgeConfirm(jobId, uid)
+            this.subjectConfirm(jobId, uid)
+            this.benefitsConfirm(jobId, uid)
+            this.certificationConfirm(jobId, uid)
+            this.languagesConfirm(jobId, uid)
+            this.getJobDetail(jobId)
+            this.$message.success('Success')
+            this.updateLoadingStatus=false;
+          } else {
+            this.$message.error(res.msg)
           }
-          const uid = this.jobForm.user_id
-          this.studentsAgeConfirm(jobId, uid)
-          this.subjectConfirm(jobId, uid)
-          this.benefitsConfirm(jobId, uid)
-          this.certificationConfirm(jobId, uid)
-          this.languagesConfirm(jobId, uid)
-          this.getJobDetail(jobId)
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        console.log(err)
-      })
+        }).catch(err => {
+          console.log(err)
+        })
+
+      }).catch(() => {
+
+        this.$message({
+          type: 'info',
+          message: 'Canceled Successfully'
+        });
+        this.updateLoadingStatus=false;
+      });
+
+
     },
     studentsAgeConfirm(jobId, uid) {
       const options = this.studentsAgeOptions
@@ -905,7 +930,8 @@ export default {
       addJobProfile(data).then(res => {
         // console.log(res)
         if (res.code === 200) {
-          this.$message.success('students age success')
+          console.log('students age success')
+          // this.$message.success('students age success')
         } else {
           this.$message.error(res.msg)
         }
@@ -941,7 +967,8 @@ export default {
       addJobProfile(data).then(res => {
         // console.log(res)
         if (res.code === 200) {
-          this.$message.success('subject success')
+          console.log('subject success')
+          // this.$message.success('subject success')
         } else {
           this.$message.error(res.msg)
         }
@@ -977,7 +1004,8 @@ export default {
       addJobProfile(data).then(res => {
         // console.log(res)
         if (res.code === 200) {
-          this.$message.success('certification success')
+          console.log('certification success')
+          // this.$message.success('certification success')
         } else {
           this.$message.error(res.msg)
         }
@@ -1013,7 +1041,8 @@ export default {
       addJobProfile(data).then(res => {
         // console.log(res)
         if (res.code === 200) {
-          this.$message.success('languages success')
+          console.log('languages success')
+          // this.$message.success('languages success')
         } else {
           this.$message.error(res.msg)
         }
@@ -1049,7 +1078,8 @@ export default {
       addJobProfile(data).then(res => {
         // console.log(res)
         if (res.code === 200) {
-          this.$message.success('benefits success')
+          console.log('benefits success')
+          // this.$message.success('benefits success')
         } else {
           this.$message.error(res.msg)
         }

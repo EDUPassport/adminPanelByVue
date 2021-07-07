@@ -334,7 +334,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
+        limit: 50,
         ad_type: undefined
       },
       importanceOptions: [1, 2, 3],
