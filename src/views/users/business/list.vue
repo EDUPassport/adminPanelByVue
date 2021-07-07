@@ -233,6 +233,11 @@
           <el-button size="mini" type="primary" @click="handleMemberLevel(row,$index)">Upgrade</el-button>
         </template>
       </el-table-column>
+      <el-table-column label="Create Time" width="180">
+        <template slot-scope="scope">
+          {{ scope.row.c_time }}
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination

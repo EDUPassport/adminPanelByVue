@@ -295,6 +295,7 @@
           </el-button>
         </template>
       </el-table-column>
+
       <el-table-column
         label="Actions"
         align="center"
@@ -316,6 +317,11 @@
           >
             Upgrade
           </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="Create Time" width="180">
+        <template slot-scope="scope">
+          {{ scope.row.c_time }}
         </template>
       </el-table-column>
     </el-table>
@@ -503,9 +509,7 @@ export default {
   },
   created() {
     this.getList()
-    this.getAreas()
     this.getVipList()
-    this.getUserObjList()
   },
   mounted() {
 

@@ -222,6 +222,11 @@
               </el-button>
             </template>
           </el-table-column>
+          <el-table-column label="Create Time" width="180">
+            <template slot-scope="scope">
+              {{ scope.row.c_time }}
+            </template>
+          </el-table-column>
         </el-table>
         <pagination
           v-show="total>0"
