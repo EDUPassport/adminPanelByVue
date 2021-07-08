@@ -327,7 +327,8 @@ export default {
       return statusMap[status]
     },
     refreshTimeFilter(a){
-      return  formatDistanceToNow(new Date(a), { addSuffix: true })
+      // console.log(a)
+      return  formatDistanceToNow(new Date(a), { addSuffix: false }) + ' ago'
     }
 
   },
@@ -402,7 +403,7 @@ export default {
       this.listLoading = true
       // console.log(this.listQuery)
       jobList(this.listQuery).then(response => {
-        console.log(response)
+        // console.log(response)
         this.list = response.message.data
         this.total = response.message.total
 
