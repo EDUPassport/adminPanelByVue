@@ -30,10 +30,7 @@
         </el-table-column>
         <el-table-column label="Category" width="110px" align="center">
           <template slot-scope="{row}">
-            <span v-if="row.platform==1">Mini Program</span>
-            <span v-if="row.platform==2">Team Event</span>
-            <span v-if="row.platform==3">Wechat</span>
-            <span v-if="row.platform==4">Social Media</span>
+            <span>{{row.category_en}}</span>
           </template>
         </el-table-column>
         <el-table-column label="Identity" width="110px" align="center">
@@ -94,8 +91,9 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="Category" prop="category_id">
+        <el-form-item label="Category" prop="category">
           <el-cascader
+            v-model="adsCategoryValue"
             :options="categoryData"
             :props="{ checkStrictly: true ,emitPath:false,value:'id',label:'name_en'}"
             :show-all-levels="false"
@@ -206,9 +204,7 @@ export default {
       total: 0,
       listLoading: true,
       listQuery: {
-        platform:1,
-        page_table: undefined,
-        position: undefined,
+        category:undefined,
         identity: 0,
         page: 1,
         limit: 50
@@ -241,20 +237,17 @@ export default {
         id: undefined,
         money:0,
         days:5,
-        platform:undefined,
         title: '',
         url: '',
         link: '',
         is_buy:1,
         is_use:0,
-        page_table: undefined,
-        position: undefined,
         identity: undefined,
+        category:undefined,
         sort: undefined,
         ad_id: undefined,
         due_time: undefined,
-        relative_link: undefined,
-        category_id:undefined
+        relative_link: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -265,16 +258,15 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        platform: [{ required: false, message: 'platform is required', trigger: 'change' }],
-        page_table: [{ required: false, message: 'page is required', trigger: 'change' }],
-        position: [{ required: false, message: 'position is required', trigger: 'change' }],
         identity: [{ required: false, message: 'identity is required', trigger: 'change' }],
         title: [{ required: false, message: 'title is required', trigger: 'blur' }]
       },
       downloadLoading: false,
       fileUrl: undefined,
       fileList: undefined,
-      categoryData:[]
+      categoryData:[],
+      adsCategoryValue:undefined
+
     }
   },
   computed: {
@@ -294,8 +286,8 @@ export default {
   methods: {
     pidChange(e) {
       console.log(e)
-      this.temp.category_id = e;
-
+      this.adsCategoryValue = e;
+      this.temp.category = e;
     },
     getAdsCategoryList() {
       let params = {
@@ -356,23 +348,28 @@ export default {
       this.handleFilter()
     },
     resetTemp() {
+
       this.temp = {
         id: undefined,
-        title: undefined,
-        money:undefined,
-        days: undefined,
-        platform:undefined,
-        url: undefined,
-        link: undefined,
-        page_table: undefined,
-        position: undefined,
+        money:0,
+        days:5,
+        title: '',
+        url: '',
+        link: '',
+        is_buy:1,
+        is_use:0,
+        identity: undefined,
+        category:undefined,
         sort: undefined,
-        ad_id: undefined
+        ad_id: undefined,
+        due_time: undefined,
+        relative_link: undefined
       }
     },
     handleCreate() {
+      // console.log(this.adsCategoryValue)
       this.resetTemp()
-      this.fileList = undefined
+      this.adsCategoryValue=undefined
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -380,6 +377,7 @@ export default {
       })
     },
     createData() {
+      this.temp.category = this.adsCategoryValue;
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
@@ -403,18 +401,22 @@ export default {
     },
     handleUpdate(row) {
       console.log(row)
+      this.adsCategoryValue = row.category;
+
       this.temp = Object.assign({}, row) // copy obj
       this.temp.ad_id = row.id
-      this.temp.position = Number(row.position)
+      this.temp.category = row.category;
+
       this.temp.days = Number(row.days)
       this.temp.money = Number(row.money)
       this.fileList = [{ name: '', url: row.url }]
-      // this.temp.timestamp = new Date(this.temp.timestamp)
+
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {

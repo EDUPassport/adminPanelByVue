@@ -19,6 +19,7 @@
           </el-form-item>
           <el-form-item label="Category" prop="category">
             <el-cascader
+              v-model="categoryId"
               :options="tableData"
               :props="{ checkStrictly: true ,emitPath:false,value:'id',label:'name_en'}"
               :show-all-levels="false"
@@ -38,30 +39,31 @@
     </el-dialog>
 
     <div class="tree-container">
-      <el-table
+      <el-tree
         :data="tableData"
-        style="width: 100%"
-        row-key="id"
-        border
-        lazy
+        node-key="id"
         default-expand-all
-        :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
-
-        <el-table-column
-          prop="name_en"
-          label="Name"
-          width="280">
-        </el-table-column>
-        <el-table-column
-          fixed="right"
-          label="Action">
-          <template slot-scope="scope">
-            <el-button type="primary" @click="editAdCategory(scope.row)" >Edit</el-button>
-            <el-button type="danger" @click="deleteAdCategory(scope.row)">Delete</el-button>
-          </template>
-        </el-table-column>
-
-      </el-table>
+        auto-expand-parent
+        highlight-current
+        :expand-on-click-node="false">
+      <span class="custom-tree-node" slot-scope="{ node, data }">
+        <span>{{ node.data.name_en }}</span>
+        <span>
+          <el-button
+            type="text"
+            size="mini"
+            @click="() => editAdCategory(data)">
+            Edit
+          </el-button>
+          <el-button
+            type="text"
+            size="mini"
+            @click="() => deleteAdCategory(node, data)">
+            Delete
+          </el-button>
+        </span>
+      </span>
+      </el-tree>
     </div>
 
   </div>
@@ -78,7 +80,8 @@ export default {
       ruleForm: {
         name_en: '',
         name_cn: '',
-        pid: ''
+        pid: '',
+        category_id: undefined
       },
       rules: {
         name_en: [
@@ -91,7 +94,9 @@ export default {
           {required: true, message: '请选择分类', trigger: 'change'}
         ]
       },
-      tableData: []
+      tableData: [],
+      categoryId: undefined
+
     }
   },
   created() {
@@ -123,19 +128,21 @@ export default {
       //   });
     },
     submitForm(formName) {
+      this.ruleForm.pid = this.categoryId;
+
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // alert('submit!');
-          let data = Object.assign({}, this.ruleForm)
-          addCategory(data).then(res => {
+          // let data = Object.assign({}, this.ruleForm)
+          addCategory(this.ruleForm).then(res => {
             console.log(res)
-            if(res.code == 200){
+            if (res.code == 200) {
               this.$message({
                 message: 'Success',
                 type: 'success'
               });
               this.getAdsCategoryList()
-            }else{
+            } else {
               this.$message.error(res.msg);
             }
           }).catch(err => {
@@ -153,30 +160,34 @@ export default {
     pidChange(e) {
       console.log(e)
       this.ruleForm.pid = e;
+      this.categoryId = e;
+    },
+    editAdCategory(row) {
+      console.log(row)
+
+      this.addDialogVisible = true;
+      // this.ruleForm.category_id = row.id;
+
+      this.ruleForm = Object.assign({category_id: row.id}, row)
+      this.categoryId = row.pid;
 
     },
-    editAdCategory(row){
-      // console.log(row)
-      this.addDialogVisible=true;
-      this.ruleForm.category_id = row.id;
-    },
-    deleteAdCategory(row){
-      console.log(row)
+    deleteAdCategory(node, row) {
       let data = {
-        category_id:row.id,
-        is_delete:1
+        category_id: row.id,
+        is_delete: 1
       }
       this.$confirm('Delete？')
         .then(_ => {
           addCategory(data).then(res => {
             console.log(res)
-            if(res.code == 200){
+            if (res.code == 200) {
               this.$message({
                 message: 'Success',
                 type: 'success'
               });
               this.getAdsCategoryList()
-            }else{
+            } else {
               this.$message.error(res.msg);
             }
           }).catch(err => {
@@ -212,6 +223,7 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+  border-bottom: 1px solid #eeeeee;
 }
 
 
