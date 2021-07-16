@@ -23,3 +23,19 @@ export function adDetail(params) {
     params
   })
 }
+
+export function adCategoryList(params){
+  return request({
+    url:'/Admin/adCategoryList',
+    method:'get',
+    params
+  })
+}
+
+export function addCategory(data) {
+  return request({
+    url: '/Admin/addCategory',
+    method: 'post',
+    data
+  })
+}

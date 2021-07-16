@@ -1,12 +1,6 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-select v-model="listQuery.cate" placeholder="Category" clearable class="filter-item">
-        <el-option v-for="item in categoryList" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
-      <el-select v-model="listQuery.position" placeholder="Position" clearable class="filter-item">
-        <el-option v-for="item in positionList" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
       <el-select v-model="listQuery.identity" placeholder="Identity" clearable class="filter-item">
         <el-option v-for="item in identityList" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
@@ -18,102 +12,120 @@
       </el-button>
     </div>
 
-    <el-tabs value="Guest" style="margin-top:15px;" type="border-card" @tab-click="tabClickJobs">
-      <el-tab-pane v-for="item in adsTabsList" :key="item.value" :label="item.label" :name="item.label">
-        <el-table
-          :key="tableKey"
-          v-loading="listLoading"
-          :data="list"
-          border
-          fit
-          highlight-current-row
-          style="width: 100%;"
-          @sort-change="sortChange"
-        >
-          <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
-            <template slot-scope="{row}">
-              <span>{{ row.id }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Category" width="110px" align="center">
-            <template slot-scope="{row}">
-              <span v-if="row.cate==1" class="link-type">Home Page</span>
-              <span v-if="row.cate==2" class="link-type">Jobs Page</span>
-              <span v-if="row.cate==3" class="link-type">Deals Page</span>
-              <span v-if="row.cate==4" class="link-type">Me Page</span>
-              <span v-if="row.cate==5" class="link-type">Discount Card</span>
-              <span v-if="row.cate==6" class="link-type">Contact Qrcode</span>
-              <span v-if="row.cate==7" class="link-type">Discount Page</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Position" width="110px" align="center">
-            <template slot-scope="{row}">
-              <span v-if="row.position == 1">Top</span>
-              <span v-if="row.position == 2">Mid</span>
-              <span v-if="row.position == 3">Bottom</span>
-              <span v-if="row.position == 4">Article</span>
-              <span v-if="row.position == 5">Deals</span>
-              <span v-if="row.position == 6">Events</span>
-              <span v-if="row.position == 7">Jobs</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Link" width="200px" align="center">
-            <template slot-scope="{row}">
-              <span>{{ row.link }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Title" width="210px" align="center">
-            <template slot-scope="{row}">
-              <span>{{ row.title }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Image" width="110px" align="center">
-            <template slot-scope="{row}">
-              <el-image
-                style="width: 100px; height: 50px"
-                :src=" row.url "
-                fit="contain"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
-            <template slot-scope="{row,$index}">
-              <el-button type="primary" size="mini" @click="handleUpdate(row)">
-                Edit
-              </el-button>
-              <el-button v-if="row.is_delete===1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
-                Recover
-              </el-button>
-              <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger" @click="handleDelete(row,$index)">
-                Delete
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane>
-    </el-tabs>
+    <div>
+      <el-table
+        :key="tableKey"
+        v-loading="listLoading"
+        :data="list"
+        border
+        fit
+        highlight-current-row
+        style="width: 100%;"
+        @sort-change="sortChange"
+      >
+        <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+          <template slot-scope="{row}">
+            <span>{{ row.id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Category" width="110px" align="center">
+          <template slot-scope="{row}">
+            <span v-if="row.platform==1">Mini Program</span>
+            <span v-if="row.platform==2">Team Event</span>
+            <span v-if="row.platform==3">Wechat</span>
+            <span v-if="row.platform==4">Social Media</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Identity" width="110px" align="center">
+          <template slot-scope="{row}">
+            <span v-if="row.identity == 0">Guest</span>
+            <span v-if="row.identity == 1">Educator</span>
+            <span v-if="row.identity == 2">Business</span>
+            <span v-if="row.identity == 3">Vendor</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Link" width="200px" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.link }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Money" width="200px" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.money }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Days" width="200px" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.days }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Title" width="210px" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.title }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Image" width="110px" align="center">
+          <template slot-scope="{row}">
+            <el-image
+              style="width: 100px; height: 50px"
+              :src=" row.url "
+              fit="contain"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
+          <template slot-scope="{row,$index}">
+            <el-button type="primary" size="mini" @click="handleUpdate(row)">
+              Edit
+            </el-button>
+            <el-button v-if="row.is_delete===1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
+              Recover
+            </el-button>
+            <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger" @click="handleDelete(row,$index)">
+              Delete
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Category" prop="cate">
-          <el-select v-model="temp.cate" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in categoryList" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Position" prop="position">
-          <el-select v-model="temp.position" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in positionList" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
+
+        <el-form-item label="Category" prop="category_id">
+          <el-cascader
+            :options="categoryData"
+            :props="{ checkStrictly: true ,emitPath:false,value:'id',label:'name_en'}"
+            :show-all-levels="false"
+            @change="pidChange"
+            clearable>
+          </el-cascader>
         </el-form-item>
         <el-form-item label="Identity" prop="identity">
           <el-select v-model="temp.identity" class="filter-item" placeholder="Please select">
             <el-option v-for="item in identityList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
+        <el-form-item label="Is Buy" prop="is_buy">
+          <el-select v-model="temp.is_buy" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in isBuyList" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Is Use" prop="is_use">
+          <el-select v-model="temp.is_use" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in isUseList" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="Title" prop="title">
           <el-input v-model="temp.title" />
+        </el-form-item>
+        <el-form-item label="Money" prop="money">
+          <el-input v-model="temp.money" type="number"/>
+        </el-form-item>
+        <el-form-item label="Days" prop="days">
+          <el-input v-model="temp.days" type="number" />
         </el-form-item>
         <el-form-item label="Link">
           <el-input v-model="temp.link" />
@@ -171,7 +183,7 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
 import { format } from 'date-fns'
-
+import {adCategoryList} from "@/api/ads";
 export default {
   name: 'Index',
   components: { Pagination },
@@ -194,36 +206,27 @@ export default {
       total: 0,
       listLoading: true,
       listQuery: {
-        cate: undefined,
+        platform:1,
+        page_table: undefined,
         position: undefined,
         identity: 0,
         page: 1,
-        limit: 20
+        limit: 50
       },
       importanceOptions: [1, 2, 3],
-      categoryList: [
-        { label: 'Home Page', value: 1 },
-        { label: 'Jobs Page', value: 2 },
-        { label: 'Deals Page', value: 3 },
-        { label: 'Me Page', value: 4 },
-        { label: 'Discount Card', value: 5 },
-        { label: 'Contact Qrcode', value: 6 },
-        { label: 'Discount Page', value: 7 }
-      ],
-      positionList: [
-        { label: 'Top', value: 1 },
-        { label: 'Mid', value: 2 },
-        { label: 'Bottom', value: 3 },
-        { label: 'Article', value: 4 },
-        { label: 'Deals', value: 5 },
-        { label: 'Events', value: 6 },
-        { label: 'Jobs', value: 7 }
-      ],
       identityList: [
         { label: 'Guest', value: 0 },
         { label: 'Educator', value: 1 },
         { label: 'Business', value: 2 },
         { label: 'Vendor', value: 3 }
+      ],
+      isBuyList:[
+        { label: 'no', value: 0 },
+        { label: 'yes', value: 1 }
+      ],
+      isUseList:[
+        { label: 'no', value: 0 },
+        { label: 'yes', value: 1 }
       ],
       adsTabsList: [
         { label: 'Guest', value: 0 },
@@ -236,16 +239,22 @@ export default {
       showReviewer: false,
       temp: {
         id: undefined,
+        money:0,
+        days:5,
+        platform:undefined,
         title: '',
         url: '',
         link: '',
-        cate: undefined,
+        is_buy:1,
+        is_use:0,
+        page_table: undefined,
         position: undefined,
         identity: undefined,
         sort: undefined,
         ad_id: undefined,
         due_time: undefined,
-        relative_link: undefined
+        relative_link: undefined,
+        category_id:undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -256,15 +265,16 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        cate: [{ required: true, message: 'category is required', trigger: 'change' }],
-        position: [{ required: true, message: 'position is required', trigger: 'change' }],
-        identity: [{ required: true, message: 'identity is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        platform: [{ required: false, message: 'platform is required', trigger: 'change' }],
+        page_table: [{ required: false, message: 'page is required', trigger: 'change' }],
+        position: [{ required: false, message: 'position is required', trigger: 'change' }],
+        identity: [{ required: false, message: 'identity is required', trigger: 'change' }],
+        title: [{ required: false, message: 'title is required', trigger: 'blur' }]
       },
       downloadLoading: false,
-      // uploadHeaders:undefined,
       fileUrl: undefined,
-      fileList: undefined
+      fileList: undefined,
+      categoryData:[]
     }
   },
   computed: {
@@ -279,35 +289,37 @@ export default {
   },
   created() {
     this.getList()
+    this.getAdsCategoryList()
   },
   methods: {
-    tabClickJobs(e) {
+    pidChange(e) {
       console.log(e)
-      if (e.index == 0) {
-        this.listQuery.identity = 0
-        this.getList()
+      this.temp.category_id = e;
+
+    },
+    getAdsCategoryList() {
+      let params = {
+        tree: 1
       }
-      if (e.index == 1) {
-        this.listQuery.identity = 1
-        this.getList()
-      }
-      if (e.index == 2) {
-        this.listQuery.identity = 2
-        this.getList()
-      }
-      if (e.index == 3) {
-        this.listQuery.identity = 3
-        this.getList()
-      }
+      adCategoryList(params).then(res => {
+        console.log(res)
+        if (res.code == 200) {
+          this.categoryData = res.message;
+        } else {
+          this.$message.error(res.msg);
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     },
     adsDueDateChange(e) {
-      console.log(format(e, 'yyyy-MM-dd HH:mm:ss'))
+      // console.log(format(e, 'yyyy-MM-dd HH:mm:ss'))
       this.temp.due_time = format(e, 'yyyy-MM-dd HH:mm:ss')
     },
     getList() {
       this.listLoading = true
       adList(this.listQuery).then(response => {
-        console.log(response)
+        // console.log(response)
         // this.list = response.message.data
         this.list = response.message.data.filter(item => item.is_delete === 0)
         this.total = response.message.total
@@ -315,7 +327,7 @@ export default {
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 1000)
       })
     },
     handleFilter() {
@@ -346,10 +358,13 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        title: '',
-        url: '',
-        link: '',
-        cate: undefined,
+        title: undefined,
+        money:undefined,
+        days: undefined,
+        platform:undefined,
+        url: undefined,
+        link: undefined,
+        page_table: undefined,
         position: undefined,
         sort: undefined,
         ad_id: undefined
@@ -371,7 +386,7 @@ export default {
           // this.temp.author = 'vue-element-admin'
           this.temp.url = this.fileUrl
           add(this.temp).then((res) => {
-            console.log(res)
+            // console.log(res)
             // this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -380,7 +395,8 @@ export default {
               type: 'success',
               duration: 2000
             })
-            window.location.reload()
+            // window.location.reload()
+            this.getList()
           })
         }
       })
@@ -390,6 +406,8 @@ export default {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.ad_id = row.id
       this.temp.position = Number(row.position)
+      this.temp.days = Number(row.days)
+      this.temp.money = Number(row.money)
       this.fileList = [{ name: '', url: row.url }]
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
@@ -430,7 +448,7 @@ export default {
       })
       // this.list.splice(index, 1)
       add({ is_delete: 1, ad_id: row.id }).then(res => {
-        console.log(res)
+        // console.log(res)
         this.getList()
       }).catch(error => {
         console.log(error)
@@ -438,7 +456,7 @@ export default {
     },
     handleRecover(row) {
       add({ is_delete: 0, ad_id: row.id }).then(res => {
-        console.log(res)
+        // console.log(res)
         this.getList()
       }).catch(error => {
         console.log(error)

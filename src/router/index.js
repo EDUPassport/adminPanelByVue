@@ -157,6 +157,14 @@ export const constantRoutes = [
     },
     children: [
       {
+        path: 'category/list',
+        component: () => import('@/views/ads/category/list'),
+        name: 'Ads Category',
+        meta: {
+          title: 'Ads Category'
+        }
+      },
+      {
         path: 'list',
         component: () => import('@/views/ads/list'),
         name: 'listAds',
