@@ -14,9 +14,9 @@
         <line-chart :chart-data="lineChartData" />
       </el-row>
     </div>
-    <div>
-      <img :src="emptyGif" class="emptyGif">
-    </div>
+<!--    <div>-->
+<!--      <img :src="emptyGif" class="emptyGif">-->
+<!--    </div>-->
   </div>
 </template>
 

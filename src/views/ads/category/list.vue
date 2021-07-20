@@ -1,21 +1,42 @@
 <template>
   <div class="container">
     <div class="add-container">
-      <el-button type="primary" @click="addDialogVisible=true">Add+</el-button>
+      <el-button type="primary" @click="handleCreate()">Add+</el-button>
     </div>
 
     <el-dialog
       title="Add"
       :visible.sync="addDialogVisible"
-      width="30%"
+      width="80%"
       :before-close="handleClose">
       <div>
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="160px" class="demo-ruleForm">
           <el-form-item label="Name(EN)" prop="name_en">
             <el-input v-model="ruleForm.name_en"></el-input>
           </el-form-item>
           <el-form-item label="Name(CN)" prop="name_cn">
             <el-input v-model="ruleForm.name_cn"></el-input>
+          </el-form-item>
+          <el-form-item label="Key" prop="name_key">
+            <el-input v-model="ruleForm.name_key"></el-input>
+          </el-form-item>
+          <el-form-item label="Money" prop="money">
+            <el-input v-model="ruleForm.money"></el-input>
+          </el-form-item>
+          <el-form-item label="Duration" prop="days">
+            <el-input v-model="ruleForm.days"></el-input>
+          </el-form-item>
+          <el-form-item label="Title" prop="title">
+            <el-input v-model="ruleForm.title"></el-input>
+          </el-form-item>
+          <el-form-item label="Description" prop="desc">
+            <el-input v-model="ruleForm.desc" type="textarea"></el-input>
+          </el-form-item>
+          <el-form-item label="Only Show in Admin" prop="is_admin">
+            <el-select v-model="ruleForm.is_admin" class="filter-item" placeholder="Please select">
+              <el-option label="No" value="0" checked />
+              <el-option label="Yes" value="1" />
+            </el-select>
           </el-form-item>
           <el-form-item label="Category" prop="category">
             <el-cascader
@@ -27,6 +48,60 @@
               clearable>
             </el-cascader>
           </el-form-item>
+
+          <el-form-item label="Icon">
+            <el-upload
+              class="upload-demo"
+              drag
+              :headers="uploadHeaders"
+              name="file[]"
+              :action="uploadRequestUrl"
+              multiple
+              list-type="picture"
+              :limit="1"
+              :on-success="uploadIconSuccess"
+              :file-list="iconFileList"
+            >
+              <i class="el-icon-upload" />
+              <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="Selected Icon">
+            <el-upload
+              class="upload-demo"
+              drag
+              :headers="uploadHeaders"
+              name="file[]"
+              :action="uploadRequestUrl"
+              multiple
+              list-type="picture"
+              :limit="1"
+              :on-success="uploadSelectIconSuccess"
+              :file-list="selectIconFileList"
+            >
+              <i class="el-icon-upload" />
+              <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            </el-upload>
+          </el-form-item>
+
+          <el-form-item label="Banner Image">
+            <el-upload
+              class="upload-demo"
+              drag
+              :headers="uploadHeaders"
+              name="file[]"
+              :action="uploadRequestUrl"
+              multiple
+              list-type="picture"
+              :limit="1"
+              :on-success="uploadBannerImageSuccess"
+              :file-list="bannerImageFileList"
+            >
+              <i class="el-icon-upload" />
+              <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            </el-upload>
+          </el-form-item>
+
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">Confirm</el-button>
             <el-button @click="resetForm('ruleForm')">Reset</el-button>
@@ -46,9 +121,16 @@
         auto-expand-parent
         highlight-current
         :expand-on-click-node="false">
+
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span>{{ node.data.name_en }}</span>
         <span>
+          <el-button
+            type="text"
+            size="mini"
+            @click="() => addAds(data)">
+            Ads
+          </el-button>
           <el-button
             type="text"
             size="mini"
@@ -76,11 +158,21 @@ export default {
   name: "list",
   data() {
     return {
+      uploadRequestUrl: process.env.VUE_APP_UPLOAD_API,
       addDialogVisible: false,
       ruleForm: {
         name_en: '',
         name_cn: '',
+        name_key:'',
+        money:'',
+        title:'',
+        desc:'',
         pid: '',
+        days:0,
+        is_admin:0,
+        icon_before:'',
+        icon_after:'',
+        image_url:'',
         category_id: undefined
       },
       rules: {
@@ -95,14 +187,43 @@ export default {
         ]
       },
       tableData: [],
-      categoryId: undefined
+      categoryId: undefined,
+      iconFileUrl:'',
+      selectIconFileUrl:'',
+      bannerImageFileUrl:'',
+      iconFileList:[],
+      selectIconFileList:[],
+      bannerImageFileList:[]
 
+    }
+  },
+  computed: {
+    token() {
+      return this.$store.state.user.token
+    },
+    uploadHeaders() {
+      return {
+        token: this.$store.state.user.token
+      }
     }
   },
   created() {
     this.getAdsCategoryList()
   },
   methods: {
+    resetFileList(){
+      this.iconFileUrl = '';
+      this.selectIconFileUrl = '';
+      this.bannerImageFileUrl = '';
+      this.iconFileList = [];
+      this.selectIconFileList = [];
+      this.bannerImageFileList = [];
+    },
+    handleCreate(){
+      this.addDialogVisible=true;
+      this.ruleForm.category_id = undefined;
+      this.resetFileList();
+    },
     getAdsCategoryList() {
       let params = {
         tree: 1
@@ -120,6 +241,7 @@ export default {
     },
     handleClose(done) {
       done();
+      this.resetFileList();
       // this.$confirm('确认关闭？')
       //   .then(_ => {
       //     done();
@@ -129,6 +251,9 @@ export default {
     },
     submitForm(formName) {
       this.ruleForm.pid = this.categoryId;
+      this.ruleForm.icon_before = this.iconFileUrl;
+      this.ruleForm.icon_after = this.selectIconFileUrl;
+      this.ruleForm.image_url = this.bannerImageFileUrl;
 
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -142,6 +267,7 @@ export default {
                 type: 'success'
               });
               this.getAdsCategoryList()
+              this.resetFileList();
             } else {
               this.$message.error(res.msg);
             }
@@ -164,6 +290,18 @@ export default {
     },
     editAdCategory(row) {
       console.log(row)
+      this.iconFileUrl = row.icon_before;
+      this.selectIconFileUrl = row.icon_after;
+      this.bannerImageFileUrl = row.image_url;
+      if(row.icon_before){
+        this.iconFileList = [{ name: '', url: row.icon_before }]
+      }
+      if(row.icon_after){
+        this.selectIconFileList = [{ name: '', url: row.icon_after }]
+      }
+      if(row.image_url){
+        this.bannerImageFileList = [{ name: '', url: row.image_url }]
+      }
 
       this.addDialogVisible = true;
       // this.ruleForm.category_id = row.id;
@@ -196,6 +334,37 @@ export default {
         })
         .catch(_ => {
         });
+    },
+    uploadIconSuccess(response, file, fileList) {
+
+      if (response.code == 200) {
+        this.iconFileUrl = response.data[0].file_url
+        // const file_name = response.data[0].file_name
+      } else {
+        console.log(response.msg)
+      }
+    },
+    uploadSelectIconSuccess(response, file, fileList) {
+
+      if (response.code == 200) {
+        this.selectIconFileUrl = response.data[0].file_url
+        // const file_name = response.data[0].file_name
+      } else {
+        console.log(response.msg)
+      }
+    },
+    uploadBannerImageSuccess(response, file, fileList) {
+
+      if (response.code == 200) {
+        this.bannerImageFileUrl = response.data[0].file_url
+        // const file_name = response.data[0].file_name
+      } else {
+        console.log(response.msg)
+      }
+    },
+    addAds(data){
+      console.log(data)
+      this.$router.push({path: '/ads/list', query: {category: data.id}})
     }
 
   }
@@ -204,14 +373,15 @@ export default {
 
 <style scoped>
 .container {
-  width: 90%;
+  width: 94%;
   margin: 0 auto;
   padding: 40px;
 }
 
 .tree-container {
   border: 1px solid #eeeeee;
-  border-radius: 10px;
+  /*border-radius: 10px;*/
+
   padding: 20px;
   margin-top: 50px;
 }
@@ -223,7 +393,9 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+  padding-left: 20px;
   border-bottom: 1px solid #eeeeee;
+
 }
 
 

@@ -1,13 +1,11 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-select v-model="listQuery.identity" placeholder="Identity" clearable class="filter-item">
-        <el-option v-for="item in identityList" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
+
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="getList()">
         Search
       </el-button>
-      <el-button v-permission="['lei','admin']" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button  class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
       </el-button>
     </div>
@@ -33,34 +31,12 @@
             <span>{{row.category_en}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Identity" width="110px" align="center">
-          <template slot-scope="{row}">
-            <span v-if="row.identity == 0">Guest</span>
-            <span v-if="row.identity == 1">Educator</span>
-            <span v-if="row.identity == 2">Business</span>
-            <span v-if="row.identity == 3">Vendor</span>
-          </template>
-        </el-table-column>
         <el-table-column label="Link" width="200px" align="center">
           <template slot-scope="{row}">
             <span>{{ row.link }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Money" width="200px" align="center">
-          <template slot-scope="{row}">
-            <span>{{ row.money }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Days" width="200px" align="center">
-          <template slot-scope="{row}">
-            <span>{{ row.days }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Title" width="210px" align="center">
-          <template slot-scope="{row}">
-            <span>{{ row.title }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column label="Image" width="110px" align="center">
           <template slot-scope="{row}">
             <el-image
@@ -90,7 +66,6 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
-
         <el-form-item label="Category" prop="category">
           <el-cascader
             v-model="adsCategoryValue"
@@ -101,29 +76,10 @@
             clearable>
           </el-cascader>
         </el-form-item>
-        <el-form-item label="Identity" prop="identity">
-          <el-select v-model="temp.identity" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in identityList" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Is Buy" prop="is_buy">
-          <el-select v-model="temp.is_buy" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in isBuyList" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </el-form-item>
         <el-form-item label="Is Use" prop="is_use">
           <el-select v-model="temp.is_use" class="filter-item" placeholder="Please select">
             <el-option v-for="item in isUseList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
-        </el-form-item>
-        <el-form-item label="Title" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item label="Money" prop="money">
-          <el-input v-model="temp.money" type="number"/>
-        </el-form-item>
-        <el-form-item label="Days" prop="days">
-          <el-input v-model="temp.days" type="number" />
         </el-form-item>
         <el-form-item label="Link">
           <el-input v-model="temp.link" />
@@ -131,18 +87,10 @@
         <el-form-item label="Relative Link">
           <el-input v-model="temp.relative_link" />
         </el-form-item>
-        <el-form-item label="Due Time">
-          <el-date-picker
-            v-model="temp.due_time"
-            type="datetime"
-            placeholder="Please pick a date"
-            @change="adsDueDateChange"
-          />
-        </el-form-item>
         <el-form-item label="Sort">
           <el-input v-model="temp.sort" type="number" />
         </el-form-item>
-        <el-form-item label="Image">
+        <el-form-item label="Banner Image">
           <el-upload
             class="upload-demo"
             drag
@@ -177,7 +125,6 @@
 <script>
 import { add, adList } from '@/api/ads'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
 import { format } from 'date-fns'
@@ -210,43 +157,21 @@ export default {
         limit: 50
       },
       importanceOptions: [1, 2, 3],
-      identityList: [
-        { label: 'Guest', value: 0 },
-        { label: 'Educator', value: 1 },
-        { label: 'Business', value: 2 },
-        { label: 'Vendor', value: 3 }
-      ],
-      isBuyList:[
-        { label: 'no', value: 0 },
-        { label: 'yes', value: 1 }
-      ],
       isUseList:[
         { label: 'no', value: 0 },
         { label: 'yes', value: 1 }
-      ],
-      adsTabsList: [
-        { label: 'Guest', value: 0 },
-        { label: 'Educator', value: 1 },
-        { label: 'Business', value: 2 },
-        { label: 'Vendor', value: 3 }
       ],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
         id: undefined,
-        money:0,
-        days:5,
-        title: '',
         url: '',
         link: '',
-        is_buy:1,
         is_use:0,
-        identity: undefined,
         category:undefined,
         sort: undefined,
         ad_id: undefined,
-        due_time: undefined,
         relative_link: undefined
       },
       dialogFormVisible: false,
@@ -258,8 +183,7 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        identity: [{ required: false, message: 'identity is required', trigger: 'change' }],
-        title: [{ required: false, message: 'title is required', trigger: 'blur' }]
+
       },
       downloadLoading: false,
       fileUrl: undefined,
@@ -310,9 +234,9 @@ export default {
     },
     getList() {
       this.listLoading = true
+      this.listQuery.category = this.$route.query.category;
       adList(this.listQuery).then(response => {
         // console.log(response)
-        // this.list = response.message.data
         this.list = response.message.data.filter(item => item.is_delete === 0)
         this.total = response.message.total
 
@@ -351,24 +275,20 @@ export default {
 
       this.temp = {
         id: undefined,
-        money:0,
-        days:5,
-        title: '',
         url: '',
         link: '',
-        is_buy:1,
         is_use:0,
-        identity: undefined,
         category:undefined,
         sort: undefined,
         ad_id: undefined,
-        due_time: undefined,
         relative_link: undefined
       }
     },
     handleCreate() {
       // console.log(this.adsCategoryValue)
       this.resetTemp()
+      this.fileUrl='';
+      this.fileList = [];
       this.adsCategoryValue=undefined
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
@@ -463,30 +383,6 @@ export default {
       }).catch(error => {
         console.log(error)
       })
-    },
-
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
     },
     getSortClass: function(key) {
       const sort = this.listQuery.sort
