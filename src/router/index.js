@@ -281,6 +281,36 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/purchase',
+    component: Layout,
+    redirect: '/ads/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Purchase',
+    meta: {
+      title: 'Purchase',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'ads/list',
+        component: () => import('@/views/purchase/ads/list'),
+        name: 'Ads List',
+        meta: {
+          title: 'Ads List'
+        }
+      },
+      {
+        path: 'ads/review',
+        component: () => import('@/views/purchase/ads/review'),
+        name: 'Ads Review',
+        meta: {
+          title: 'Ads Review'
+        }
+      }
+
+    ]
+  },
+  {
     path: '/jobs',
     component: Layout,
     redirect: '/jobs/list',

@@ -39,3 +39,34 @@ export function addCategory(data) {
     data
   })
 }
+export function myAds(params){
+  return request({
+    url:'/admin/myAds',
+    method:'get',
+    params
+  })
+}
+
+export function setUserAds(data) {
+  return request({
+    url: '/Admin/setUserAds',
+    method: 'post',
+    data
+  })
+}
+
+export function approveAdList(params){
+  return request({
+    url:'/admin/approveAdList',
+    method:'get',
+    params
+  })
+}
+
+export function approveAds(data) {
+  return request({
+    url: '/admin/approveAds',
+    method: 'post',
+    data
+  })
+}
