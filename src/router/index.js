@@ -129,18 +129,18 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/config/system/list',
     alwaysShow: true, // will always show the root menu
-    name: 'Config',
+    name: 'Company assets',
     meta: {
-      title: 'Config',
+      title: 'Company assets',
       icon: 'list'
     },
     children: [
       {
         path: 'system/list',
         component: () => import('@/views/config/system/list'),
-        name: 'listSystem',
+        name: 'MP Image Asset',
         meta: {
-          title: 'System'
+          title: 'MP Image Asset'
         }
       }
     ]
@@ -159,9 +159,9 @@ export const constantRoutes = [
       {
         path: 'category/list',
         component: () => import('@/views/ads/category/list'),
-        name: 'Ads Category',
+        name: 'Advertisement Structure',
         meta: {
-          title: 'Ads Category'
+          title: 'Advertisement Structure'
         }
       },
       {
@@ -170,6 +170,22 @@ export const constantRoutes = [
         name: 'listAds',
         meta: {
           title: 'Ads List'
+        }
+      },
+      {
+        path: 'purchase/list',
+        component: () => import('@/views/ads/purchase/list'),
+        name: 'Purchased Ads',
+        meta: {
+          title: 'Purchased Ads'
+        }
+      },
+      {
+        path: 'purchase/review',
+        component: () => import('@/views/ads/purchase/review'),
+        name: 'Redeemed Ad Review',
+        meta: {
+          title: 'Redeemed Ad Review'
         }
       },
       {
@@ -197,18 +213,18 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/category/list',
     alwaysShow: true, // will always show the root menu
-    name: 'Category',
+    name: 'Services',
     meta: {
-      title: 'Category',
+      title: 'Services',
       icon: 'list'
     },
     children: [
       {
         path: 'list',
         component: () => import('@/views/category/list'),
-        name: 'listCategory',
+        name: 'Multiple Select Fields',
         meta: {
-          title: 'Category List'
+          title: 'Multiple Select Fields'
         }
       }
     ]
@@ -218,167 +234,151 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/users/index',
     alwaysShow: true, // will always show the root menu
-    name: 'Users',
+    name: 'All Users',
     meta: {
-      title: 'Users',
+      title: 'All Users',
       icon: 'list'
     },
     children: [
       {
         path: 'index',
         component: () => import('@/views/users/index'),
-        name: 'listUsers',
+        name: 'User List',
         meta: {
-          title: 'Users List'
+          title: 'User List'
         }
-      },
+      }
+    ]
+  },
+  {
+    path: '/educator',
+    component: Layout,
+    redirect: '/educator/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Educators',
+    meta: {
+      title: 'Educators',
+      icon: 'list'
+    },
+    children: [
       {
-        path: 'educator',
-        component: () => import('@/views/users/edu/list'),
-        name: 'listEducator',
+        path: 'list',
+        component: () => import('@/views/educator/list'),
+        name: 'All Educators',
         meta: {
-          title: 'Educator List'
+          title: 'All Educators'
         }
       },
       {
         path: 'editEducator',
-        component: () => import('@/views/users/edu/edit'),
-        name: 'EditEducator',
-        meta: { title: 'Edit Educator', noCache: true, activeMenu: '/users/educator' },
+        component: () => import('@/views/educator/edit'),
+        name: 'edit Educator',
+        meta: { title: 'Edit Educator', noCache: true, activeMenu: '/educator' },
         hidden: true
-      },
+      }
+
+    ]
+  },
+  {
+    path: '/business',
+    component: Layout,
+    redirect: '/business/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Businesses',
+    meta: {
+      title: 'Businesses',
+      icon: 'list'
+    },
+    children: [
       {
-        path: 'business',
-        component: () => import('@/views/users/business/list'),
-        name: 'listBusiness',
+        path: 'list',
+        component: () => import('@/views/business/list'),
+        name: 'All Businesses',
         meta: {
-          title: 'Business List'
+          title: 'All Businesses'
         }
       },
       {
         path: 'editBusiness',
-        component: () => import('@/views/users/business/edit'),
+        component: () => import('@/views/business/edit'),
         name: 'EditBusiness',
-        meta: { title: 'Edit Business', noCache: true, activeMenu: '/users/business' },
+        meta: { title: 'Edit Business', noCache: true, activeMenu: '/business/list' },
         hidden: true
       },
       {
-        path: 'vendor',
-        component: () => import('@/views/users/vendor/list'),
-        name: 'listVendor',
+        path: 'jobs/service/list',
+        component: () => import('@/views/business/jobs/service/list'),
+        name: 'Select Fields',
         meta: {
-          title: 'Vendor List'
+          title: 'Select Fields'
+        }
+      },
+      {
+        path: 'jobs/list',
+        component: () => import('@/views/business/jobs/list'),
+        name: 'Jobs',
+        meta: {
+          title: 'Jobs'
+        }
+      },
+      {
+        path: 'jobs/editJobs',
+        component: () => import('@/views/business/jobs/edit'),
+        hidden: true,
+        name: 'Edit Job',
+        meta: {
+          title: 'Edit Jobs', noCache: true, activeMenu: '/business/jobs/list'
+        }
+      },
+      {
+        path: 'jobs/addJobs',
+        component: () => import('@/views/business/jobs/edit'),
+        hidden: true,
+        name: 'add job',
+        meta: {
+          title: 'Add Job', noCache: true, activeMenu: '/business/jobs/list'
+        }
+      }
+
+    ]
+  },
+  {
+    path: '/vendor',
+    component: Layout,
+    redirect: '/vendor/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Vendor',
+    meta: {
+      title: 'Vendor',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'vendor',
+        component: () => import('@/views/vendor/list'),
+        name: 'All Vendors',
+        meta: {
+          title: 'All Vendors'
         }
       },
       {
         path: 'editVendor',
-        component: () => import('@/views/users/vendor/edit'),
+        component: () => import('@/views/vendor/edit'),
         name: 'EditVendor',
-        meta: { title: 'Edit Vendor', noCache: true, activeMenu: '/users/vendor' },
+        meta: { title: 'Edit Vendor', noCache: true, activeMenu: '/vendor/list' },
         hidden: true
-      }
-
-    ]
-  },
-  {
-    path: '/purchase',
-    component: Layout,
-    redirect: '/ads/list',
-    alwaysShow: true, // will always show the root menu
-    name: 'Purchase',
-    meta: {
-      title: 'Purchase',
-      icon: 'list'
-    },
-    children: [
-      {
-        path: 'ads/list',
-        component: () => import('@/views/purchase/ads/list'),
-        name: 'Ads List',
-        meta: {
-          title: 'Ads List'
-        }
       },
       {
-        path: 'ads/review',
-        component: () => import('@/views/purchase/ads/review'),
-        name: 'Ads Review',
-        meta: {
-          title: 'Ads Review'
-        }
-      }
-
-    ]
-  },
-  {
-    path: '/jobs',
-    component: Layout,
-    redirect: '/jobs/list',
-    alwaysShow: true, // will always show the root menu
-    name: 'Jobs',
-    meta: {
-      title: 'Jobs',
-      icon: 'list'
-    },
-    children: [
-      {
-        path: 'list',
-        component: () => import('@/views/jobs/list'),
-        name: 'listJobs',
-        meta: {
-          title: 'Jobs List'
-        }
-      },
-      {
-        path: 'service/list',
-        component: () => import('@/views/jobs/service/list'),
-        name: 'listService',
-        meta: {
-          title: 'Services List'
-        }
-      },
-      {
-        path: 'editJobs',
-        component: () => import('@/views/jobs/edit'),
-        hidden: true,
-        name: 'EditJobs',
-        meta: {
-          title: 'Edit Jobs', noCache: true, activeMenu: '/jobs/list'
-        }
-      },
-      {
-        path: 'addJobs',
-        component: () => import('@/views/jobs/edit'),
-        hidden: true,
-        name: 'AddJobs',
-        meta: {
-          title: 'Add Jobs', noCache: true, activeMenu: '/users/business'
-        }
-      }
-    ]
-  },
-  {
-    path: '/deals',
-    component: Layout,
-    redirect: '/deals/list',
-    alwaysShow: true, // will always show the root menu
-    name: 'Deals',
-    meta: {
-      title: 'Deals',
-      icon: 'list'
-    },
-    children: [
-      {
-        path: 'list',
-        component: () => import('@/views/deals/list'),
+        path: 'deals/list',
+        component: () => import('@/views/vendor/deals/list'),
         name: 'listDeals',
         meta: {
           title: 'Deals List'
         }
       },
       {
-        path: 'editDeals',
-        component: () => import('@/views/deals/add'),
+        path: 'deals/editDeals',
+        component: () => import('@/views/vendor/deals/add'),
         hidden: true,
         name: 'EditDeals',
         meta: {
@@ -386,38 +386,25 @@ export const constantRoutes = [
         }
       },
       {
-        path: 'addDeals',
-        component: () => import('@/views/deals/add'),
+        path: 'deals/addDeals',
+        component: () => import('@/views/vendor/deals/add'),
         hidden: true,
         name: 'AddDeals',
         meta: {
           title: 'Add Deals', noCache: true, activeMenu: '/deals/list'
         }
-      }
-    ]
-  },
-  {
-    path: '/events',
-    component: Layout,
-    redirect: '/events/list',
-    alwaysShow: true, // will always show the root menu
-    name: 'Events',
-    meta: {
-      title: 'Events',
-      icon: 'list'
-    },
-    children: [
+      },
       {
-        path: 'list',
-        component: () => import('@/views/events/list'),
+        path: 'events/list',
+        component: () => import('@/views/vendor/events/list'),
         name: 'listEvents',
         meta: {
           title: 'Events List'
         }
       },
       {
-        path: 'detail',
-        component: () => import('@/views/events/detail'),
+        path: 'events/detail',
+        component: () => import('@/views/vendor/events/detail'),
         hidden: true,
         name: 'eventDetail',
         meta: {
@@ -425,8 +412,8 @@ export const constantRoutes = [
         }
       },
       {
-        path: 'editEvents',
-        component: () => import('@/views/events/add'),
+        path: 'events/editEvents',
+        component: () => import('@/views/vendor/events/add'),
         hidden: true,
         name: 'EditEvents',
         meta: {
@@ -434,14 +421,15 @@ export const constantRoutes = [
         }
       },
       {
-        path: 'addEvents',
-        component: () => import('@/views/events/add'),
+        path: 'events/addEvents',
+        component: () => import('@/views/vendor/events/add'),
         hidden: true,
         name: 'AddEvents',
         meta: {
           title: 'Add Events', noCache: true, activeMenu: '/events/list'
         }
       }
+
     ]
   }
 

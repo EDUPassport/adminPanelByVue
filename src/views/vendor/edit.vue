@@ -246,7 +246,7 @@
 <script>
 import { userInfo, addVendorBasic, subCateLists } from '@/api/member'
 import { getAreas } from '@/api/location'
-import nationality from '@/views/users/nationality'
+import nationality from '@/utils/nationality'
 import { format } from 'date-fns'
 
 export default {

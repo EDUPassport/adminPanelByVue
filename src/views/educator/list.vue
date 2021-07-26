@@ -2,15 +2,36 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input
-        v-model="listQuery.work_email"
-        placeholder="Work Email"
+        v-model="listQuery.first_name"
+        placeholder="First Name"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
       <el-input
-        v-model="listQuery.vendor_name_en"
-        placeholder="Vendor Name"
+        v-model="listQuery.last_name"
+        placeholder="Last Name"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.nickname"
+        placeholder="Nickname"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.country"
+        placeholder="Country"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.province"
+        placeholder="Province"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
@@ -25,6 +46,12 @@
       <el-input
         v-model="listQuery.phone"
         placeholder="Phone"
+        style="width: 200px;"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.email"
+        placeholder="Email"
         style="width: 200px;"
         @keyup.enter.native="handleFilter"
       />
@@ -56,75 +83,35 @@
             inline
             class="demo-table-expand"
           >
-            <el-form-item label="Nickname">
-              <span>{{ props.row.nickname }}</span>
-            </el-form-item>
-            <el-form-item label="Business Reg Number">
-              <span>{{ props.row.busin_reg_num }}</span>
-            </el-form-item>
-            <el-form-item label="Province">
-              <span>{{ props.row.province }}</span>
-            </el-form-item>
-            <el-form-item label="City">
-              <span>{{ props.row.city }}</span>
-            </el-form-item>
-            <el-form-item label="District">
-              <span>{{ props.row.district }}</span>
+            <el-form-item
+              v-if="props.row.country != ''"
+              label="Country"
+            >
+              {{ props.row.country }}
             </el-form-item>
             <el-form-item
-              v-if="props.row.address !=''"
-              label="Address"
+              v-if="props.row.province != ''"
+              label="Province"
             >
-              <span>{{ props.row.address }}</span>
-            </el-form-item>
-            <el-form-item label="First Language">
-              <span>{{ props.row.first_language }}</span>
-            </el-form-item>
-            <el-form-item label="Dog Friendly">
-              <span v-if="props.row.is_dog_friendly==1">Yes</span>
-              <span v-if="props.row.is_dog_friendly==0">Unknown</span>
-            </el-form-item>
-            <el-form-item label="Event">
-              <span v-if="props.row.is_events==1">Yes</span>
-              <span v-if="props.row.is_events==0">Unknown</span>
-            </el-form-item>
-            <el-form-item label="Job Title">
-              <span>{{ props.row.job_title }}</span>
-            </el-form-item>
-            <el-form-item label="Nationality">
-              <span>{{ props.row.nationality }}</span>
-            </el-form-item>
-            <el-form-item label="Vendor Bio">
-              <span>{{ props.row.vendor_bio }}</span>
-            </el-form-item>
-            <el-form-item label="Legal Company Name">
-              <span>{{ props.row.legal_company_name }}</span>
-            </el-form-item>
-            <el-form-item label="Company Name(EN)">
-              <span>{{ props.row.vendor_name_en }}</span>
-            </el-form-item>
-            <el-form-item label="Category">
-              <span>{{ props.row.vendor_type_name }}</span>
-            </el-form-item>
-
-            <el-form-item label="Email">
-              <span>{{ props.row.work_email }}</span>
-            </el-form-item>
-            <el-form-item label="Website">
-              <span>{{ props.row.website }}</span>
-            </el-form-item>
-            <el-form-item label="Company Wechat">
-              <span>{{ props.row.wechat_public_name }}</span>
+              {{ props.row.province }}
             </el-form-item>
             <el-form-item
-              v-if="props.row.busin_reg_img !='' "
-              label="Business Reg img"
+              v-if="props.row.city != ''"
+              label="City"
             >
-              <el-image
-                style="width: 100px;height: 100px;"
-                :src="props.row.busin_reg_img"
-                :preview-src-list="[props.row.busin_reg_img]"
-              />
+              {{ props.row.city }}
+            </el-form-item>
+            <el-form-item
+              v-if="props.row.district != ''"
+              label="District"
+            >
+              {{ props.row.district }}
+            </el-form-item>
+            <el-form-item
+              v-if="props.row.nickname != ''"
+              label="Nickname"
+            >
+              {{ props.row.nickname }}
             </el-form-item>
             <el-form-item
               v-if="props.row.profile_photo != '' "
@@ -147,26 +134,6 @@
               />
             </el-form-item>
             <el-form-item
-              v-if="props.row.logo != '' "
-              label="Logo"
-            >
-              <el-image
-                style="width: 100px;height: 100px;"
-                :src="props.row.logo"
-                :preview-src-list="[props.row.logo]"
-              />
-            </el-form-item>
-            <el-form-item
-              v-if="props.row.wechat_public_qrcode !='' "
-              label="Wechat Qrcode"
-            >
-              <el-image
-                style="width: 100px;height: 100px;"
-                :src="props.row.wechat_public_qrcode"
-                :preview-src-list="[props.row.wechat_public_qrcode]"
-              />
-            </el-form-item>
-            <el-form-item
               v-if="props.row.video_url != '' "
               label="Video"
             >
@@ -175,12 +142,6 @@
                 :src="props.row.video_url"
                 controls
               />
-            </el-form-item>
-            <el-form-item
-              v-if="props.row.proposed_deal != '' "
-              label="Proposed Deal"
-            >
-              <span>{{ props.row.proposed_deal }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -200,34 +161,44 @@
       <el-table-column
         label="User Id"
         prop="user_id"
-        width="110"
+        width="80"
       >
         <template slot-scope="{row}">
           <span>{{ row.user_id }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        label="First&&Last Name"
-        width="160"
+        label="First&Last Name"
+        width="140"
       >
         <template slot-scope="scope">
           {{ scope.row.first_name }} {{ scope.row.last_name }}
         </template>
       </el-table-column>
       <el-table-column
-        label="Company Name(EN)"
-        width="150"
-      >
-        <template slot-scope="scope">
-          {{ scope.row.vendor_name_en }}
-        </template>
-      </el-table-column>
-      <el-table-column
         label="Wechat Id"
-        width="110"
+        width="140"
       >
         <template slot-scope="scope">
           {{ scope.row.wx_id }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="Email"
+        width="110"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.email }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="Level"
+        width="110"
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.level==1">Basic</span>
+          <span v-if="scope.row.level==2">Pro</span>
+          <span v-if="scope.row.level==3">Plus</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -240,62 +211,14 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="Membership Level"
+        label="Nationality"
         width="110"
+        align="center"
       >
         <template slot-scope="scope">
-          <span v-if="scope.row.level == 1">Basic </span>
-          <span v-if="scope.row.level == 2">Pro </span>
-          <span v-if="scope.row.level == 3">Plus </span>
+          {{ scope.row.nationality }}
         </template>
       </el-table-column>
-      <el-table-column
-        label="Deals(Count/Number)"
-        align="center"
-        width="100"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="{row}">
-          <el-tag type="success">
-            {{ row.deals_count }}
-          </el-tag>
-          /
-          <el-tag type="info">
-            {{ row.deals_num }}
-          </el-tag>
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleAddDeals(row)"
-          >
-            Add
-          </el-button>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Events(Count/Number)"
-        align="center"
-        width="100"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="{row}">
-          <el-tag type="success">
-            {{ row.event_count }}
-          </el-tag>
-          /
-          <el-tag type="info">
-            {{ row.events_num }}
-          </el-tag>
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleAddEvents(row)"
-          >
-            Add
-          </el-button>
-        </template>
-      </el-table-column>
-
       <el-table-column
         label="Actions"
         align="center"
@@ -336,9 +259,94 @@
 
     <el-dialog
       :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormVisible"
+    >
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="90px"
+        style="width: 400px; margin-left:50px;"
+      >
+        <el-form-item
+          label="username"
+          prop="username"
+        >
+          <el-input v-model="temp.username" />
+        </el-form-item>
+        <el-form-item
+          label="nickname"
+          prop="nickname"
+        >
+          <el-input v-model="temp.nickname" />
+        </el-form-item>
+        <el-form-item
+          label="truename"
+          prop="truename"
+        >
+          <el-input v-model="temp.truename" />
+        </el-form-item>
+        <el-form-item
+          label="sex"
+          prop="sex"
+        >
+          <el-select
+            v-model="temp.sex"
+            class="filter-item"
+            placeholder="Please select gender"
+          >
+            <el-option
+              v-for="item in sexOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="phone"
+          prop="phone"
+        >
+          <el-input v-model="temp.phone" />
+        </el-form-item>
+        <el-form-item
+          label="email"
+          prop="email"
+        >
+          <el-input v-model="temp.email" />
+        </el-form-item>
+        <el-form-item
+          label="birthday"
+          prop="birthday"
+        >
+          <el-date-picker
+            v-model="temp.birthday"
+            type="date"
+            placeholder="Please picker a date"
+          />
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="dialogFormVisible = false">
+          Cancel
+        </el-button>
+        <el-button
+          type="primary"
+          @click="dialogStatus==='create'?createData():updateData()"
+        >
+          Confirm
+        </el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      :title="textMap[dialogStatus]"
       :visible.sync="dialogFormUpgrade"
     >
-      <!--      :rules="rules"-->
       <el-form
         ref="dataForm"
         :model="tempUpgrade"
@@ -402,16 +410,11 @@
 
 <script>
 
-import {
-  deleteUser,
-  vipList,
-  changeVipLevel,
-  vendorList,
-  addVendorBasic
-} from '@/api/member'
+import {editUserInfo, deleteUser, vipList, changeVipLevel, userObjectList, educatorList} from '@/api/member'
 import waves from '@/directive/waves' // waves directive
 import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'
+import {addDeals} from '@/api/deals' // secondary package based on el-pagination
 import {addEvent} from '@/api/events'
 
 export default {
@@ -431,6 +434,49 @@ export default {
   },
   data() {
     return {
+      dealsType: [{label: 'Deal', value: 1}, {label: 'Discount', value: 2}],
+      dealsTwo: [{label: 'All Locations', value: 1}, {label: 'Limited', value: 0}],
+      dealsThree: [{label: '1 year', value: 1}, {label: '2 year', value: 2}],
+      dealsFour: [{label: 'Shanghai', value: 1}, {label: 'Other', value: 0}],
+      eventsOne: [{label: 'Social', value: 1}, {label: 'Professional', value: 2}],
+      userListData: [],
+      popuCityList: [],
+      dialogFormDealsVisible: false,
+
+      dealsTempData: {
+        user_id: 1,
+        is_unregister: undefined,
+        type: undefined,
+        is_all: undefined,
+        file: undefined,
+        due_contract: undefined,
+        pay_money: undefined,
+        desc: undefined,
+        deal_id: undefined,
+        city: undefined,
+        location: undefined,
+        identity: undefined
+      },
+      fileUrl: undefined,
+      fileList: undefined,
+      eventsFileUrl: undefined,
+      eventsFileList: undefined,
+      dialogFormEventsVisible: false,
+      eventsTempData: {
+        user_id: 1,
+        name: undefined,
+        desc: undefined,
+        is_all: undefined,
+        type_desc: undefined,
+        pay_money: undefined,
+        date: undefined,
+        start_time: undefined,
+        end_time: undefined,
+        file: undefined,
+        location: undefined,
+        city: undefined,
+        is_unregister: 0
+      },
 
       tableKey: 0,
       list: null,
@@ -462,13 +508,13 @@ export default {
       showReviewer: false,
       temp: {
         user_id: undefined,
+        username: undefined,
+        nickname: undefined,
+        truename: undefined,
+        sex: undefined,
+        phone: undefined,
         email: undefined,
-        logo: undefined,
-        wechat_public_qrcode: undefined,
-        wechat_public_name: undefined,
-        vendor_name_en: undefined,
-        vendor_bio: undefined,
-        work_email: undefined
+        birthday: ''
       },
       tempUpgrade: {
         identity: undefined,
@@ -485,15 +531,13 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        // username: [{ required: true, message: 'username is required', trigger: 'change' }],
-        // birthday: [{ type: 'date', required: true, message: 'birthday is required', trigger: 'change' }],
-        // nickname: [{ required: true, message: 'nickname is required', trigger: 'blur' }]
+        username: [{required: true, message: 'username is required', trigger: 'change'}],
+        birthday: [{type: 'date', required: true, message: 'birthday is required', trigger: 'change'}],
+        nickname: [{required: true, message: 'nickname is required', trigger: 'blur'}]
       },
       downloadLoading: false,
       dialogUserDetailVisible: false,
-      userDetailData: [],
-      eventStartTime: undefined,
-      eventEndTime: undefined
+      userDetailData: []
 
     }
   },
@@ -510,41 +554,46 @@ export default {
   created() {
     this.getList()
     this.getVipList()
-  },
-  mounted() {
-
+    this.getUserObjList()
   },
   methods: {
-
+    getUserObjList() {
+      userObjectList({pid: 71}).then(res => {
+        console.log(res)
+        this.popuCityList = res.message
+      })
+    },
     handleAddDeals(row) {
-      this.$router.push({ path: '/deals/addDeals', query: { uid: row.user_id }})
+      this.dialogFormDealsVisible = true
+      this.dealsTempData.user_id = row.id
     },
     handleAddEvents(row) {
-      this.$router.push({ path: '/events/addEvents', query: { uid: row.user_id }})
+      this.dialogFormEventsVisible = true
+
+      this.dealsTempData.user_id = row.id
     },
     createEvents() {
-      // console.log(this.eventsTempData)
+      console.log(this.eventsTempData)
       // console.log(tempData.birthday.getFullYear())
-      if (this.eventStartTime != undefined) {
-        this.eventsTempData.start_time = this.eventStartTime
+      const year = this.eventsTempData.date.getFullYear()
+      const month = this.eventsTempData.date.getMonth() + 1
+      const day = this.eventsTempData.date.getDate()
+
+      this.eventsTempData.date = year + '-' + month + '-' + day
+
+      if (this.eventsTempData.is_unregister == 1) {
+        this.eventsTempData.user_id = 1
       }
-      if (this.eventEndTime != undefined) {
-        this.eventsTempData.end_time = this.eventEndTime
-      }
-      this.eventsTempData.location = this.mapInfo.address
-      this.eventsTempData.lat = this.mapInfo.lat
-      this.eventsTempData.lng = this.mapInfo.lng
       addEvent(this.eventsTempData).then(response => {
-        // console.log(response)
+        console.log(response)
         if (response.code == 200) {
           this.$message({
-            message: 'Success',
+            message: '操作Success',
             type: 'success'
           })
           this.dialogFormEventsVisible = false
-          this.getList()
           this.eventsTempData = {
-            user_id: undefined,
+            user_id: 1,
             name: undefined,
             desc: undefined,
             is_all: undefined,
@@ -555,25 +604,56 @@ export default {
             end_time: undefined,
             file: undefined,
             location: undefined,
-            province: undefined,
-            province_name: undefined,
             city: undefined,
-            city_name: undefined,
-            district: undefined,
-            district_name: undefined,
-            third_com_name: undefined,
-            third_com_logo: undefined,
-            third_com_bg: undefined,
-            lng: undefined,
-            lat: undefined
+            is_unregister: 0
           }
         }
       })
     },
+    createDeals() {
+      console.log(this.dealsTempData)
+      if (this.dealsTempData.is_unregister == 1) {
+        this.dealsTempData.user_id = 1
+      }
+      addDeals(this.dealsTempData).then(response => {
+        console.log(response)
+        if (response.code == 200) {
+          this.$message({
+            message: '操作Success',
+            type: 'success'
+          })
+          this.dialogFormDealsVisible = false
+        }
+      })
+    },
+    uploadFileSuccess(response, file, fileList) {
+      console.log(response)
+      // console.log(file)
+      // console.log(fileList)
+      if (response.code == 200) {
+        this.fileUrl = response.data[0].file_url
+        this.dealsTempData.file = response.data[0].file_url
+        // const file_name = response.data[0].file_name
+      } else {
+        console.log(response.msg)
+      }
+    },
+    uploadEventsFileSuccess(response, file, eventsFileList) {
+      console.log(response)
+      // console.log(file)
+      // console.log(fileList)
+      if (response.code == 200) {
+        this.eventsFileUrl = response.data[0].file_url
+        this.eventsTempData.file = response.data[0].file_url
+        // const file_name = response.data[0].file_name
+      } else {
+        console.log(response.msg)
+      }
+    },
     getList() {
       this.listLoading = true
       // console.log(this.listQuery)
-      vendorList(this.listQuery).then(response => {
+      educatorList(this.listQuery).then(response => {
         // console.log(response)
         this.list = response.message.data
         this.total = response.message.total
@@ -652,15 +732,32 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.$router.push({path: '/users/editVendor', query: {uid: row.user_id}})
+      this.$router.push({path: '/educator/editEducator', query: {uid: row.user_id}})
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           // console.log(this.temp)
           const tempData = Object.assign({}, this.temp)
+          const tempObj = {}
+          tempObj.username = this.temp.username
+          tempObj.nickname = this.temp.nickname
+          tempObj.truename = this.temp.truename
+          tempObj.sex = this.temp.sex
+          tempObj.phone = this.temp.phone
+          tempObj.email = this.temp.email
+          tempObj.user_id = this.temp.user_id
 
-          addVendorBasic(tempData).then((res) => {
+          // console.log(tempData.birthday.getFullYear())
+          const year = tempData.birthday.getFullYear()
+          const month = tempData.birthday.getMonth() + 1
+          const day = tempData.birthday.getDate()
+          const birthdayStr = year + '-' + month + '-' + day
+          tempObj.birthday = birthdayStr
+          tempData.birthday = birthdayStr // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          // console.log(tempData)
+          editUserInfo(tempObj).then((res) => {
+            console.log(res)
             if (res.code == 200) {
               this.dialogFormVisible = false
               this.$notify({
@@ -671,6 +768,8 @@ export default {
               })
               this.getList()
             }
+            // const index = this.list.findIndex(v => v.id === this.temp.id)
+            // this.list.splice(index, 1, this.temp)
           })
         }
       })
@@ -740,6 +839,7 @@ export default {
               that.dialogFormUpgrade = false
             }
           })
+
           // console.log(tempData)
         }
       })
@@ -775,6 +875,20 @@ export default {
       this.dialogUserDetailVisible = true
       this.userDetailData.push(detail)
       console.log(detail)
+    },
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['id', 'name', 'phone', 'is_educator', 'is_business', 'is_vendor', 'is_other', 'is_seeking', 'identity']
+        const filterVal = ['id', 'name', 'phone', 'is_educator', 'is_business', 'is_vendor', 'is_other', 'is_seeking', 'identity']
+        const data = this.formatJson(filterVal)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: 'table-list'
+        })
+        this.downloadLoading = false
+      })
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {

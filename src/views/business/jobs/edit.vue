@@ -562,7 +562,7 @@
 
 import {userObjectList, userInfo} from '@/api/member'
 import {addJobs, addJobProfile, jobDetail, uploadExcel} from '@/api/jobs'
-import nationality from '@/views/users/nationality'
+import nationality from '@/utils/nationality'
 import {randomString} from '@/utils'
 import {getAreas} from '@/api/location'
 

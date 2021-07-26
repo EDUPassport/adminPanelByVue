@@ -306,7 +306,7 @@
 <script>
 import { userInfo, addBusinessBasic, addProfile, userObjectList, subCateLists } from '@/api/member'
 import { getAreas } from '@/api/location'
-import nationality from '@/views/users/nationality'
+import nationality from '@/utils/nationality'
 
 export default {
   data() {

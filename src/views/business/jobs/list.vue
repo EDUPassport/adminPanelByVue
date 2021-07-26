@@ -450,10 +450,10 @@ export default {
       }
     },
     handleCreate() {
-      this.$router.push({ path: '/jobs/addJobs' })
+      this.$router.push({ path: '/business/jobs/addJobs' })
     },
     handleUpdate(row) {
-      this.$router.push({ path: '/jobs/editJobs', query: { id: row.id, uid: row.user_id }})
+      this.$router.push({ path: '/business/jobs/editJobs', query: { id: row.id, uid: row.user_id }})
     },
     handleDelete(row, index) {
       this.$confirm('This operation will delete the Job, do you want to continue?', 'Notice', {

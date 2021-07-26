@@ -473,10 +473,10 @@ export default {
       })
     },
     handleDetail(row){
-      this.$router.push({ path: '/events/detail', query: { event_id: row.id }})
+      this.$router.push({ path: '/vendor/events/detail', query: { event_id: row.id }})
     },
     handleUpdate(row) {
-      this.$router.push({ path: '/events/editEvents', query: { event_id: row.id }})
+      this.$router.push({ path: '/vendor/events/editEvents', query: { event_id: row.id }})
     },
     eventsTempDateChange(e) {
       this.eventsTempData.date = format(e, 'yyyy-MM-dd')

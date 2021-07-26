@@ -399,7 +399,7 @@ export default {
             message: 'Success',
             type: 'success'
           })
-          this.$router.push({ path: '/jobs/list', query: {}})
+          this.$router.push({ path: '/business/jobs/list', query: {}})
           this.dialogFormMultiPosts = false
         } else {
           this.$message({
@@ -478,14 +478,14 @@ export default {
       this.getList()
     },
     handleCreateJobs(row) {
-      this.$router.push({ path: '/jobs/addJobs', query: { uid: row.user_id, business_id: row.id, business_name: row.business_name }})
+      this.$router.push({ path: '/business/jobs/addJobs', query: { uid: row.user_id, business_id: row.id, business_name: row.business_name }})
     },
     handleMultiCreateJobs(row) {
       this.tempMultiPosts.user_id = row.user_id
       this.dialogFormMultiPosts = true
     },
     handleUpdate(row) {
-      this.$router.push({ path: '/users/editBusiness', query: { uid: row.user_id }})
+      this.$router.push({ path: '/business/editBusiness', query: { uid: row.user_id }})
     },
     handleMemberLevel(row, index) {
       // this.tempUpgrade = Object.assign({}, row) // copy obj
