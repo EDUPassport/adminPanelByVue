@@ -49,7 +49,7 @@ export function myAds(params){
 
 export function setUserAds(data) {
   return request({
-    url: '/Admin/setUserAds',
+    url: '/admin/setUserAds',
     method: 'post',
     data
   })
