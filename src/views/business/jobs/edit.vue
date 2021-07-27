@@ -90,25 +90,43 @@
           label="Working Hours"
           prop="working_hours"
         >
-          <el-time-select
-            v-model="workingStartTime"
-            placeholder="Start Time"
-            :picker-options="{
-              start: '00:00',
-              step: '00:01',
-              end: '24:00'
-            }"
-          />
-          <el-time-select
-            v-model="workingEndTime"
-            placeholder="End Time"
-            :picker-options="{
-              start: '00:00',
-              step: '00:01',
-              end: '24:00',
-              minTime: workingStartTime
-            }"
-          />
+          <div>
+            <el-button @click="dialogWorkingHours=true">Add</el-button>
+          </div>
+          <div class="working-hours-item" v-for="(item,index) in workingHoursData" :key="index">
+            <el-tag class="working-hours-week" v-for="(week,i) in item.week" :key="i">
+              <span v-if="week==1">M</span>
+              <span v-if="week==2">T</span>
+              <span v-if="week==3">W</span>
+              <span v-if="week==4">Th</span>
+              <span v-if="week==5">F</span>
+              <span v-if="week==6">Sa</span>
+              <span v-if="week==7">Su</span>
+            </el-tag>
+            <div class="working-hours-hours">{{item.hours}}</div>
+            <div class="working-hours-remove" @click="removeWorkingHours(index)">
+              <el-button type="danger" size="mini">Remove</el-button>
+            </div>
+          </div>
+          <!--          <el-time-select-->
+          <!--            v-model="workingStartTime"-->
+          <!--            placeholder="Start Time"-->
+          <!--            :picker-options="{-->
+          <!--              start: '00:00',-->
+          <!--              step: '00:01',-->
+          <!--              end: '24:00'-->
+          <!--            }"-->
+          <!--          />-->
+          <!--          <el-time-select-->
+          <!--            v-model="workingEndTime"-->
+          <!--            placeholder="End Time"-->
+          <!--            :picker-options="{-->
+          <!--              start: '00:00',-->
+          <!--              step: '00:01',-->
+          <!--              end: '24:00',-->
+          <!--              minTime: workingStartTime-->
+          <!--            }"-->
+          <!--          />-->
         </el-form-item>
 
         <el-form-item
@@ -155,7 +173,7 @@
           label="Job Title"
           prop="job_title"
         >
-          <el-input v-model="jobForm.job_title" />
+          <el-input v-model="jobForm.job_title"/>
         </el-form-item>
         <el-form-item
           label="Position Description"
@@ -458,91 +476,6 @@
         </el-form-item>
       </div>
 
-      <!--      <div class="container-item">-->
-      <!--        <div class="title">Contact Person Info</div>-->
-      <!--        <el-form-item label="Will you be doing the interview?">-->
-      <!--          <el-switch-->
-      <!--            v-model="jobForm.is_interview"-->
-      <!--            active-color="#13ce66"-->
-      <!--            inactive-color="#ff4949"-->
-      <!--            :active-value="1"-->
-      <!--            :inactive-value="0"-->
-      <!--            @change="interviewChange"-->
-      <!--          />-->
-      <!--        </el-form-item>-->
-      <!--        <el-form-item label="Name" prop="interview_name">-->
-      <!--          <el-input v-model="jobForm.interview_name" />-->
-      <!--        </el-form-item>-->
-      <!--        <el-form-item label="Nationality">-->
-      <!--          <el-select v-model="jobForm.interview_nationlity">-->
-      <!--            <el-option v-for="item in nationalityList" :key="item.code" :label="item.name" :value="item.name" />-->
-      <!--          </el-select>-->
-      <!--        </el-form-item>-->
-      <!--        <el-form-item label="Photo">-->
-      <!--          <el-upload-->
-      <!--            class="upload-demo"-->
-      <!--            drag-->
-      <!--            :headers="uploadHeaders"-->
-      <!--            name="file[]"-->
-      <!--            :action="uploadRequestUrl"-->
-      <!--            multiple-->
-      <!--            list-type="picture"-->
-      <!--            :limit="1"-->
-      <!--            :on-success="photoSuccess"-->
-      <!--            :file-list="photoFileList"-->
-      <!--          >-->
-      <!--            <i class="el-icon-upload" />-->
-      <!--            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>-->
-      <!--          </el-upload>-->
-      <!--        </el-form-item>-->
-      <!--      </div>-->
-
-      <!--      <div class="container-item">-->
-      <!--        <div class="title">Third Info (第三方信息)</div>-->
-
-      <!--        <el-form-item label="Third Logo">-->
-      <!--          <el-upload-->
-      <!--            class="upload-demo"-->
-      <!--            drag-->
-      <!--            :headers="uploadHeaders"-->
-      <!--            name="file[]"-->
-      <!--            :action="uploadRequestUrl"-->
-      <!--            multiple-->
-      <!--            list-type="picture"-->
-      <!--            :limit="1"-->
-      <!--            :on-success="uploadThirdLogoSuccess"-->
-      <!--            :file-list="thirdLogoFileList"-->
-      <!--          >-->
-      <!--            <i class="el-icon-upload" />-->
-      <!--            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>-->
-      <!--            &lt;!&ndash;            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>&ndash;&gt;-->
-      <!--          </el-upload>-->
-      <!--        </el-form-item>-->
-
-      <!--        <el-form-item label="Third Header Photo">-->
-      <!--          <el-upload-->
-      <!--            class="upload-demo"-->
-      <!--            drag-->
-      <!--            :headers="uploadHeaders"-->
-      <!--            name="file[]"-->
-      <!--            :action="uploadRequestUrl"-->
-      <!--            multiple-->
-      <!--            list-type="picture"-->
-      <!--            :limit="1"-->
-      <!--            :on-success="uploadThirdHeaderPhotoSuccess"-->
-      <!--            :file-list="thirdHeaderPhotoFileList"-->
-      <!--          >-->
-      <!--            <i class="el-icon-upload" />-->
-      <!--            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>-->
-      <!--            &lt;!&ndash;            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>&ndash;&gt;-->
-      <!--          </el-upload>-->
-      <!--        </el-form-item>-->
-
-      <!--        <el-form-item label="Third Company Name">-->
-      <!--          <el-input v-model="jobForm.third_com_name" class="filter-item" placeholder="Please input " />-->
-      <!--        </el-form-item>-->
-      <!--      </div>-->
-
       <div class="container-item">
         <el-form-item>
           <el-button
@@ -555,6 +488,26 @@
         </el-form-item>
       </div>
     </el-form>
+
+    <el-dialog title="Week" :visible.sync="dialogWorkingHours">
+      <el-form :model="workingHoursForm" label-position="top">
+        <el-form-item label="Week">
+          <el-checkbox-group v-model="checkedWeekList" @change="handleCheckedWeeksChange">
+            <el-checkbox v-for="(week,index) in weekList" :label="week.value" :key="index" :value="week.value">
+              {{ week.label }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="Hours">
+          <el-input v-model="workingHoursStr" autocomplete="off" placeholder="09:00-18:00"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogWorkingHours = false">Cancel</el-button>
+        <el-button type="primary" @click="confirmWorkingHours()">Confirm</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -568,6 +521,7 @@ import {getAreas} from '@/api/location'
 
 import {AMapManager} from 'vue-amap'
 import {addEvent} from "@/api/events";
+
 const amapManager = new AMapManager()
 
 export default {
@@ -708,10 +662,49 @@ export default {
 
       thirdLogoFileList: undefined,
       thirdHeaderPhotoFileList: undefined,
-      workingStartTime:'',
-      workingEndTime:'',
-      updateLoadingStatus:false,
-
+      workingStartTime: '',
+      workingEndTime: '',
+      updateLoadingStatus: false,
+      dialogWorkingHours: false,
+      workingHoursForm: {
+        week: undefined,
+        hours: undefined
+      },
+      checkAll: false,
+      checkedWeekList: [],
+      weekList: [
+        {
+          label: 'M',
+          value: 1
+        },
+        {
+          label: 'T',
+          value: 2
+        },
+        {
+          label: 'W',
+          value: 3
+        },
+        {
+          label: 'Th',
+          value: 4
+        },
+        {
+          label: 'F',
+          value: 5
+        }, {
+          label: 'Sa',
+          value: 6
+        },
+        {
+          label: "Su",
+          value: 7
+        }
+      ],
+      isIndeterminate: true,
+      workingHoursData: [],
+      weekData:[],
+      workingHoursStr:''
     }
 
   },
@@ -756,6 +749,29 @@ export default {
     this.initMapByInput()
   },
   methods: {
+    handleCheckedWeeksChange(value) {
+      // console.log(value);
+      this.weekData = value;
+    },
+    removeWorkingHours(index){
+      // console.log(index)
+      this.workingHoursData.splice(index,1)
+    },
+    confirmWorkingHours(){
+
+      let weekData = this.weekData;
+      let hoursStr = this.workingHoursStr;
+
+      let obj = {
+        week:weekData,
+        hours:hoursStr,
+        show:false
+      }
+
+      // console.log(obj)
+      this.workingHoursData.push(obj);
+      this.dialogWorkingHours = false;
+    },
     getFormattedAddress() {
       AMap.plugin('AMap.Geocoder', () => {
         const GeocoderOptions = {
@@ -852,13 +868,12 @@ export default {
     },
     updateJob() {
       this.updateLoadingStatus = true;
-      if(this.workingEndTime && this.workingStartTime){
-        this.jobForm.working_hours = this.workingStartTime + '-' + this.workingEndTime
-      }
-      this.jobForm.job_location = this.jobForm.district_name + ', '+this.jobForm.city_name+', '+this.jobForm.province_name
+
+      this.jobForm.job_location = this.jobForm.district_name + ', ' + this.jobForm.city_name + ', ' + this.jobForm.province_name
       this.jobForm.address = this.mapInfo.address
       this.jobForm.lat = this.mapInfo.lat
       this.jobForm.lng = this.mapInfo.lng
+      this.jobForm.working_hours = JSON.stringify(this.workingHoursData);
       const data = Object.assign({}, this.jobForm)
 
       this.$confirm('Sure you want to perform the operation?', 'Tips', {
@@ -883,7 +898,7 @@ export default {
             this.languagesConfirm(jobId, uid)
             this.getJobDetail(jobId)
             this.$message.success('Success')
-            this.updateLoadingStatus=false;
+            this.updateLoadingStatus = false;
           } else {
             this.$message.error(res.msg)
           }
@@ -897,7 +912,7 @@ export default {
           type: 'info',
           message: 'Canceled Successfully'
         });
-        this.updateLoadingStatus=false;
+        this.updateLoadingStatus = false;
       });
 
 
@@ -909,7 +924,7 @@ export default {
       const expand = []
       const object_id = []
       e.forEach(value => {
-        const index = options.findIndex(function(item) {
+        const index = options.findIndex(function (item) {
           return item.id === value
         })
         if (index === -1) {
@@ -946,7 +961,7 @@ export default {
       const expand = []
       const object_id = []
       e.forEach(value => {
-        const index = options.findIndex(function(item) {
+        const index = options.findIndex(function (item) {
           return item.id === value
         })
         if (index === -1) {
@@ -983,7 +998,7 @@ export default {
       const expand = []
       const object_id = []
       e.forEach(value => {
-        const index = options.findIndex(function(item) {
+        const index = options.findIndex(function (item) {
           return item.id === value
         })
         if (index === -1) {
@@ -1020,7 +1035,7 @@ export default {
       const expand = []
       const object_id = []
       e.forEach(value => {
-        const index = options.findIndex(function(item) {
+        const index = options.findIndex(function (item) {
           return item.id === value
         })
         if (index === -1) {
@@ -1057,7 +1072,7 @@ export default {
       const expand = []
       const object_id = []
       e.forEach(value => {
-        const index = options.findIndex(function(item) {
+        const index = options.findIndex(function (item) {
           return item.id === value
         })
         if (index === -1) {
@@ -1129,18 +1144,13 @@ export default {
           this.jobForm.desc = res.message.desc
           this.jobForm.apply_due_date = res.message.apply_due_date
           this.jobForm.class_size = res.message.class_size
-          this.jobForm.working_hours = res.message.working_hours
+
 
           const workHours = res.message.working_hours
           if (workHours) {
-            const workHoursArr = workHours.split('-')
-            console.log(workHoursArr)
-            if (workHoursArr[0] && workHoursArr[1] !== 'undefined') {
-              this.workingStartTime = workHoursArr[0]
-            }
-            if (workHoursArr[1] && workHoursArr[1] !== 'undefined') {
-              this.workingEndTime = workHoursArr[1]
-            }
+            // this.jobForm.working_hours = JSON.parse(workHours)
+            this.jobForm.working_hours = workHours
+            this.workingHoursData = JSON.parse(workHours)
           }
           this.jobForm.salary_min = res.message.salary_min
           this.jobForm.salary_max = res.message.salary_max
@@ -1170,16 +1180,16 @@ export default {
           this.jobForm.age_min = res.message.age_min
           this.jobForm.age_max = res.message.age_max
 
-          if(res.message.address){
+          if (res.message.address) {
             self.mapInfo.address = res.message.address
           }
-          if(res.message.lat){
+          if (res.message.lat) {
             self.mapInfo.lat = res.message.lat
           }
-          if(res.message.lng){
+          if (res.message.lng) {
             self.mapInfo.lng = res.message.lng
           }
-          if(res.message.lat && res.message.lng){
+          if (res.message.lat && res.message.lng) {
             self.mapInfo.lnglat = [res.message.lng, res.message.lat]
           }
 
@@ -1375,5 +1385,28 @@ export default {
   font-weight: bold;
   padding: 20px;
 }
+.working-hours-item{
+  border: 1px solid #eeeeee;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 20px;
+  border-radius: 10px;
+  margin-top: 10px;
+  position: relative;
+}
+.working-hours-week{
+  margin-left: 10px;
+}
+.working-hours-hours{
+  margin-left: 20px;
+}
+.working-hours-remove{
+  position: absolute;
+  right: 10px;
+  top: 10px;
 
+}
 </style>
+
