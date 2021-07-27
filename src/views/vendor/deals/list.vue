@@ -75,14 +75,14 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="First&&Last Name"
+        label="Company Name"
         width="150"
       >
         <template
-          v-if="row.user_info"
+          v-if="row.user_info.vendor_name_en"
           slot-scope="{row}"
         >
-          {{ row.user_info.first_name }} {{ row.user_info.last_name }}
+          {{ row.user_info.vendor_name_en }}
         </template>
       </el-table-column>
       <el-table-column

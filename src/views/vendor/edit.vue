@@ -240,11 +240,36 @@
       </el-form-item>
 
     </el-form>
+
+    <div style="margin-top: 20px;">
+      <div class="title">Images (6 max)</div>
+      <div class="images6max-container">
+        <el-upload
+          class="upload-images6max"
+          drag
+          :headers="uploadHeaders"
+          name="file[]"
+          :action="uploadRequestUrl"
+          multiple
+          list-type="picture"
+          :limit="6"
+          :on-success="images6maxSuccess"
+          :file-list="images6maxFileList"
+        >
+          <i class="el-icon-upload" />
+          <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+        </el-upload>
+
+        <el-button type="primary" @click="updateImages6max()">Update</el-button>
+      </div>
+
+    </div>
+
   </div>
 </template>
 
 <script>
-import { userInfo, addVendorBasic, subCateLists } from '@/api/member'
+import { userInfo, addVendorBasic, subCateLists ,addUserImg} from '@/api/member'
 import { getAreas } from '@/api/location'
 import nationality from '@/utils/nationality'
 import { format } from 'date-fns'
@@ -302,7 +327,9 @@ export default {
           { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ]
       },
-      subCateData: []
+      subCateData: [],
+      images6maxFileList:[],
+      images6maxData:[]
     }
   },
   computed: {
@@ -383,6 +410,20 @@ export default {
           } else {
             this.vendorLogoFileList = undefined
           }
+
+          let userImages = res.message.vendor_info.user_images;
+          if(userImages.length>0){
+            let imagesData = [];
+            userImages.forEach(item=>{
+              let obj = {
+                name:'',
+                url:item.url
+              }
+              imagesData.push(obj)
+            })
+            this.images6maxFileList = imagesData;
+          }
+
           if (license !== '') {
             this.businessLicenseFileList = [{ name: '', url: license }]
           } else {
@@ -500,6 +541,37 @@ export default {
         console.log(response.msg)
       }
     },
+    images6maxSuccess(response){
+      // console.log(response);
+      if(response.code == 200){
+        let fileUrl = response.data[0].file_url;
+        this.images6maxData.push(fileUrl)
+      }else{
+        console.log(response.msg)
+      }
+      console.log(this.images6maxData)
+
+    },
+    updateImages6max(){
+      let data = {
+        user_id:this.$route.query.uid,
+        identity:3,
+        img:this.images6maxData
+      }
+      addUserImg(data).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+          this.$message.success(res.msg)
+          setTimeout(function() {
+            window.location.reload()
+          }, 1000)
+        }else{
+          this.$message.error(res.msg)
+        }
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -550,5 +622,10 @@ export default {
   font-weight: bold;
   text-align: center;
 }
-
+.images6max-container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
 </style>

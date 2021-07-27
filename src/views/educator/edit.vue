@@ -158,7 +158,29 @@
       </el-form-item>
 
     </el-form>
+    <div style="margin-top: 20px;">
+      <div class="title">Images (6 max)</div>
+      <div class="images6max-container">
+        <el-upload
+          class="upload-images6max"
+          drag
+          :headers="uploadHeaders"
+          name="file[]"
+          :action="uploadRequestUrl"
+          multiple
+          list-type="picture"
+          :limit="6"
+          :on-success="images6maxSuccess"
+          :file-list="images6maxFileList"
+        >
+          <i class="el-icon-upload" />
+          <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+        </el-upload>
 
+        <el-button type="primary" @click="updateImages6max()">Update</el-button>
+      </div>
+
+    </div>
     <div style="margin-top: 20px;">
       <div class="title">Certifications</div>
       <div class="select-container">
@@ -435,7 +457,7 @@
 </template>
 
 <script>
-import { addEduBasic, userInfo, userObjectList, addProfile, addUserEducation, addUserWork, subCateLists } from '@/api/member'
+import { addEduBasic, userInfo, userObjectList, addProfile, addUserEducation, addUserWork, subCateLists,addUserImg } from '@/api/member'
 import { getAreas } from '@/api/location'
 import nationality from '@/utils/nationality'
 
@@ -530,7 +552,9 @@ export default {
       educationStatus: false,
       durationStudy: undefined,
       subCateData: [],
-      eduCategory: []
+      eduCategory: [],
+      images6maxFileList:[],
+      images6maxData:[]
 
     }
   },
@@ -968,6 +992,20 @@ export default {
           } else {
             this.headerPhotoFileList = undefined
           }
+
+          let userImages = educatorInfo.user_images;
+          if(userImages.length>0){
+            let imagesData = [];
+            userImages.forEach(item=>{
+              let obj = {
+                name:'',
+                url:item.url
+              }
+              imagesData.push(obj)
+            })
+            this.images6maxFileList = imagesData;
+          }
+
           // teaching certificate
           const teachingCertificate = educatorInfo.Teaching_certificate
           const certificate_arr = []
@@ -1176,6 +1214,17 @@ export default {
         console.log(response.msg)
       }
     },
+    images6maxSuccess(response){
+      // console.log(response);
+      if(response.code == 200){
+        let fileUrl = response.data[0].file_url;
+        this.images6maxData.push(fileUrl)
+      }else{
+        console.log(response.msg)
+      }
+      console.log(this.images6maxData)
+
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -1240,7 +1289,28 @@ export default {
           return false
         }
       })
+    },
+    updateImages6max(){
+       let data = {
+          user_id:this.$route.query.uid,
+         identity:1,
+         img:this.images6maxData
+       }
+       addUserImg(data).then(res=>{
+         console.log(res)
+         if(res.code == 200){
+           this.$message.success(res.msg)
+           setTimeout(function() {
+             window.location.reload()
+           }, 1000)
+         }else{
+           this.$message.error(res.msg)
+         }
+       }).catch(err=>{
+         console.log(err)
+       })
     }
+
   }
 }
 </script>
@@ -1295,5 +1365,10 @@ export default {
 .work-exp-form {
   margin-top: 20px;
 }
-
+.images6max-container{
+    display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
 </style>

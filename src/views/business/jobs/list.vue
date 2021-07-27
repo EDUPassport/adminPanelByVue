@@ -200,8 +200,11 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="Actions" align="center" width="400" class-name="small-padding fixed-width">
+          <el-table-column label="Actions" align="center" width="500" class-name="small-padding fixed-width">
             <template slot-scope="{row,$index}">
+              <el-button type="primary" size="mini" @click="handleApplications(row)">
+                Applications
+              </el-button>
               <el-button type="primary" size="mini" @click="handleAds(row)">
                 Ads
               </el-button>
@@ -410,7 +413,7 @@ export default {
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 500)
       })
     },
     handleFilter() {
@@ -454,6 +457,9 @@ export default {
     },
     handleUpdate(row) {
       this.$router.push({ path: '/business/jobs/editJobs', query: { id: row.id, uid: row.user_id }})
+    },
+    handleApplications(row){
+      this.$router.push({path:'/business/jobs/resume/list',query:{job_id:row.id}})
     },
     handleDelete(row, index) {
       this.$confirm('This operation will delete the Job, do you want to continue?', 'Notice', {

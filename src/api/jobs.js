@@ -89,3 +89,10 @@ export function uploadJobs(data) {
     data
   })
 }
+export function getJobResume(params) {
+  return request({
+    url: 'admin/getJobResume',
+    method: 'get',
+    params
+  })
+}

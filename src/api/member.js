@@ -146,3 +146,11 @@ export function subCateLists(params) {
     params
   })
 }
+
+export function addUserImg(data) {
+  return request({
+    url: '/admin/addUserImg',
+    method: 'post',
+    data
+  })
+}

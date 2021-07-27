@@ -338,6 +338,15 @@ export const constantRoutes = [
         meta: {
           title: 'Add Job', noCache: true, activeMenu: '/business/jobs/list'
         }
+      },
+      {
+        path: 'jobs/resume/list',
+        component: () => import('@/views/business/jobs/resume/list'),
+        hidden: true,
+        name: 'Applications',
+        meta: {
+          title: 'Applications', noCache: true, activeMenu: '/business/jobs/list'
+        }
       }
 
     ]
