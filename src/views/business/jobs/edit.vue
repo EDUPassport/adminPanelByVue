@@ -91,7 +91,7 @@
           prop="working_hours"
         >
           <div>
-            <el-button @click="dialogWorkingHours=true">Add</el-button>
+            <el-button type="primary" @click="dialogWorkingHours=true">Add+</el-button>
           </div>
           <div class="working-hours-item" v-for="(item,index) in workingHoursData" :key="index">
             <el-tag class="working-hours-week" v-for="(week,i) in item.week" :key="i">
@@ -108,25 +108,6 @@
               <el-button type="danger" size="mini">Remove</el-button>
             </div>
           </div>
-          <!--          <el-time-select-->
-          <!--            v-model="workingStartTime"-->
-          <!--            placeholder="Start Time"-->
-          <!--            :picker-options="{-->
-          <!--              start: '00:00',-->
-          <!--              step: '00:01',-->
-          <!--              end: '24:00'-->
-          <!--            }"-->
-          <!--          />-->
-          <!--          <el-time-select-->
-          <!--            v-model="workingEndTime"-->
-          <!--            placeholder="End Time"-->
-          <!--            :picker-options="{-->
-          <!--              start: '00:00',-->
-          <!--              step: '00:01',-->
-          <!--              end: '24:00',-->
-          <!--              minTime: workingStartTime-->
-          <!--            }"-->
-          <!--          />-->
         </el-form-item>
 
         <el-form-item
@@ -499,7 +480,25 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="Hours">
-          <el-input v-model="workingHoursStr" autocomplete="off" placeholder="09:00-18:00"></el-input>
+          <el-time-select
+            v-model="workingStartTime"
+            placeholder="Start Time"
+            :picker-options="{
+                        start: '00:00',
+                        step: '00:01',
+                        end: '24:00'
+                      }"
+          />
+          <el-time-select
+            v-model="workingEndTime"
+            placeholder="End Time"
+            :picker-options="{
+                        start: '00:00',
+                        step: '00:01',
+                        end: '24:00',
+                        minTime: workingStartTime
+                      }"
+          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -518,9 +517,7 @@ import {addJobs, addJobProfile, jobDetail, uploadExcel} from '@/api/jobs'
 import nationality from '@/utils/nationality'
 import {randomString} from '@/utils'
 import {getAreas} from '@/api/location'
-
 import {AMapManager} from 'vue-amap'
-import {addEvent} from "@/api/events";
 
 const amapManager = new AMapManager()
 
@@ -760,7 +757,10 @@ export default {
     confirmWorkingHours(){
 
       let weekData = this.weekData;
-      let hoursStr = this.workingHoursStr;
+      let startHours = this.workingStartTime;
+      let endHours = this.workingEndTime;
+
+      let hoursStr = startHours + '-' + endHours;
 
       let obj = {
         week:weekData,
@@ -898,7 +898,10 @@ export default {
             this.languagesConfirm(jobId, uid)
             this.getJobDetail(jobId)
             this.$message.success('Success')
-            this.updateLoadingStatus = false;
+            setTimeout(function (){
+              window.location.reload();
+              this.updateLoadingStatus = false;
+            },1000)
           } else {
             this.$message.error(res.msg)
           }
@@ -1299,37 +1302,6 @@ export default {
         console.log(err)
       })
     },
-    photoSuccess(response) {
-      if (response.code === 200) {
-        this.photoFileList = [{name: '', url: response.data[0].file_url}]
-        this.jobForm.interview_imgurl = response.data[0].file_url
-        // const file_name = response.data[0].file_name
-      } else {
-        console.log(response.msg)
-      }
-    },
-    uploadThirdLogoSuccess(response, file, fileList) {
-      console.log(response)
-      // console.log(file)
-      // console.log(fileList)
-      if (response.code == 200) {
-        this.thirdLogoFileList = [{name: '', url: response.data[0].file_url}]
-        this.jobForm.third_com_logo = response.data[0].file_url
-      } else {
-        console.log(response.msg)
-      }
-    },
-    uploadThirdHeaderPhotoSuccess(response, file, fileList) {
-      console.log(response)
-      // console.log(file)
-      // console.log(fileList)
-      if (response.code == 200) {
-        this.thirdHeaderPhotoFileList = [{name: '', url: response.data[0].file_url}]
-        this.jobForm.third_com_bg = response.data[0].file_url
-      } else {
-        console.log(response.msg)
-      }
-    },
     getUserInfo(uid) {
       const params = {
         id: uid
@@ -1344,23 +1316,6 @@ export default {
       }).catch(err => {
         console.log(err)
       })
-    },
-    interviewChange(e) {
-      // console.log(e)
-      if (e == 1) {
-        this.jobForm.interview_name = this.businessUserInfo.first_name + ' ' + this.businessUserInfo.last_name
-        this.jobForm.interview_nationlity = this.businessUserInfo.nationality
-        this.jobForm.interview_imgurl = this.businessUserInfo.profile_photo
-        if (this.jobForm.interview_imgurl !== '') {
-          this.photoFileList = [{name: '', url: this.jobForm.interview_imgurl}]
-        } else {
-          this.photoFileList = undefined
-        }
-      } else {
-        this.jobForm.interview_name = undefined
-        this.jobForm.interview_nationlity = undefined
-        this.jobForm.interview_imgurl = undefined
-      }
     }
 
   }
