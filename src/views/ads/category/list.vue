@@ -17,7 +17,7 @@
           <el-form-item label="Name(CN)" prop="name_cn">
             <el-input v-model="ruleForm.name_cn"></el-input>
           </el-form-item>
-          <el-form-item label="Key" prop="name_key">
+          <el-form-item v-permission="['lei']" label="Key" prop="name_key">
             <el-input v-model="ruleForm.name_key"></el-input>
           </el-form-item>
           <el-form-item label="Money" prop="money">
@@ -153,6 +153,8 @@
 
 <script>
 import {adCategoryList, addCategory} from "@/api/ads";
+import permission from '@/directive/permission/permission'
+import waves from "@/directive/waves";
 
 export default {
   name: "list",
@@ -197,6 +199,7 @@ export default {
 
     }
   },
+  directives: { waves, permission },
   computed: {
     token() {
       return this.$store.state.user.token

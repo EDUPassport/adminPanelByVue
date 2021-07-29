@@ -25,9 +25,14 @@
             <span>{{ row.id }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Category" width="110px" align="center">
+        <el-table-column label="Category" width="160px" align="center">
           <template slot-scope="{row}">
             <span>{{row.category_en}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Profile" width="190px" align="center">
+          <template slot-scope="{row}">
+            <span>{{row.name_key}}</span>
           </template>
         </el-table-column>
         <el-table-column label="Link" width="200px" align="center">
@@ -114,6 +119,7 @@
             :limit="1"
             :on-success="uploadFileSuccess"
             :file-list="fileList"
+            :before-remove="bannerBeforeRemove"
           >
             <i class="el-icon-upload" />
             <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
@@ -131,6 +137,7 @@
             :limit="1"
             :on-success="adsBannerSuccess"
             :file-list="adsBannerFileList"
+            :before-remove="adsBannerBeforeRemove"
           >
             <i class="el-icon-upload" />
             <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
@@ -414,6 +421,11 @@ export default {
         console.log(response.msg)
       }
     },
+    bannerBeforeRemove(file, fileList){
+      if(file.status == 'success'){
+        this.fileUrl = ''
+      }
+    },
     adsBannerSuccess(response){
       if (response.code == 200) {
         this.adsBannerFileUrl = response.data[0].file_url
@@ -421,6 +433,11 @@ export default {
       } else {
         console.log(response.msg)
       }
+    },
+    adsBannerBeforeRemove(file, fileList){
+        if(file.status == 'success'){
+          this.adsBannerFileUrl = ''
+        }
     }
   }
 }
