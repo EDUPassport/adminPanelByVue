@@ -5,9 +5,9 @@
     </div>
 
     <el-dialog
-      title="Add"
+      title="Ads Category"
       :visible.sync="addDialogVisible"
-      width="80%"
+      width="60%"
       :before-close="handleClose">
       <div>
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="160px" class="demo-ruleForm">
@@ -26,16 +26,22 @@
           <el-form-item label="Duration" prop="days">
             <el-input v-model="ruleForm.days"></el-input>
           </el-form-item>
-          <el-form-item label="Title" prop="title">
-            <el-input v-model="ruleForm.title"></el-input>
+          <el-form-item label="Title(EN)" prop="title_en">
+            <el-input v-model="ruleForm.title_en"></el-input>
           </el-form-item>
-          <el-form-item label="Description" prop="desc">
-            <el-input v-model="ruleForm.desc" type="textarea"></el-input>
+          <el-form-item label="Title(CN)" prop="title_cn">
+            <el-input v-model="ruleForm.title_cn"></el-input>
+          </el-form-item>
+          <el-form-item label="Description(EN)" prop="desc_en">
+            <el-input v-model="ruleForm.desc_en" type="textarea"></el-input>
+          </el-form-item>
+          <el-form-item label="Description(CN)" prop="desc_cn">
+            <el-input v-model="ruleForm.desc_cn" type="textarea"></el-input>
           </el-form-item>
           <el-form-item label="Only Show in Admin" prop="is_admin">
             <el-select v-model="ruleForm.is_admin" class="filter-item" placeholder="Please select">
-              <el-option label="No" value="0" checked />
-              <el-option label="Yes" value="1" />
+              <el-option label="No" :value="0" checked />
+              <el-option label="Yes" :value="1" />
             </el-select>
           </el-form-item>
           <el-form-item label="Category" prop="category">
@@ -167,8 +173,10 @@ export default {
         name_cn: '',
         name_key:'',
         money:'',
-        title:'',
-        desc:'',
+        title_cn:'',
+        title_en:'',
+        desc_en:'',
+        desc_cn:'',
         pid: '',
         days:0,
         is_admin:0,
@@ -269,7 +277,8 @@ export default {
                 message: 'Success',
                 type: 'success'
               });
-              this.getAdsCategoryList()
+              this.getAdsCategoryList();
+              this.addDialogVisible = false;
               this.resetFileList();
             } else {
               this.$message.error(res.msg);
