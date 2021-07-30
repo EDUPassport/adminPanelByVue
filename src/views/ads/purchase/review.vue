@@ -23,6 +23,13 @@
         </template>
       </el-table-column>
       <el-table-column
+        label="Profile"
+        width="150">
+        <template slot-scope="scope" v-if="scope.row.ad_category">
+          {{ scope.row.ad_category.name_key }}
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="user_id"
         label="UserId"
         width="150">
@@ -41,7 +48,16 @@
             fit="contain"></el-image>
         </template>
       </el-table-column>
-
+      <el-table-column
+        prop="status"
+        label="Status"
+        width="150">
+        <template slot-scope="scope">
+          <el-tag  type="success" v-if="scope.row.status == 1">Success</el-tag>
+          <el-tag type="danger" v-if="scope.row.status == 2">Rejected</el-tag>
+          <el-tag type="info" v-if="scope.row.status == 3">Pending</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column
         label="Action"
         width="120">
