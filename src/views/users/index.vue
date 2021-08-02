@@ -51,6 +51,9 @@
       >
         Search
       </el-button>
+
+
+
     </div>
 
     <el-table
@@ -528,7 +531,7 @@
             drag
             :headers="uploadHeaders"
             name="file[]"
-            action="http://api.test.esl-passport.cn/api/admin/upload"
+            :action="uploadRequestUrl"
             multiple
             list-type="picture"
             :limit="1"
@@ -690,7 +693,7 @@
             drag
             :headers="uploadHeaders"
             name="file[]"
-            action="http://api.test.esl-passport.cn/api/admin/upload"
+            :action="uploadRequestUrl"
             multiple
             list-type="picture"
             :limit="1"
@@ -871,6 +874,7 @@
         </el-button>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
@@ -908,7 +912,7 @@ export default {
       userListData: [],
       popuCityList: [],
       dialogFormDealsVisible: false,
-
+      uploadRequestUrl: process.env.VUE_APP_UPLOAD_API,
       dealsTempData: {
         user_id: 1,
         is_unregister: undefined,
@@ -1380,6 +1384,9 @@ export default {
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
+    },
+    handleAddCustomUser(){
+
     }
   }
 }

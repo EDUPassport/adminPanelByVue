@@ -38,3 +38,19 @@ export function updateObject(data) {
     data
   })
 }
+
+export function addAdminUser(data) {
+  return request({
+    url: '/admin/addAdminUser',
+    method: 'post',
+    data
+  })
+}
+
+export function getAdminList(params) {
+  return request({
+    url: '/admin/getAdminList',
+    method: 'get',
+    params
+  })
+}

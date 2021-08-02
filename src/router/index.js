@@ -440,7 +440,30 @@ export const constantRoutes = [
       }
 
     ]
+  },
+  {
+    path: '/admin/user',
+    component: Layout,
+    redirect: '/admin/user/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Admin User',
+    meta: {
+      title: 'Admin User',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'user/list',
+        component: () => import('@/views/admin/user/list'),
+        name: 'Admin Users',
+        meta: {
+          title: 'Admin Users'
+        }
+      }
+
+    ]
   }
+
 
 ]
 
