@@ -327,25 +327,35 @@ export default {
         category_id: row.id,
         is_delete: 1
       }
-      this.$confirm('Delete？')
-        .then(_ => {
-          addCategory(data).then(res => {
-            console.log(res)
-            if (res.code == 200) {
-              this.$message({
-                message: 'Success',
-                type: 'success'
-              });
-              this.getAdsCategoryList()
-            } else {
-              this.$message.error(res.msg);
-            }
-          }).catch(err => {
-            console.log(err)
-          })
+
+      this.$confirm('Please contact the technical department before deleting the subcategory under the app category, otherwise the technical department will not be responsible', 'Tips', {
+        confirmButtonText: 'Sure',
+        cancelButtonText: 'Cancel',
+        type: 'error'
+      }).then(() => {
+
+        addCategory(data).then(res => {
+          console.log(res)
+          if (res.code == 200) {
+            this.$message({
+              message: 'Success',
+              type: 'success'
+            });
+            this.getAdsCategoryList()
+          } else {
+            this.$message.error(res.msg);
+          }
+        }).catch(err => {
+          console.log(err)
         })
-        .catch(_ => {
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
         });
+      });
+
     },
     uploadIconSuccess(response, file, fileList) {
 
