@@ -2,13 +2,14 @@
   <div class="app-container">
     <div class="filter-container">
       <el-select v-model="listQuery.cate" placeholder="Category" clearable class="filter-item">
-        <el-option v-for="item in categoryList" :key="item.value" :label="item.label" :value="item.value" />
+        <el-option v-for="item in categoryList" :key="item.value" :label="item.label" :value="item.value"/>
       </el-select>
 
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="getList()">
         Search
       </el-button>
-      <el-button v-permission="['lei','admin']" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button v-permission="['lei','admin']" class="filter-item" style="margin-left: 10px;" type="primary"
+                 icon="el-icon-edit" @click="handleCreate">
         Add
       </el-button>
     </div>
@@ -25,7 +26,8 @@
           style="width: 100%;"
           @sort-change="sortChange"
         >
-          <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+          <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80"
+                           :class-name="getSortClass('id')">
             <template slot-scope="{row}">
               <span>{{ row.id }}</span>
             </template>
@@ -52,6 +54,7 @@
               <span v-if="row.sys_key == 12">Vendor_Upgrade_Basic</span>
               <span v-if="row.sys_key == 13">Vendor_Upgrade_Pro</span>
               <span v-if="row.sys_key == 14">Vendor_Upgrade_Plus</span>
+              <span v-if="row.sys_key == 15">Lama</span>
             </template>
           </el-table-column>
           <el-table-column label="Comment" width="200px" align="center">
@@ -77,7 +80,8 @@
               <el-button v-if="row.is_delete===1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
                 Recover
               </el-button>
-              <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger" @click="handleDelete(row,$index)">
+              <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger"
+                         @click="handleDelete(row,$index)">
                 Delete
               </el-button>
             </template>
@@ -86,22 +90,23 @@
       </el-tab-pane>
     </el-tabs>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit"
+                @pagination="getList"/>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="top" style="width: 400px; margin-left:50px;">
         <el-form-item label="Category" prop="cate">
           <el-select v-model="temp.cate" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in categoryList" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option v-for="item in categoryList" :key="item.value" :label="item.label" :value="item.value"/>
           </el-select>
         </el-form-item>
         <el-form-item label="System Key" prop="sys_key">
           <el-select v-model="temp.sys_key" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in sysKeyList" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option v-for="item in sysKeyList" :key="item.value" :label="item.label" :value="item.value"/>
           </el-select>
         </el-form-item>
         <el-form-item label="Comment" prop="comment">
-          <el-input v-model="temp.comment" type="textarea" />
+          <el-input v-model="temp.comment" type="textarea"/>
         </el-form-item>
 
         <el-form-item label="System Value">
@@ -117,7 +122,7 @@
             :on-success="uploadFileSuccess"
             :file-list="fileList"
           >
-            <i class="el-icon-upload" />
+            <i class="el-icon-upload"/>
             <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
           </el-upload>
         </el-form-item>
@@ -137,16 +142,16 @@
 </template>
 
 <script>
-import { addSystem, getSystemInfo } from '@/api/system.js'
+import {addSystem, getSystemInfo} from '@/api/system.js'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
-import { format } from 'date-fns'
+import {format} from 'date-fns'
 
 export default {
   name: 'Index',
-  components: { Pagination },
-  directives: { waves, permission },
+  components: {Pagination},
+  directives: {waves, permission},
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -171,27 +176,28 @@ export default {
       },
       importanceOptions: [1, 2, 3],
       categoryList: [
-        { label: 'APP', value: 1 },
-        { label: 'Admin Panel', value: 2 }
+        {label: 'APP', value: 1},
+        {label: 'Admin Panel', value: 2}
       ],
       sysKeyList: [
-        { label: 'Vendor_Qrcode', value: 1 },
-        { label: 'Discount_Card', value: 2 },
-        { label: 'Contact_Qrcode', value: 3 },
-        { label: 'Esl_Logo', value: 4 },
-        { label: 'Discount_Sample', value: 5 },
-        { label: 'Educator_Upgrade_Basic', value: 6 },
-        { label: 'Educator_Upgrade_Pro', value: 7 },
-        { label: 'Educator_Upgrade_Plus', value: 8 },
-        { label: 'Business_Upgrade_Basic', value: 9 },
-        { label: 'Business_Upgrade_Pro', value: 10 },
-        { label: 'Business_Upgrade_Plus', value: 11 },
-        { label: 'Vendor_Upgrade_Basic', value: 12 },
-        { label: 'Vendor_Upgrade_Pro', value: 13 },
-        { label: 'Vendor_Upgrade_Plus', value: 14 }
+        {label: 'Vendor_Qrcode', value: 1},
+        {label: 'Discount_Card', value: 2},
+        {label: 'Contact_Qrcode', value: 3},
+        {label: 'Esl_Logo', value: 4},
+        {label: 'Discount_Sample', value: 5},
+        {label: 'Educator_Upgrade_Basic', value: 6},
+        {label: 'Educator_Upgrade_Pro', value: 7},
+        {label: 'Educator_Upgrade_Plus', value: 8},
+        {label: 'Business_Upgrade_Basic', value: 9},
+        {label: 'Business_Upgrade_Pro', value: 10},
+        {label: 'Business_Upgrade_Plus', value: 11},
+        {label: 'Vendor_Upgrade_Basic', value: 12},
+        {label: 'Vendor_Upgrade_Pro', value: 13},
+        {label: 'Vendor_Upgrade_Plus', value: 14},
+        {label: 'Lama', value: 15}
 
       ],
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
+      sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
@@ -209,8 +215,8 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        cate: [{ required: true, message: 'category is required', trigger: 'change' }],
-        sys_key: [{ required: true, message: 'position is required', trigger: 'change' }]
+        cate: [{required: true, message: 'category is required', trigger: 'change'}],
+        sys_key: [{required: true, message: 'position is required', trigger: 'change'}]
       },
       downloadLoading: false,
       // uploadHeaders:undefined,
@@ -269,7 +275,7 @@ export default {
       row.status = status
     },
     sortChange(data) {
-      const { prop, order } = data
+      const {prop, order} = data
       if (prop === 'id') {
         this.sortByID(order)
       }
@@ -325,7 +331,7 @@ export default {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.sys_id = row.id
 
-      this.fileList = [{ name: '', url: row.sys_value }]
+      this.fileList = [{name: '', url: row.sys_value}]
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -364,7 +370,7 @@ export default {
         duration: 2000
       })
       // this.list.splice(index, 1)
-      addSystem({ is_delete: 1, sys_id: row.id }).then(res => {
+      addSystem({is_delete: 1, sys_id: row.id}).then(res => {
         console.log(res)
         this.getList()
       }).catch(error => {
@@ -372,14 +378,14 @@ export default {
       })
     },
     handleRecover(row) {
-      addSystem({ is_delete: 0, sys_id: row.id }).then(res => {
+      addSystem({is_delete: 0, sys_id: row.id}).then(res => {
         console.log(res)
         this.getList()
       }).catch(error => {
         console.log(error)
       })
     },
-    getSortClass: function(key) {
+    getSortClass: function (key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
     },

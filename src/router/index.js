@@ -462,6 +462,28 @@ export const constantRoutes = [
       }
 
     ]
+  },
+  {
+    path: '/lama',
+    component: Layout,
+    redirect: '/lama/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Lama List',
+    meta: {
+      title: 'Lama',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/lama/list'),
+        name: 'Lama Users',
+        meta: {
+          title: 'Lama Users'
+        }
+      }
+
+    ]
   }
 
 
