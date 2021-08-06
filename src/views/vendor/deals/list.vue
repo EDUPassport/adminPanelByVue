@@ -131,6 +131,16 @@
           <span>{{ row.reason }}</span>
         </template>
       </el-table-column>
+      <el-table-column
+        label="Views"
+        width="150px"
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <span>{{ row.views }}</span>
+        </template>
+      </el-table-column>
+
 
       <el-table-column
         label="Status"
