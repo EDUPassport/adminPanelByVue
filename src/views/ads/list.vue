@@ -40,6 +40,11 @@
             <span>{{ row.link }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="Title" width="200px" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.title }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="Relative Link" width="200px" align="center">
           <template slot-scope="{row}">
             <span>{{ row.relative_link }}</span>
@@ -103,6 +108,9 @@
         </el-form-item>
         <el-form-item label="Relative Link">
           <el-input v-model="temp.relative_link" />
+        </el-form-item>
+        <el-form-item label="Description">
+          <el-input v-model="temp.title"  type="textarea"/>
         </el-form-item>
         <el-form-item label="Sort">
           <el-input v-model="temp.sort" type="number" />
@@ -205,6 +213,8 @@ export default {
         url: '',
         link: '',
         is_use:0,
+        title:undefined,
+        desc:undefined,
         category:undefined,
         sort: undefined,
         ad_id: undefined,
