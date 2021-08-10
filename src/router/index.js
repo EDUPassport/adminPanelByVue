@@ -391,7 +391,7 @@ export const constantRoutes = [
         hidden: true,
         name: 'EditDeals',
         meta: {
-          title: 'Edit Deals', noCache: true, activeMenu: '/deals/list'
+          title: 'Edit Deals', noCache: true, activeMenu: '/vendor/deals/list'
         }
       },
       {
@@ -400,7 +400,7 @@ export const constantRoutes = [
         hidden: true,
         name: 'AddDeals',
         meta: {
-          title: 'Add Deals', noCache: true, activeMenu: '/deals/list'
+          title: 'Add Deals', noCache: true, activeMenu: '/vendor/deals/list'
         }
       },
       {
@@ -417,7 +417,7 @@ export const constantRoutes = [
         hidden: true,
         name: 'eventDetail',
         meta: {
-          title: 'Event Detail', noCache: true, activeMenu: '/events/list'
+          title: 'Event Detail', noCache: true, activeMenu: '/vendor/events/list'
         }
       },
       {
@@ -426,7 +426,7 @@ export const constantRoutes = [
         hidden: true,
         name: 'EditEvents',
         meta: {
-          title: 'Edit Events', noCache: true, activeMenu: '/events/list'
+          title: 'Edit Events', noCache: true, activeMenu: '/vendor/events/list'
         }
       },
       {
@@ -435,7 +435,7 @@ export const constantRoutes = [
         hidden: true,
         name: 'AddEvents',
         meta: {
-          title: 'Add Events', noCache: true, activeMenu: '/events/list'
+          title: 'Add Events', noCache: true, activeMenu: '/vendor/events/list'
         }
       }
 

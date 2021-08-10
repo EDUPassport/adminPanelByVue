@@ -317,6 +317,14 @@
           >
             Upgrade
           </el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handlePurchaseAds(row)"
+          >
+            Purchase Ads
+          </el-button>
+
         </template>
       </el-table-column>
       <el-table-column label="Create Time" width="180">
@@ -397,6 +405,34 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="Purchase Ads" :visible.sync="purchaseAdsDialogFormVisible">
+      <el-form :model="purchaseAdsForm">
+        <el-form-item label="Ad Category" label-width="200">
+          <el-cascader
+            ref="purchaseAdsCategory"
+            v-model="purchaseAdsForm.category_id"
+            :options="categoryData"
+            :props="categoryProps"
+            :show-all-levels="false"
+            @change="pidChange"
+            clearable>
+          </el-cascader>
+        </el-form-item>
+        <el-form-item label="Need Design" label-width="200">
+          <el-select v-model="purchaseAdsForm.is_design" placeholder="Please Select">
+            <el-option label="Yes" :value="1"></el-option>
+            <el-option label="No" :value="0"></el-option>
+          </el-select>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="purchaseAdsDialogFormVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="purchaseConfirm()">Confirm</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -410,9 +446,10 @@ import {
   addVendorBasic
 } from '@/api/member'
 import waves from '@/directive/waves' // waves directive
-import {parseTime} from '@/utils'
+import {parseTime, tree} from '@/utils'
 import Pagination from '@/components/Pagination'
 import {addEvent} from '@/api/events'
+import {adCategoryList, buyAd} from "@/api/ads";
 
 export default {
   name: 'Index',
@@ -493,7 +530,26 @@ export default {
       dialogUserDetailVisible: false,
       userDetailData: [],
       eventStartTime: undefined,
-      eventEndTime: undefined
+      eventEndTime: undefined,
+
+      purchaseAdsDialogFormVisible: false,
+      purchaseAdsForm: {
+        category_id: undefined,
+        money: undefined,
+        is_design: 1,
+        user_id: undefined,
+        identity: 3,
+        nickname: undefined
+      },
+      categoryArr: [],
+      categoryData: [],
+      adsCategoryValue: undefined,
+      categoryProps: {
+        checkStrictly: false,
+        emitPath: false,
+        value: 'id',
+        label: 'name_en'
+      }
 
     }
   },
@@ -510,12 +566,56 @@ export default {
   created() {
     this.getList()
     this.getVipList()
+    this.getAdsCategoryList()
   },
   mounted() {
 
   },
   methods: {
-
+    purchaseConfirm() {
+      let data = Object.assign({}, this.purchaseAdsForm)
+      // console.log(data)
+      buyAd(data).then(res => {
+        console.log(res)
+        if(res.code == 200){
+          this.$message.success('Success')
+        }else{
+          this.$message.error(res.msg)
+        }
+        this.purchaseAdsDialogFormVisible = false;
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    handlePurchaseAds(row) {
+      console.log(row)
+      this.purchaseAdsForm.nickname = row.first_name + ' ' + row.last_name;
+      this.purchaseAdsForm.user_id = row.user_id;
+      this.purchaseAdsDialogFormVisible = true;
+    },
+    pidChange(e) {
+      // console.log(e)
+      this.purchaseAdsForm.category_id = e;
+      this.purchaseAdsForm.money = this.$refs.purchaseAdsCategory.getCheckedNodes()[0].data.money;
+      // console.log(this.$refs.purchaseAdsCategory.getCheckedNodes()[0].data.money)
+    },
+    getAdsCategoryList() {
+      let params = {
+        tree: 0
+      }
+      adCategoryList(params).then(res => {
+        // console.log(res)
+        if (res.code == 200) {
+          this.categoryArr = res.message;
+          this.categoryData = tree(res.message);
+          // console.log(tree(res.message))
+        } else {
+          this.$message.error(res.msg);
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     handleAddDeals(row) {
       this.$router.push({ path: '/vendor/deals/addDeals', query: { uid: row.user_id }})
     },

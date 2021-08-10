@@ -219,7 +219,7 @@
           <span v-if="scope.row.level==3">Plus</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="340" class-name="small-padding fixed-width">
+      <el-table-column label="Actions" align="center" width="440" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
@@ -231,6 +231,13 @@
             Multi Posts
           </el-button>
           <el-button size="mini" type="primary" @click="handleMemberLevel(row,$index)">Upgrade</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handlePurchaseAds(row)"
+          >
+            Purchase Ads
+          </el-button>
         </template>
       </el-table-column>
       <el-table-column label="Create Time" width="180">
@@ -297,6 +304,33 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="Purchase Ads" :visible.sync="purchaseAdsDialogFormVisible">
+      <el-form :model="purchaseAdsForm">
+        <el-form-item label="Ad Category" label-width="200">
+          <el-cascader
+            ref="purchaseAdsCategory"
+            v-model="purchaseAdsForm.category_id"
+            :options="categoryData"
+            :props="categoryProps"
+            :show-all-levels="false"
+            @change="pidChange"
+            clearable>
+          </el-cascader>
+        </el-form-item>
+        <el-form-item label="Need Design" label-width="200">
+          <el-select v-model="purchaseAdsForm.is_design" placeholder="Please Select">
+            <el-option label="Yes" :value="1"></el-option>
+            <el-option label="No" :value="0"></el-option>
+          </el-select>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="purchaseAdsDialogFormVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="purchaseConfirm()">Confirm</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -306,6 +340,8 @@ import { vipList, changeVipLevel, businessList } from '@/api/member'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { uploadExcel, uploadJobs } from '@/api/jobs'
+import {adCategoryList, buyAd} from "@/api/ads";
+import {tree} from "@/utils";
 
 export default {
   name: 'Index',
@@ -368,7 +404,27 @@ export default {
       },
       multiPostsFile: undefined,
       tableData: [],
-      tableHeader: []
+      tableHeader: [],
+
+      purchaseAdsDialogFormVisible: false,
+      purchaseAdsForm: {
+        category_id: undefined,
+        money: undefined,
+        is_design: 1,
+        user_id: undefined,
+        identity: 2,
+        nickname: undefined
+      },
+      categoryArr: [],
+      categoryData: [],
+      adsCategoryValue: undefined,
+      categoryProps: {
+        checkStrictly: false,
+        emitPath: false,
+        value: 'id',
+        label: 'name_en'
+      }
+
     }
   },
   computed: {
@@ -384,8 +440,53 @@ export default {
   created() {
     this.getList()
     this.getVipList()
+    this.getAdsCategoryList()
   },
   methods: {
+    purchaseConfirm() {
+      let data = Object.assign({}, this.purchaseAdsForm)
+      // console.log(data)
+      buyAd(data).then(res => {
+        console.log(res)
+        if(res.code == 200){
+          this.$message.success('Success')
+        }else{
+          this.$message.error(res.msg)
+        }
+        this.purchaseAdsDialogFormVisible = false;
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    handlePurchaseAds(row) {
+      console.log(row)
+      this.purchaseAdsForm.nickname = row.first_name + ' ' + row.last_name;
+      this.purchaseAdsForm.user_id = row.user_id;
+      this.purchaseAdsDialogFormVisible = true;
+    },
+    pidChange(e) {
+      // console.log(e)
+      this.purchaseAdsForm.category_id = e;
+      this.purchaseAdsForm.money = this.$refs.purchaseAdsCategory.getCheckedNodes()[0].data.money;
+      // console.log(this.$refs.purchaseAdsCategory.getCheckedNodes()[0].data.money)
+    },
+    getAdsCategoryList() {
+      let params = {
+        tree: 0
+      }
+      adCategoryList(params).then(res => {
+        // console.log(res)
+        if (res.code == 200) {
+          this.categoryArr = res.message;
+          this.categoryData = tree(res.message);
+          // console.log(tree(res.message))
+        } else {
+          this.$message.error(res.msg);
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     updateMultiPosts() {
       const data = Object.assign({}, this.tempMultiPosts)
       const form = new FormData()

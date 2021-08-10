@@ -130,18 +130,11 @@
         <!--          <el-input v-model="dealsTempData.location" class="filter-item" placeholder="Please select" />-->
         <!--        </el-form-item>-->
         <el-form-item label="Deal/Discount Duration">
-          <el-select
+          <el-input
             v-model="dealsTempData.due_contract"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in dealsThree"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+            type="number"
+            placeholder="Please input"
+          />
         </el-form-item>
         <el-form-item label="Dog Friendly">
           <el-select

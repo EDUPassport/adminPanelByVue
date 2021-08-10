@@ -45,7 +45,9 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') {
+      return ['日', '一', '二', '三', '四', '五', '六'][value]
+    }
     return value.toString().padStart(2, '0')
   })
   return time_str
@@ -254,7 +256,7 @@ export function getTime(type) {
 export function debounce(func, wait, immediate) {
   let timeout, args, context, timestamp, result
 
-  const later = function() {
+  const later = function () {
     // 据上一次触发时间间隔
     const last = +new Date() - timestamp
 
@@ -271,7 +273,7 @@ export function debounce(func, wait, immediate) {
     }
   }
 
-  return function(...args) {
+  return function (...args) {
     context = this
     timestamp = +new Date()
     const callNow = immediate && !timeout
@@ -370,4 +372,22 @@ export function randomString(e) {
   }
   // 返回随机组合字符串
   return n
+}
+
+export function tree(data) {
+  var map = {};
+  data.forEach(function (item) {
+    map[item.id] = item;       //这里的ID根据数据库的字段
+  });
+  //console.log(map)
+  var val = [];
+  data.forEach(function (item) {
+    var parent = map[item.pid];      //这里是父级ID---pid
+    if (parent) {
+      (parent.children || (parent.children = [])).push(item);
+    } else {
+      val.push(item);
+    }
+  });
+  return val;
 }

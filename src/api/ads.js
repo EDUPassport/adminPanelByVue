@@ -70,3 +70,12 @@ export function approveAds(data) {
     data
   })
 }
+
+export function buyAd(data) {
+  return request({
+    url: '/admin/buyAd',
+    method: 'post',
+    data
+  })
+}
+
