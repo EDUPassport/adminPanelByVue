@@ -154,3 +154,12 @@ export function addUserImg(data) {
     data
   })
 }
+
+export function assignAccount(data) {
+  return request({
+    url: '/admin/assignAccount',
+    method: 'post',
+    data
+  })
+}
+

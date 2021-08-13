@@ -53,7 +53,6 @@
       </el-button>
 
 
-
     </div>
 
     <el-table
@@ -383,7 +382,7 @@
       <el-table-column
         label="Actions"
         align="center"
-        width="280"
+        width="380"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{row,$index}">
@@ -407,6 +406,14 @@
             @click="handleMemberLevel(row,$index)"
           >
             Upgrade
+          </el-button>
+          <el-button
+            v-if="row.pid==0"
+            size="mini"
+            type="primary"
+            @click="handleSubAccount(row)"
+          >
+            Sub Account
           </el-button>
         </template>
       </el-table-column>
@@ -538,7 +545,7 @@
             :on-success="uploadFileSuccess"
             :file-list="fileList"
           >
-            <i class="el-icon-upload" />
+            <i class="el-icon-upload"/>
             <div class="el-upload__text">
               Drag the file here, or <em>click to upload</em>
             </div>
@@ -700,7 +707,7 @@
             :on-success="uploadEventsFileSuccess"
             :file-list="eventsFileList"
           >
-            <i class="el-icon-upload" />
+            <i class="el-icon-upload"/>
             <div class="el-upload__text">
               Drag the file here, or <em>click to upload</em>
             </div>
@@ -740,19 +747,19 @@
           label="username"
           prop="username"
         >
-          <el-input v-model="temp.username" />
+          <el-input v-model="temp.username"/>
         </el-form-item>
         <el-form-item
           label="nickname"
           prop="nickname"
         >
-          <el-input v-model="temp.nickname" />
+          <el-input v-model="temp.nickname"/>
         </el-form-item>
         <el-form-item
           label="truename"
           prop="truename"
         >
-          <el-input v-model="temp.truename" />
+          <el-input v-model="temp.truename"/>
         </el-form-item>
         <el-form-item
           label="sex"
@@ -775,13 +782,13 @@
           label="phone"
           prop="phone"
         >
-          <el-input v-model="temp.phone" />
+          <el-input v-model="temp.phone"/>
         </el-form-item>
         <el-form-item
           label="email"
           prop="email"
         >
-          <el-input v-model="temp.email" />
+          <el-input v-model="temp.email"/>
         </el-form-item>
         <el-form-item
           label="birthday"
@@ -875,22 +882,45 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="Sub Account" :visible.sync="subAccountDialogVisible">
+      <!--      :rules="rules"-->
+      <el-form ref="dataForm" :model="subAccountForm" label-position="left" label-width="90px"
+               style="width: 400px; margin-left:50px;">
+
+        <el-form-item label="Phone" prop="phone">
+          <el-input type="number" v-model="subAccountForm.phone" ></el-input>
+        </el-form-item>
+        <el-form-item label="Username" prop="username">
+          <el-input type="text" v-model="subAccountForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="Password" prop="password">
+          <el-input type="text" v-model="subAccountForm.password"></el-input>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="subAccountDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="addSubAccount()">Confirm</el-button>
+      </div>
+
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 
-import { userList, editUserInfo, deleteUser, vipList, changeVipLevel, userObjectList } from '@/api/member'
+import {userList, editUserInfo, deleteUser, vipList, changeVipLevel, userObjectList,assignAccount} from '@/api/member'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
+import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'
-import { addDeals } from '@/api/deals' // secondary package based on el-pagination
-import { addEvent } from '@/api/events'
+import {addDeals} from '@/api/deals' // secondary package based on el-pagination
+import {addEvent} from '@/api/events'
 
 export default {
   name: 'Index',
-  components: { Pagination },
-  directives: { waves },
+  components: {Pagination},
+  directives: {waves},
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -904,11 +934,11 @@ export default {
   },
   data() {
     return {
-      dealsType: [{ label: 'Deal', value: 1 }, { label: 'Discount', value: 2 }],
-      dealsTwo: [{ label: 'All Locations', value: 1 }, { label: 'Limited', value: 0 }],
-      dealsThree: [{ label: '1 year', value: 1 }, { label: '2 year', value: 2 }],
-      dealsFour: [{ label: 'Shanghai', value: 1 }, { label: 'Other', value: 0 }],
-      eventsOne: [{ label: 'Social', value: 1 }, { label: 'Professional', value: 2 }],
+      dealsType: [{label: 'Deal', value: 1}, {label: 'Discount', value: 2}],
+      dealsTwo: [{label: 'All Locations', value: 1}, {label: 'Limited', value: 0}],
+      dealsThree: [{label: '1 year', value: 1}, {label: '2 year', value: 2}],
+      dealsFour: [{label: 'Shanghai', value: 1}, {label: 'Other', value: 0}],
+      eventsOne: [{label: 'Social', value: 1}, {label: 'Professional', value: 2}],
       userListData: [],
       popuCityList: [],
       dialogFormDealsVisible: false,
@@ -966,14 +996,14 @@ export default {
         sex: undefined
       },
       percentOptions: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      seekingOptions: [{ label: 'no', value: 0 }, { label: 'Yes', value: 1 }],
-      sexOptions: [{ label: 'unco', value: 0 }, { label: 'Male', value: 1 }, { label: 'Female', value: 2 }],
-      identityOptions: [{ label: 'Educator', value: 1 }, { label: 'Business', value: 2 }, { label: 'Vendor', value: 3 }],
+      seekingOptions: [{label: 'no', value: 0}, {label: 'Yes', value: 1}],
+      sexOptions: [{label: 'unco', value: 0}, {label: 'Male', value: 1}, {label: 'Female', value: 2}],
+      identityOptions: [{label: 'Educator', value: 1}, {label: 'Business', value: 2}, {label: 'Vendor', value: 3}],
       levelOptions: [],
       vipList: [],
 
       importanceOptions: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
+      sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
@@ -1001,13 +1031,21 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        username: [{ required: true, message: 'username is required', trigger: 'change' }],
-        birthday: [{ type: 'date', required: true, message: 'birthday is required', trigger: 'change' }],
-        nickname: [{ required: true, message: 'nickname is required', trigger: 'blur' }]
+        username: [{required: true, message: 'username is required', trigger: 'change'}],
+        birthday: [{type: 'date', required: true, message: 'birthday is required', trigger: 'change'}],
+        nickname: [{required: true, message: 'nickname is required', trigger: 'blur'}]
       },
       downloadLoading: false,
       dialogUserDetailVisible: false,
-      userDetailData: []
+      userDetailData: [],
+
+      subAccountDialogVisible: false,
+      subAccountForm: {
+        pid: undefined,
+        phone: undefined,
+        username: undefined,
+        password: undefined
+      }
 
     }
   },
@@ -1027,8 +1065,25 @@ export default {
     this.getUserObjList()
   },
   methods: {
+    handleSubAccount(row) {
+      this.subAccountForm.pid = row.id;
+      this.subAccountDialogVisible = true;
+    },
+    addSubAccount(){
+      let data = Object.assign({},this.subAccountForm)
+      assignAccount(data).then(res=>{
+        if(res.code==200){
+          this.$message.success(res.msg)
+        }else{
+          this.$message.error(res.msg)
+        }
+        this.subAccountDialogVisible = false;
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
     getUserObjList() {
-      userObjectList({ pid: 71 }).then(res => {
+      userObjectList({pid: 71}).then(res => {
         console.log(res)
         this.popuCityList = res.message
       })
@@ -1167,7 +1222,7 @@ export default {
       row.status = status
     },
     sortChange(data) {
-      const { prop, order } = data
+      const {prop, order} = data
       if (prop === 'id') {
         this.sortByID(order)
       }
@@ -1381,11 +1436,11 @@ export default {
         }
       }))
     },
-    getSortClass: function(key) {
+    getSortClass: function (key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
     },
-    handleAddCustomUser(){
+    handleAddCustomUser() {
 
     }
   }
