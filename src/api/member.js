@@ -163,3 +163,18 @@ export function assignAccount(data) {
   })
 }
 
+export function changeBindPhone(data) {
+  return request({
+    url: '/admin/changeBindPhone',
+    method: 'post',
+    data
+  })
+}
+
+export function unbindAccount(data) {
+  return request({
+    url: '/admin/unbindAccount',
+    method: 'post',
+    data
+  })
+}

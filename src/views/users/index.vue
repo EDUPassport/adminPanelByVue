@@ -63,7 +63,6 @@
       fit
       highlight-current-row
       style="width: 100%;"
-      @sort-change="sortChange"
     >
       <el-table-column type="expand">
         <template slot-scope="props">
@@ -297,18 +296,17 @@
         sortable="custom"
         align="center"
         width="80"
-        :class-name="getSortClass('id')"
       >
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        label="Name"
+        label="Username"
         width="110"
       >
         <template slot-scope="scope">
-          {{ scope.row.nickname }}
+          {{ scope.row.username }}
         </template>
       </el-table-column>
       <el-table-column
@@ -382,7 +380,7 @@
       <el-table-column
         label="Actions"
         align="center"
-        width="380"
+        width="680"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{row,$index}">
@@ -415,6 +413,21 @@
           >
             Sub Account
           </el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handleUserPhone(row)"
+          >
+            Update User Phone
+          </el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handleUnBindAccount(row)"
+          >
+            Unbind Account
+          </el-button>
+
         </template>
       </el-table-column>
     </el-table>
@@ -426,310 +439,6 @@
       :limit.sync="listQuery.limit"
       @pagination="getList"
     />
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormDealsVisible"
-    >
-      <el-form
-        ref="dataForm"
-        :model="dealsTempData"
-        label-position="left"
-        label-width="110px"
-        style="width: 400px; margin-left:50px;"
-      >
-        <el-form-item label="Type">
-          <el-select
-            v-model="dealsTempData.type"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in dealsType"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="IS All">
-          <el-select
-            v-model="dealsTempData.is_all"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in dealsTwo"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Due Contract">
-          <el-select
-            v-model="dealsTempData.due_contract"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in dealsThree"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Pay Money">
-          <el-input
-            v-model="dealsTempData.pay_money"
-            type="number"
-            class="filter-item"
-            placeholder="Please select"
-          />
-        </el-form-item>
-        <el-form-item label="For Unregister">
-          <el-select
-            v-model="dealsTempData.is_unregister"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              label="YES"
-              :value="1"
-            />
-            <el-option
-              label="NO"
-              :value="0"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Popular City">
-          <el-select
-            v-model="dealsTempData.city"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in popuCityList"
-              :key="item.id"
-              :label="item.object_en"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Location">
-          <el-input
-            v-model="dealsTempData.location"
-            class="filter-item"
-            placeholder="Please select"
-          />
-        </el-form-item>
-        <el-form-item label="Desc">
-          <el-input
-            v-model="dealsTempData.desc"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Url">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="uploadFileSuccess"
-            :file-list="fileList"
-          >
-            <i class="el-icon-upload"/>
-            <div class="el-upload__text">
-              Drag the file here, or <em>click to upload</em>
-            </div>
-            <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
-          </el-upload>
-        </el-form-item>
-      </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="dialogFormDealsVisible = false">
-          Cancel
-        </el-button>
-        <el-button
-          type="primary"
-          @click="createDeals"
-        >
-          Confirm
-        </el-button>
-      </div>
-    </el-dialog>
-
-    <!--    events-->
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormEventsVisible"
-    >
-      <el-form
-        ref="dataForm"
-        :model="eventsTempData"
-        label-position="left"
-        label-width="110px"
-        style="width: 400px; margin-left:50px;"
-      >
-        <el-form-item label="Name">
-          <el-input
-            v-model="eventsTempData.name"
-            class="filter-item"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Desc">
-          <el-input
-            v-model="eventsTempData.desc"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="IS All">
-          <el-select
-            v-model="eventsTempData.is_all"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in eventsOne"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Type Desc">
-          <el-input
-            v-model="eventsTempData.type_desc"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Pay Money">
-          <el-input
-            v-model="eventsTempData.pay_money"
-            type="number"
-            class="filter-item"
-            placeholder="Please select"
-          />
-        </el-form-item>
-        <el-form-item label="For Unregister">
-          <el-select
-            v-model="eventsTempData.is_unregister"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              label="YES"
-              :value="1"
-            />
-            <el-option
-              label="NO"
-              :value="0"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Popular City">
-          <el-select
-            v-model="eventsTempData.city"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in popuCityList"
-              :key="item.id"
-              :label="item.object_en"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Location">
-          <el-input
-            v-model="eventsTempData.location"
-            class="filter-item"
-            placeholder="Please select"
-          />
-        </el-form-item>
-
-        <el-form-item label="Date">
-          <!--          <el-input v-model="temp.birthday" />-->
-          <el-date-picker
-            v-model="eventsTempData.date"
-            type="date"
-            placeholder="Please picker a date"
-          />
-        </el-form-item>
-        <el-form-item label="Start Time & End Time">
-          <el-time-select
-            v-model="eventsTempData.start_time"
-            placeholder="Start Time"
-            :picker-options="{
-              start: '00:00',
-              step: '00:01',
-              end: '24:00'
-            }"
-          />
-          <el-time-select
-            v-model="eventsTempData.end_time"
-            placeholder="End Time"
-            :picker-options="{
-              start: '00:00',
-              step: '00:01',
-              end: '24:00',
-              minTime: eventsTempData.start_time
-            }"
-          />
-        </el-form-item>
-
-        <el-form-item label="Url">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="uploadEventsFileSuccess"
-            :file-list="eventsFileList"
-          >
-            <i class="el-icon-upload"/>
-            <div class="el-upload__text">
-              Drag the file here, or <em>click to upload</em>
-            </div>
-            <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
-          </el-upload>
-        </el-form-item>
-      </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="dialogFormEventsVisible = false">
-          Cancel
-        </el-button>
-        <el-button
-          type="primary"
-          @click="createEvents"
-        >
-          Confirm
-        </el-button>
-      </div>
-    </el-dialog>
 
     <el-dialog
       :title="textMap[dialogStatus]"
@@ -905,17 +614,31 @@
 
     </el-dialog>
 
+    <el-dialog title="Change Bind Phone" :visible.sync="changeBindPhoneDialogVisible">
+      <!--      :rules="rules"-->
+      <el-form ref="dataForm" :model="changeBindPhoneForm" label-position="left" label-width="90px"
+               style="width: 400px; margin-left:50px;">
+
+        <el-form-item label="Phone" prop="phone">
+          <el-input type="number" v-model="changeBindPhoneForm.phone" ></el-input>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="changeBindPhoneDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="updateBindPhone()">Confirm</el-button>
+      </div>
+
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 
-import {userList, editUserInfo, deleteUser, vipList, changeVipLevel, userObjectList,assignAccount} from '@/api/member'
+import {userList, editUserInfo, deleteUser, vipList, changeVipLevel, userObjectList,assignAccount,changeBindPhone,unbindAccount} from '@/api/member'
 import waves from '@/directive/waves' // waves directive
-import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'
-import {addDeals} from '@/api/deals' // secondary package based on el-pagination
-import {addEvent} from '@/api/events'
 
 export default {
   name: 'Index',
@@ -934,50 +657,7 @@ export default {
   },
   data() {
     return {
-      dealsType: [{label: 'Deal', value: 1}, {label: 'Discount', value: 2}],
-      dealsTwo: [{label: 'All Locations', value: 1}, {label: 'Limited', value: 0}],
-      dealsThree: [{label: '1 year', value: 1}, {label: '2 year', value: 2}],
-      dealsFour: [{label: 'Shanghai', value: 1}, {label: 'Other', value: 0}],
-      eventsOne: [{label: 'Social', value: 1}, {label: 'Professional', value: 2}],
-      userListData: [],
-      popuCityList: [],
-      dialogFormDealsVisible: false,
       uploadRequestUrl: process.env.VUE_APP_UPLOAD_API,
-      dealsTempData: {
-        user_id: 1,
-        is_unregister: undefined,
-        type: undefined,
-        is_all: undefined,
-        file: undefined,
-        due_contract: undefined,
-        pay_money: undefined,
-        desc: undefined,
-        deal_id: undefined,
-        city: undefined,
-        location: undefined,
-        identity: undefined
-      },
-      fileUrl: undefined,
-      fileList: undefined,
-      eventsFileUrl: undefined,
-      eventsFileList: undefined,
-      dialogFormEventsVisible: false,
-      eventsTempData: {
-        user_id: 1,
-        name: undefined,
-        desc: undefined,
-        is_all: undefined,
-        type_desc: undefined,
-        pay_money: undefined,
-        date: undefined,
-        start_time: undefined,
-        end_time: undefined,
-        file: undefined,
-        location: undefined,
-        city: undefined,
-        is_unregister: 0
-      },
-
       tableKey: 0,
       list: null,
       total: 0,
@@ -995,17 +675,13 @@ export default {
         is_seeking: undefined,
         sex: undefined
       },
-      percentOptions: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+
       seekingOptions: [{label: 'no', value: 0}, {label: 'Yes', value: 1}],
       sexOptions: [{label: 'unco', value: 0}, {label: 'Male', value: 1}, {label: 'Female', value: 2}],
       identityOptions: [{label: 'Educator', value: 1}, {label: 'Business', value: 2}, {label: 'Vendor', value: 3}],
       levelOptions: [],
       vipList: [],
 
-      importanceOptions: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
-      statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
       temp: {
         user_id: undefined,
         username: undefined,
@@ -1029,7 +705,6 @@ export default {
         upgrade: 'Upgrade'
       },
       dialogPvVisible: false,
-      pvData: [],
       rules: {
         username: [{required: true, message: 'username is required', trigger: 'change'}],
         birthday: [{type: 'date', required: true, message: 'birthday is required', trigger: 'change'}],
@@ -1045,6 +720,11 @@ export default {
         phone: undefined,
         username: undefined,
         password: undefined
+      },
+      changeBindPhoneDialogVisible:false,
+      changeBindPhoneForm:{
+        user_id:undefined,
+        phone:undefined
       }
 
     }
@@ -1062,9 +742,41 @@ export default {
   created() {
     this.getList()
     this.getVipList()
-    this.getUserObjList()
   },
   methods: {
+    handleUserPhone(row){
+        this.changeBindPhoneDialogVisible = true;
+        this.changeBindPhoneForm.user_id = row.id;
+    },
+    updateBindPhone(){
+      let data = Object.assign({},this.changeBindPhoneForm);
+      changeBindPhone(data).then(res=>{
+        if(res.code==200){
+          this.$message.success(res.msg)
+        }else{
+          this.$message.error(res.msg)
+        }
+        this.changeBindPhoneDialogVisible = false;
+        this.getList();
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
+    handleUnBindAccount(row){
+       let data = {
+         user_id:row.id
+       }
+      unbindAccount(data).then(res=>{
+        if(res.code==200){
+          this.$message.success(res.msg)
+        }else{
+          this.$message.error(res.msg)
+        }
+        this.getList();
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
     handleSubAccount(row) {
       this.subAccountForm.pid = row.id;
       this.subAccountDialogVisible = true;
@@ -1087,91 +799,6 @@ export default {
         console.log(res)
         this.popuCityList = res.message
       })
-    },
-    handleAddDeals(row) {
-      this.dialogFormDealsVisible = true
-      this.dealsTempData.user_id = row.id
-    },
-    handleAddEvents(row) {
-      this.dialogFormEventsVisible = true
-
-      this.dealsTempData.user_id = row.id
-    },
-    createEvents() {
-      console.log(this.eventsTempData)
-      // console.log(tempData.birthday.getFullYear())
-      const year = this.eventsTempData.date.getFullYear()
-      const month = this.eventsTempData.date.getMonth() + 1
-      const day = this.eventsTempData.date.getDate()
-
-      this.eventsTempData.date = year + '-' + month + '-' + day
-
-      if (this.eventsTempData.is_unregister == 1) {
-        this.eventsTempData.user_id = 1
-      }
-      addEvent(this.eventsTempData).then(response => {
-        console.log(response)
-        if (response.code == 200) {
-          this.$message({
-            message: '操作Success',
-            type: 'success'
-          })
-          this.dialogFormEventsVisible = false
-          this.eventsTempData = {
-            user_id: 1,
-            name: undefined,
-            desc: undefined,
-            is_all: undefined,
-            type_desc: undefined,
-            pay_money: undefined,
-            date: undefined,
-            start_time: undefined,
-            end_time: undefined,
-            file: undefined,
-            location: undefined,
-            city: undefined,
-            is_unregister: 0
-          }
-        }
-      })
-    },
-    createDeals() {
-      console.log(this.dealsTempData)
-      if (this.dealsTempData.is_unregister == 1) {
-        this.dealsTempData.user_id = 1
-      }
-      addDeals(this.dealsTempData).then(response => {
-        console.log(response)
-        if (response.code == 200) {
-          this.$message({
-            message: '操作Success',
-            type: 'success'
-          })
-          this.dialogFormDealsVisible = false
-        }
-      })
-    },
-    uploadFileSuccess(response, file, fileList) {
-      console.log(response)
-      // console.log(file)
-      // console.log(fileList)
-      if (response.code == 200) {
-        this.fileUrl = response.data[0].file_url
-        this.dealsTempData.file = response.data[0].file_url
-      } else {
-        console.log(response.msg)
-      }
-    },
-    uploadEventsFileSuccess(response, file, eventsFileList) {
-      console.log(response)
-      // console.log(file)
-      // console.log(fileList)
-      if (response.code == 200) {
-        this.eventsFileUrl = response.data[0].file_url
-        this.eventsTempData.file = response.data[0].file_url
-      } else {
-        console.log(response.msg)
-      }
     },
     getList() {
       this.listLoading = true
@@ -1221,20 +848,6 @@ export default {
       })
       row.status = status
     },
-    sortChange(data) {
-      const {prop, order} = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
-    },
     resetTemp() {
       this.temp = {
         id: undefined,
@@ -1246,15 +859,6 @@ export default {
         type: ''
       }
     },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.user_id = row.id
@@ -1411,34 +1015,6 @@ export default {
       this.dialogUserDetailVisible = true
       this.userDetailData.push(detail)
       console.log(detail)
-    },
-
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['id', 'name', 'phone', 'is_educator', 'is_business', 'is_vendor', 'is_other', 'is_seeking', 'identity']
-        const filterVal = ['id', 'name', 'phone', 'is_educator', 'is_business', 'is_vendor', 'is_other', 'is_seeking', 'identity']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
-    },
-    getSortClass: function (key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
     },
     handleAddCustomUser() {
 
