@@ -142,6 +142,14 @@ export const constantRoutes = [
         meta: {
           title: 'MP Image Asset'
         }
+      },
+      {
+        path: 'system/tags',
+        component: () => import('@/views/config/system/tags'),
+        name: 'Tags',
+        meta: {
+          title: 'Tags'
+        }
       }
     ]
   },
