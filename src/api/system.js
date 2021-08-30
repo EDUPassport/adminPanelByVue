@@ -40,3 +40,20 @@ export function tagInfo(params) {
   })
 }
 
+export function getSubIdentity(params) {
+  return request({
+    url: '/admin/getSubIdentity',
+    method: 'get',
+    params
+  })
+}
+
+export function addSubIdentity(data) {
+  return request({
+    url: '/admin/addSubIdentity',
+    method: 'post',
+    data
+  })
+}
+
+

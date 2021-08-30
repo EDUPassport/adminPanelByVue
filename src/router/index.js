@@ -150,6 +150,14 @@ export const constantRoutes = [
         meta: {
           title: 'Tags'
         }
+      },
+      {
+        path: 'subcate/list',
+        component: () => import('@/views/config/subcate/list'),
+        name: 'Sub Category',
+        meta: {
+          title: 'Sub Category'
+        }
       }
     ]
   },
