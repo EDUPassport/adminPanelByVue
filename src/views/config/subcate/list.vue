@@ -6,69 +6,44 @@
         Search
       </el-button>
       <el-button v-permission="['lei','admin']" class="filter-item" style="margin-left: 10px;" type="primary"
-                 icon="el-icon-edit" @click="handleCreate">
+                 icon="el-icon-edit" @click="handleCreateParent()">
         Add
       </el-button>
     </div>
+    <div class="tree-container">
+      <el-tree
+        :data="list"
+        node-key="id"
+        default-expand-all
+        auto-expand-parent
+        highlight-current
+        :expand-on-click-node="false">
 
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-    >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Name EN" width="110px" align="center">
-        <template slot-scope="{row}">
-          <span>{{row.identity_name}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Name CN" width="110px" align="center">
-        <template slot-scope="{row}">
-          <span>{{row.identity_name_cn}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Pid" width="200px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.pid }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="Image" width="110px" align="center">
-        <template slot-scope="{row}">
-          <el-image
-            style="width: 100px; height: 50px"
-            :src=" row.icon_url "
-            fit="contain"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+      <span class="custom-tree-node" slot-scope="{ node, data }">
+        <span>{{ node.data.identity_name }}</span>
+        <span>
+          <el-button
+            type="text"
+            size="mini"
+            @click="() => handleCreate(data)">
+            Add
+          </el-button>
+          <el-button
+            type="text"
+            size="mini"
+            @click="() => handleUpdate(data)">
             Edit
           </el-button>
-          <el-button v-if="row.is_delete===1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
-            Recover
-          </el-button>
-          <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger"
-                     @click="handleDelete(row,$index)">
+          <el-button
+            type="text"
+            size="mini"
+            @click="() => handleDelete(data)">
             Delete
           </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit"
-                @pagination="getList"/>
+        </span>
+      </span>
+      </el-tree>
+    </div>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="top" style="width: 400px; margin-left:50px;">
@@ -112,8 +87,8 @@
 </template>
 
 <script>
-import {getSubIdentity,addSubIdentity} from '@/api/system.js'
-
+import {addSubIdentity, getSubIdentity} from '@/api/system.js'
+import {tree} from "@/utils";
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
@@ -141,15 +116,17 @@ export default {
       listLoading: true,
       listQuery: {
         cate: undefined,
+        is_delete: 0,
         page: 1,
-        limit: 20
+        limit: 1000
       },
 
       temp: {
         identity_name_cn: undefined,
         identity_name: undefined,
         icon_url: undefined,
-        tag_id:undefined,
+        pid:undefined,
+        identity_id:undefined,
         is_delete:0
       },
       dialogFormVisible: false,
@@ -159,8 +136,8 @@ export default {
         create: 'Create'
       },
       rules: {
-        name_cn: [{required: true, message: 'category is required', trigger: 'change'}],
-        name_en: [{required: true, message: 'position is required', trigger: 'change'}]
+        identity_name_cn: [{required: true, message: 'is required', trigger: 'change'}],
+        identity_name: [{required: true, message: 'is required', trigger: 'change'}]
       },
       downloadLoading: false,
       // uploadHeaders:undefined,
@@ -182,26 +159,15 @@ export default {
     this.getList()
   },
   methods: {
-    tabClickJobs(e) {
-      console.log(e)
-      if (e.index == 0) {
-        this.listQuery.cate = 1
-        this.getList()
-      }
-      if (e.index == 1) {
-        this.listQuery.cate = 2
-        this.getList()
-      }
-    },
     getList() {
       this.listLoading = true
       getSubIdentity(this.listQuery).then(response => {
-        console.log(response)
-        // this.list = response.message.data
-        this.list = response.message.data.filter(item => item.is_delete === 0)
+
+        let resData = response.message.data;
+        // console.log(treeData);
+        this.list = tree(resData);
         this.total = response.message.total
 
-        // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -220,16 +186,29 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        name_cn: undefined,
-        name_en: undefined,
-        desc: undefined,
-        image_url: undefined,
-        tag_id: undefined
+        identity_name_cn: undefined,
+        identity_name: undefined,
+        icon_url: undefined,
+        pid:undefined,
+        identity_id:undefined
       }
+      this.fileList = [];
+      this.fileUrl = '';
     },
-    handleCreate() {
+    handleCreateParent(){
       this.resetTemp()
-      this.fileList = undefined
+      this.temp.pid = 0;
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    handleCreate(data) {
+
+      this.resetTemp()
+      this.temp.pid = data.id;
+
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -239,12 +218,9 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          // this.temp.author = 'vue-element-admin'
-          this.temp.image_url = this.fileUrl
-          addSystemTag(this.temp).then((res) => {
-            console.log(res)
-            // this.list.unshift(this.temp)
+          this.temp.icon_url = this.fileUrl
+          addSubIdentity(this.temp).then((res) => {
+
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -252,18 +228,20 @@ export default {
               type: 'success',
               duration: 2000
             })
+            this.resetTemp()
             window.location.reload()
           })
         }
       })
     },
     handleUpdate(row) {
-      console.log(row)
+      // console.log(row)
+      this.resetTemp();
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.tag_id = row.id
-
-      this.fileList = [{name: '', url: row.image_url}]
-      // this.temp.timestamp = new Date(this.temp.timestamp)
+      this.temp.identity_id = row.id
+      if(row.icon_url){
+        this.fileList = [{name: '', url: row.icon_url}]
+      }
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -273,11 +251,11 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.image_url = this.fileUrl
+          this.temp.icon_url = this.fileUrl
           const tempData = Object.assign({}, this.temp)
 
-          addSystemTag(tempData).then((res) => {
-            console.log(res)
+          addSubIdentity(tempData).then((res) => {
+            // console.log(res)
             if (res.code == 200) {
               this.dialogFormVisible = false
               this.$notify({
@@ -287,13 +265,13 @@ export default {
                 duration: 2000
               })
               this.getList()
-              this.fileUrl = ''
+              this.resetTemp()
             }
           })
         }
       })
     },
-    handleDelete(row, index) {
+    handleDelete(row) {
       this.$notify({
         title: 'Success',
         message: 'Delete Successfully',
@@ -301,32 +279,54 @@ export default {
         duration: 2000
       })
       // this.list.splice(index, 1)
-      addSystemTag({is_delete: 1, tag_id: row.id}).then(res => {
-        console.log(res)
+      addSubIdentity({is_delete: 1, identity_id: row.id}).then(res => {
+        // console.log(res)
         this.getList()
       }).catch(error => {
         console.log(error)
       })
     },
     handleRecover(row) {
-      addSystemTag({is_delete: 0, tag_id: row.id}).then(res => {
-        console.log(res)
+      addSubIdentity({is_delete: 0, identity_id: row.id}).then(res => {
+        // console.log(res)
         this.getList()
       }).catch(error => {
         console.log(error)
       })
     },
     uploadFileSuccess(response, file, fileList) {
-      // console.log(response)
-      // console.log(file)
-      // console.log(fileList)
+
       if (response.code == 200) {
         this.fileUrl = response.data[0].file_url
-        // const file_name = response.data[0].file_name
       } else {
         console.log(response.msg)
       }
+
     }
   }
 }
 </script>
+
+<style scoped>
+
+.tree-container {
+  border: 1px solid #eeeeee;
+  /*border-radius: 10px;*/
+
+  padding: 20px;
+  margin-top: 50px;
+}
+
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+  padding-left: 20px;
+  border-bottom: 1px solid #eeeeee;
+
+}
+
+</style>
