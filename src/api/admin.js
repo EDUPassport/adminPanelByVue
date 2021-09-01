@@ -39,6 +39,14 @@ export function updateObject(data) {
   })
 }
 
+export function addUserObject(data) {
+  return request({
+    url: '/admin/addUserObject',
+    method: 'post',
+    data
+  })
+}
+
 export function addAdminUser(data) {
   return request({
     url: '/admin/addAdminUser',
