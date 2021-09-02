@@ -5,8 +5,7 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="getList()">
         Search
       </el-button>
-      <el-button v-permission="['lei','admin']" class="filter-item" style="margin-left: 10px;" type="primary"
-                 icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
       </el-button>
     </div>

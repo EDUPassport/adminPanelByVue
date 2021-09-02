@@ -293,7 +293,6 @@
       <el-table-column
         label="User Id"
         prop="id"
-        sortable="custom"
         align="center"
         width="80"
       >
@@ -302,8 +301,18 @@
         </template>
       </el-table-column>
       <el-table-column
+        label="Parent Id"
+        prop="pid"
+        align="center"
+        width="120"
+      >
+        <template slot-scope="{row}">
+          <span>{{ row.pid }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
         label="Username"
-        width="110"
+        width="180"
       >
         <template slot-scope="scope">
           {{ scope.row.username }}
