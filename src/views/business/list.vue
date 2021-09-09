@@ -219,7 +219,7 @@
           <span v-if="scope.row.level==3">Plus</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="440" class-name="small-padding fixed-width">
+      <el-table-column label="Actions" align="center" width="480" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
@@ -238,6 +238,25 @@
           >
             Purchase Ads
           </el-button>
+
+          <el-button
+            v-if="row.is_delete == 0"
+            size="mini"
+            type="danger"
+            @click="handleDelete(row)"
+          >
+            Delete
+          </el-button>
+
+          <el-button
+            v-if="row.is_delete == 1"
+            size="mini"
+            type="warning"
+            @click="handleRecover(row)"
+          >
+            Recover
+          </el-button>
+
         </template>
       </el-table-column>
       <el-table-column label="Create Time" width="180">
@@ -336,7 +355,7 @@
 
 <script>
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
-import { vipList, changeVipLevel, businessList } from '@/api/member'
+import { vipList, changeVipLevel, businessList,addBusinessBasic } from '@/api/member'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { uploadExcel, uploadJobs } from '@/api/jobs'
@@ -587,6 +606,73 @@ export default {
     },
     handleUpdate(row) {
       this.$router.push({ path: '/business/editBusiness', query: { uid: row.user_id }})
+    },
+    handleDelete(row){
+
+      let data = {
+        user_id:row.user_id,
+        is_delete:1
+      }
+
+      this.$confirm('Delete ?', 'Tips', {
+        confirmButtonText: 'Sure',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        addBusinessBasic(data).then(res => {
+          // console.log(res)
+          if (res.code === 200) {
+            this.$message.success(res.msg)
+            setTimeout(function() {
+              window.location.reload()
+            }, 1000)
+
+            // this.$router.push({path:'/users/business'})
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(error => {
+          console.log(error)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: 'Cancel'
+        });
+      });
+
+    },
+    handleRecover(row){
+
+      let data = {
+        user_id:row.user_id,
+        is_delete:0
+      }
+
+      this.$confirm('Recover ?', 'Tips', {
+        confirmButtonText: 'Sure',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        addBusinessBasic(data).then(res => {
+          // console.log(res)
+          if (res.code === 200) {
+            this.$message.success(res.msg)
+            this.getList();
+            // this.$router.push({path:'/users/business'})
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(error => {
+          console.log(error)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: 'Cancel'
+        });
+      });
+
     },
     handleMemberLevel(row, index) {
       // this.tempUpgrade = Object.assign({}, row) // copy obj
