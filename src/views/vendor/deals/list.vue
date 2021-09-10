@@ -103,6 +103,7 @@
           <a :href="row.file">{{ row.file_name }}</a>
         </template>
       </el-table-column>
+
       <el-table-column
         label="City"
         width="150px"
@@ -141,6 +142,17 @@
         </template>
       </el-table-column>
 
+      <el-table-column
+        label="Online"
+        width="150px"
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <span v-if="row.is_online==1">online</span>
+          <span v-if="row.is_online==2">offline</span>
+          <span v-if="row.is_online==3">Both</span>
+        </template>
+      </el-table-column>
 
       <el-table-column
         label="Status"

@@ -60,6 +60,21 @@
             />
           </el-select>
         </el-form-item>
+
+        <el-form-item label="Online">
+          <el-select
+            v-model="dealsTempData.is_online"
+            class="filter-item"
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="item in onlineOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="Location">
           <el-select
             v-model="dealsTempData.province_name"
@@ -226,7 +241,7 @@ export default {
       allowedDogOptions: [{label: 'Yes', value: 1}, {label: 'No', value: 0}],
       userListData: [],
       popuCityList: [],
-
+      onlineOptions: [{label: 'online', value: 1}, {label: 'offline', value: 2},{label: 'both', value: 3}],
       dealsTempData: {
         user_id: 1,
         type: undefined,
@@ -249,7 +264,8 @@ export default {
         allowed_dog: undefined,
         deal_ranking_time: undefined,
         lng: undefined,
-        lat: undefined
+        lat: undefined,
+        is_online:undefined
 
       },
       fileUrl: undefined,
