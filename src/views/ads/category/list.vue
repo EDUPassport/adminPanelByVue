@@ -317,8 +317,8 @@ export default {
 
       this.addDialogVisible = true;
       // this.ruleForm.category_id = row.id;
-
       this.ruleForm = Object.assign({category_id: row.id}, row)
+      this.ruleForm.money = row.money / 100;
       this.categoryId = row.pid;
 
     },
