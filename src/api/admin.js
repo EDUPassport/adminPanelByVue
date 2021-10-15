@@ -31,6 +31,7 @@ export function categoryList(params) {
     params
   })
 }
+
 export function updateObject(data) {
   return request({
     url: '/admin/updateObject',
@@ -38,6 +39,7 @@ export function updateObject(data) {
     data
   })
 }
+
 
 export function addUserObject(data) {
   return request({
@@ -58,6 +60,23 @@ export function addAdminUser(data) {
 export function getAdminList(params) {
   return request({
     url: '/admin/getAdminList',
+    method: 'get',
+    params
+  })
+
+}
+
+export function addPromoCode(data) {
+  return request({
+    url: '/admin/addPromoCode',
+    method: 'post',
+    data
+  })
+}
+
+export function promoCardList(params) {
+  return request({
+    url: '/admin/promoCardList',
     method: 'get',
     params
   })

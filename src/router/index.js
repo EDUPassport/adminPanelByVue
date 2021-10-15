@@ -500,7 +500,28 @@ export const constantRoutes = [
       }
 
     ]
-  }
+  },
+  {
+    path: '/promo',
+    component: Layout,
+    redirect: '/promo/code',
+    alwaysShow: true, // will always show the root menu
+    name: 'PromoCode',
+    meta: {
+      title: 'Promo Code',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'code',
+        component: () => import('@/views/promoCode/code'),
+        name: 'promoCode',
+        meta: {
+          title: 'Promo Code'
+        }
+      }
+    ]
+  },
 
 
 ]
