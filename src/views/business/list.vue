@@ -187,6 +187,13 @@
           {{ scope.row.first_name }} {{ scope.row.last_name }}
         </template>
       </el-table-column>
+      <el-table-column label="Status" width="140">
+        <template slot-scope="scope">
+          <span v-if="scope.row.status == 0">Pending</span>
+          <span v-if="scope.row.status == 1">Approve</span>
+          <span v-if="scope.row.status == 2">Rejected</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Number of Jobs posted" width="160">
         <template slot-scope="scope">
           {{ scope.row.job_num }}
@@ -221,6 +228,9 @@
       </el-table-column>
       <el-table-column label="Actions" align="center" width="480" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
+          <el-button type="primary" size="mini" @click="handleReview(row)">
+            Review
+          </el-button>
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
           </el-button>
@@ -350,6 +360,32 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="Review" :visible.sync="dialogReviewFormVisible">
+      <el-form
+        ref="dataReviewForm"
+        :model="tempReview"
+        label-position="left"
+        label-width="70px"
+        style="width: 400px; margin-left:50px;"
+      >
+        <el-form-item label="Status">
+          <el-select v-model="tempReview.status" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in reviewStatusOptions" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogReviewFormVisible = false">
+          Cancel
+        </el-button>
+        <el-button type="primary" @click="reviewData">
+          Confirm
+        </el-button>
+      </div>
+    </el-dialog>
+
+
   </div>
 </template>
 
@@ -358,8 +394,9 @@ import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 import { vipList, changeVipLevel, businessList,addBusinessBasic } from '@/api/member'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
-import { uploadExcel, uploadJobs } from '@/api/jobs'
+import { uploadJobs } from '@/api/jobs'
 import {adCategoryList, buyAd} from "@/api/ads";
+import {approveBusiness} from "@/api/admin"
 import {tree} from "@/utils";
 
 export default {
@@ -442,7 +479,13 @@ export default {
         emitPath: false,
         value: 'id',
         label: 'name_en'
-      }
+      },
+      dialogReviewFormVisible:false,
+      reviewStatusOptions: [{ label: 'Pending', value: 0 }, { label: 'Successful', value: 1 }, { label: 'Rejected', value: 2 }],
+      tempReview: {
+        business_id: undefined,
+        status: undefined
+      },
 
     }
   },
@@ -462,6 +505,31 @@ export default {
     this.getAdsCategoryList()
   },
   methods: {
+    handleReview(row) {
+      // this.temp = Object.assign({}, row) // copy obj
+      this.tempReview.business_id = row.id
+      this.dialogReviewFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataReviewForm'].clearValidate()
+      })
+    },
+    reviewData() {
+      this.$refs['dataReviewForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.tempReview)
+          approveBusiness(tempData).then(() => {
+            this.dialogReviewFormVisible = false
+            this.$notify({
+              title: 'Success',
+              message: 'Update Successfully',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          })
+        }
+      })
+    },
     purchaseConfirm() {
       let data = Object.assign({}, this.purchaseAdsForm)
       // console.log(data)

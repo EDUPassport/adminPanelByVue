@@ -74,6 +74,14 @@ export function addPromoCode(data) {
   })
 }
 
+export function approveBusiness(data) {
+  return request({
+    url: '/admin/approveBusiness',
+    method: 'post',
+    data
+  })
+}
+
 export function promoCardList(params) {
   return request({
     url: '/admin/promoCardList',

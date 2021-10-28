@@ -55,6 +55,7 @@
               <span v-if="row.sys_key == 13">Vendor_Upgrade_Pro</span>
               <span v-if="row.sys_key == 14">Vendor_Upgrade_Plus</span>
               <span v-if="row.sys_key == 15">Lama</span>
+              <span v-if="row.sys_key == 16">Vendor_Featured_logos</span>
             </template>
           </el-table-column>
           <el-table-column label="Comment" width="200px" align="center">
@@ -194,7 +195,8 @@ export default {
         {label: 'Vendor_Upgrade_Basic', value: 12},
         {label: 'Vendor_Upgrade_Pro', value: 13},
         {label: 'Vendor_Upgrade_Plus', value: 14},
-        {label: 'Lama', value: 15}
+        {label: 'Lama', value: 15},
+        {label:"Vendor_Featured_logos",value:16}
 
       ],
       sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],

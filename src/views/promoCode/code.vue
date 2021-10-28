@@ -31,6 +31,11 @@
           <span> {{row.exchange_time}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Month" width="210px" align="center">
+        <template slot-scope="{row}">
+          <span> {{row.month}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Exchange UserId" width="210px" align="center">
         <template slot-scope="{row}">
           <span> {{row.user_id}}</span>
@@ -59,6 +64,9 @@
 
         <el-form-item label="Code Text" prop="code">
           <el-input v-model="temp.code" />
+        </el-form-item>
+        <el-form-item label="Month" prop="month">
+          <el-input v-model="temp.month" type="number" placeholder="1~12"></el-input>
         </el-form-item>
 
       </el-form>
@@ -121,7 +129,8 @@
         showReviewer: false,
         temp: {
           id: undefined,
-          code: ''
+          code: '',
+          month:0
         },
         dialogFormVisible: false,
         dialogStatus: '',
@@ -132,7 +141,8 @@
         dialogPvVisible: false,
         pvData: [],
         rules: {
-          code: [{ required: true, message: 'code is required', trigger: 'change' }]
+          code: [{ required: true, message: 'code is required', trigger: 'change' }],
+          month: [{ required: true, message: 'month is required', trigger: 'change' }]
         },
         downloadLoading: false,
         // uploadHeaders:undefined,
