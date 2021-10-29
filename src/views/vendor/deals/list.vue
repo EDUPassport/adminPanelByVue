@@ -181,12 +181,30 @@
         </template>
       </el-table-column>
       <el-table-column
+        label="Featured"
+        align="center"
+        width="230"
+        class-name="small-padding fixed-width"
+      >
+        <template slot-scope="{row}">
+         {{row.is_featured}}
+        </template>
+      </el-table-column>
+
+      <el-table-column
         label="Actions"
         align="center"
         width="230"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{row}">
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleFeatured(row)"
+          >
+            Featured
+          </el-button>
           <el-button
             type="primary"
             size="mini"
@@ -460,6 +478,41 @@
         </el-button>
       </div>
     </el-dialog>
+
+
+    <el-dialog
+      title="Set Featured"
+      :visible.sync="dialogFeaturedVisible"
+    >
+      <el-form
+        ref="dataFeaturedForm"
+        :rules="featuredRules"
+        :model="featuredTemp"
+        label-position="top"
+        label-width="170px"
+        style="width: 400px; margin-left:50px;"
+      >
+        <el-form-item label="Featured Sort">
+          <el-input v-model="featuredTemp.is_featured" type="number" placeholder="Set featured"></el-input>
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="dialogFeaturedVisible = false">
+          Cancel
+        </el-button>
+        <el-button
+          type="primary"
+          @click="featuredData"
+        >
+          Confirm
+        </el-button>
+      </div>
+    </el-dialog>
+
+
   </div>
 </template>
 
@@ -472,6 +525,7 @@ import { format } from 'date-fns' // secondary package based on el-pagination
 import { getAreas } from '@/api/location'
 import {AMapManager} from 'vue-amap'
 const amapManager = new AMapManager()
+import {setFeaturedDeals} from '@/api/admin'
 export default {
   name: 'Index',
   components: { Pagination },
@@ -574,7 +628,14 @@ export default {
         type: [{ required: true, message: 'status is required', trigger: 'change' }]
       },
       downloadLoading: false,
-      fileName: undefined
+      fileName: undefined,
+
+      featuredTemp:{
+        deal_id:undefined,
+        is_featured:0
+      },
+      dialogFeaturedVisible:false,
+      featuredRules:{}
 
     }
   },
@@ -822,6 +883,13 @@ export default {
         }
       })
     },
+    handleFeatured(row){
+      this.featuredTemp.deal_id = row.id;
+      this.dialogFeaturedVisible = true;
+      this.$nextTick(()=>{
+        this.$refs['dataFeaturedForm'].clearValidate()
+      })
+    },
     handleReview(row) {
       // this.temp = Object.assign({}, row)
       this.temp.deal_id = row.id
@@ -829,6 +897,27 @@ export default {
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
+      })
+    },
+    featuredData() {
+      this.$refs['dataFeaturedForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.featuredTemp)
+
+          setFeaturedDeals(tempData).then((res) => {
+            // console.log(res)
+            if (res.code == 200) {
+              this.dialogFeaturedVisible = false
+              this.$notify({
+                title: 'Success',
+                message: 'Update Successfully',
+                type: 'success',
+                duration: 2000
+              })
+              this.getList()
+            }
+          })
+        }
       })
     },
     reviewData() {

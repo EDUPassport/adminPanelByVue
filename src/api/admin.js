@@ -89,3 +89,11 @@ export function promoCardList(params) {
     params
   })
 }
+
+export function setFeaturedDeals(data) {
+  return request({
+    url: '/admin/setFeaturedDeals',
+    method: 'post',
+    data
+  })
+}
