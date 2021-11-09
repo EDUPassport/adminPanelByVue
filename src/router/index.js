@@ -453,6 +453,15 @@ export const constantRoutes = [
         meta: {
           title: 'Add Events', noCache: true, activeMenu: '/vendor/events/list'
         }
+      },
+      {
+        path: 'logo',
+        component: () => import('@/views/vendor/logo/list'),
+        hidden: false,
+        name: 'logoList',
+        meta: {
+          title: "Logo List", noCache: true, activeMenu: '/vendor/logo/list'
+        }
       }
 
     ]

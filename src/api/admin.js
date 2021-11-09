@@ -97,3 +97,18 @@ export function setFeaturedDeals(data) {
     data
   })
 }
+
+export function getSixLogo(params) {
+  return request({
+    url: '/admin/getSixLogo',
+    method: 'get',
+    params
+  })
+}
+export function addSixLogo(data) {
+  return request({
+    url: '/admin/addSixLogo',
+    method: 'post',
+    data
+  })
+}
