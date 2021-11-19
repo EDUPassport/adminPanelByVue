@@ -531,6 +531,27 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/subscribe',
+    component: Layout,
+    redirect: '/subscribe/email',
+    alwaysShow: true, // will always show the root menu
+    name: 'emailList',
+    meta: {
+      title: 'Email List',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'email',
+        component: () => import('@/views/subscribe/email/email'),
+        name: 'emailList',
+        meta: {
+          title: 'Email List'
+        }
+      }
+    ]
+  }
 
 
 ]

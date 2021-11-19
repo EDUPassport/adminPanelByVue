@@ -112,3 +112,12 @@ export function addSixLogo(data) {
     data
   })
 }
+
+//admin/subscribeEmailList
+export function subscribeEmailList(params) {
+  return request({
+    url: '/admin/subscribeEmailList',
+    method: 'get',
+    params
+  })
+}

@@ -36,6 +36,11 @@
           <span> {{row.month}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Money (Unit points)" width="210px" align="center">
+        <template slot-scope="{row}">
+          <span> {{row.money}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Exchange UserId" width="210px" align="center">
         <template slot-scope="{row}">
           <span> {{row.user_id}}</span>
@@ -63,10 +68,13 @@
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
 
         <el-form-item label="Code Text" prop="code">
-          <el-input v-model="temp.code" />
+          <el-input v-model="temp.code" ></el-input>
         </el-form-item>
         <el-form-item label="Month" prop="month">
           <el-input v-model="temp.month" type="number" placeholder="1~12"></el-input>
+        </el-form-item>
+        <el-form-item label="Money (Unit points)" prop="money">
+          <el-input v-model="temp.money" type="number" placeholder="money"></el-input>
         </el-form-item>
 
       </el-form>
@@ -130,7 +138,8 @@
         temp: {
           id: undefined,
           code: '',
-          month:0
+          month:0,
+          money:0
         },
         dialogFormVisible: false,
         dialogStatus: '',
@@ -142,7 +151,8 @@
         pvData: [],
         rules: {
           code: [{ required: true, message: 'code is required', trigger: 'change' }],
-          month: [{ required: true, message: 'month is required', trigger: 'change' }]
+          month: [{ required: true, message: 'month is required', trigger: 'change' }],
+          money: [{ required: true, message: 'money is required', trigger: 'change' }],
         },
         downloadLoading: false,
         // uploadHeaders:undefined,
