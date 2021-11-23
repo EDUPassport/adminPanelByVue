@@ -121,3 +121,12 @@ export function subscribeEmailList(params) {
     params
   })
 }
+
+export function promoCardUserList(params) {
+  return request({
+    url: '/admin/promoCardUserList',
+    method: 'get',
+    params
+  })
+}
+

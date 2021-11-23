@@ -41,24 +41,27 @@
           <span> {{row.money}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Exchange UserId" width="210px" align="center">
+      <el-table-column label="Use Count" width="210px" align="center">
         <template slot-scope="{row}">
-          <span> {{row.user_id}}</span>
+          <span> {{row.use_count}}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">-->
-<!--        <template slot-scope="{row,$index}">-->
-<!--          <el-button type="primary" size="mini" @click="handleUpdate(row)">-->
-<!--            Edit-->
-<!--          </el-button>-->
-<!--          <el-button v-if="row.is_delete===1" v-permission="['lei']" size="mini" @click="handleRecover(row)">-->
-<!--            Recover-->
-<!--          </el-button>-->
-<!--          <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger" @click="handleDelete(row,$index)">-->
-<!--            Delete-->
-<!--          </el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
+        <template slot-scope="{row,$index}">
+          <el-button type="primary" size="mini" @click="showUseUsers(row.card_no)">
+            Used list
+          </el-button>
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+            Edit
+          </el-button>
+          <el-button v-if="row.is_delete===1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
+            Recover
+          </el-button>
+          <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger" @click="handleDelete(row,$index)">
+            Delete
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
 
@@ -174,7 +177,11 @@
       this.getList()
     },
     methods: {
-
+      showUseUsers(cardNo){
+        this.$router.push({path:'/promo/usedList',query:{
+          card_no:cardNo
+          }})
+      },
       getList() {
         this.listLoading = true
         promoCardList(this.listQuery).then(response => {
@@ -251,10 +258,7 @@
       handleUpdate(row) {
         console.log(row)
         this.temp = Object.assign({}, row) // copy obj
-        this.temp.ad_id = row.id
-        this.temp.position = Number(row.position)
-        this.fileList = [{ name: '', url: row.url }]
-        // this.temp.timestamp = new Date(this.temp.timestamp)
+        this.temp.id = row.id
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$nextTick(() => {
@@ -264,7 +268,6 @@
       updateData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            this.temp.url = this.fileUrl
             const tempData = Object.assign({}, this.temp)
             // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
             addPromoCode(tempData).then((res) => {
@@ -284,23 +287,34 @@
           }
         })
       },
-      handleDelete(row, index) {
-        this.$notify({
-          title: 'Success',
-          message: 'Delete Successfully',
-          type: 'success',
-          duration: 2000
-        })
+      handleDelete(row) {
+
         // this.list.splice(index, 1)
-        addPromoCode({ is_delete: 1, ad_id: row.id }).then(res => {
+        addPromoCode({ is_delete: 1, id: row.id }).then(res => {
           console.log(res)
-          this.getList()
+          if(res.code== 200){
+            this.$notify({
+              title: 'Success',
+              message: 'Delete Successfully',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          }else{
+            this.$notify({
+              title: 'Error',
+              message: res.msg,
+              type: 'warning',
+              duration: 2000
+            })
+          }
+
         }).catch(error => {
           console.log(error)
         })
       },
       handleRecover(row) {
-        addPromoCode({ is_delete: 0, ad_id: row.id }).then(res => {
+        addPromoCode({ is_delete: 0, id: row.id }).then(res => {
           console.log(res)
           this.getList()
         }).catch(error => {

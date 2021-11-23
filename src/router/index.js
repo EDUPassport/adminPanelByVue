@@ -528,6 +528,15 @@ export const constantRoutes = [
         meta: {
           title: 'Promo Code'
         }
+      },
+      {
+        path: 'usedList',
+        component: () => import('@/views/promoCode/usedList'),
+        name: 'usedList',
+        hidden: true,
+        meta: {
+          title: 'Used List'
+        }
       }
     ]
   },
