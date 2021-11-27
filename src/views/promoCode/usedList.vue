@@ -18,22 +18,22 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Code Text" width="110px" align="center">
+      <el-table-column label="Promo Code" width="110px" align="center">
         <template slot-scope="{row}">
           <span  class="link-type">{{row.card_no}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Exchange Time" width="210px" align="center">
+      <el-table-column label="Redeem Time" width="210px" align="center">
         <template slot-scope="{row}">
           <span> {{row.c_time}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Month" width="210px" align="center">
+      <el-table-column label="Duration(months)" width="210px" align="center">
         <template slot-scope="{row}">
           <span> {{row.month}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Money (Unit points)" width="210px" align="center">
+      <el-table-column label="Amount(RMB 单位分)" width="210px" align="center">
         <template slot-scope="{row}">
           <span> {{row.money}}</span>
         </template>

@@ -21,32 +21,37 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Code Text" width="110px" align="center">
+      <el-table-column label="Promo Code" width="110px" align="center">
         <template slot-scope="{row}">
           <span  class="link-type">{{row.card_no}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Exchange Time" width="210px" align="center">
+      <el-table-column label="Redeem Time" width="210px" align="center">
         <template slot-scope="{row}">
           <span> {{row.exchange_time}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Month" width="210px" align="center">
+      <el-table-column label="Duration(months)" width="210px" align="center">
         <template slot-scope="{row}">
           <span> {{row.month}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Money (Unit points)" width="210px" align="center">
+      <el-table-column label="Amount(RMB 单位分)" width="210px" align="center">
         <template slot-scope="{row}">
           <span> {{row.money}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Use Count" width="210px" align="center">
+      <el-table-column label="Max Limit" width="210px" align="center">
+        <template slot-scope="{row}">
+          <span> {{row.max_limit}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Number of Users" width="210px" align="center">
         <template slot-scope="{row}">
           <span> {{row.use_count}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="Actions" align="center" width="260" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="showUseUsers(row.card_no)">
             Used list
@@ -55,10 +60,10 @@
             Edit
           </el-button>
           <el-button v-if="row.is_delete===1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
-            Recover
+            Activate
           </el-button>
           <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger" @click="handleDelete(row,$index)">
-            Delete
+            Deactivate
           </el-button>
         </template>
       </el-table-column>
@@ -70,14 +75,17 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="Code Text" prop="code">
+        <el-form-item label="Promo Code" prop="code">
           <el-input v-model="temp.code" ></el-input>
         </el-form-item>
-        <el-form-item label="Month" prop="month">
+        <el-form-item label="Duration(months)" prop="month">
           <el-input v-model="temp.month" type="number" placeholder="1~12"></el-input>
         </el-form-item>
-        <el-form-item label="Money (Unit points)" prop="money">
+        <el-form-item label="Amount(RMB * 100)" prop="money">
           <el-input v-model="temp.money" type="number" placeholder="money"></el-input>
+        </el-form-item>
+        <el-form-item label="Max Limit" prop="max_limit">
+          <el-input v-model="temp.max_limit" type="number" placeholder="max limit"></el-input>
         </el-form-item>
 
       </el-form>
@@ -142,7 +150,8 @@
           id: undefined,
           code: '',
           month:0,
-          money:0
+          money:0,
+          max_limit:0
         },
         dialogFormVisible: false,
         dialogStatus: '',
@@ -185,12 +194,10 @@
       getList() {
         this.listLoading = true
         promoCardList(this.listQuery).then(response => {
-          console.log(response)
-          // this.list = response.message.data
+          // console.log(response)
           this.list = response.message.data.filter(item => item.is_delete === 0)
           this.total = response.message.total
 
-          // Just to simulate the time of the request
           setTimeout(() => {
             this.listLoading = false
           }, 1.5 * 1000)
@@ -238,19 +245,29 @@
       createData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-            // this.temp.author = 'vue-element-admin'
-            addPromoCode(this.temp).then((res) => {
-              console.log(res)
-              // this.list.unshift(this.temp)
-              this.dialogFormVisible = false
-              this.$notify({
-                title: 'Success',
-                message: 'Created Successfully',
-                type: 'success',
-                duration: 2000
-              })
-              window.location.reload()
+            // this.temp.max_limit = Number(this.temp.max_limit)
+            let params = Object.assign({},this.temp)
+
+            addPromoCode(params).then((res) => {
+              if(res.code == 200){
+                this.dialogFormVisible = false
+                this.$notify({
+                  title: 'Success',
+                  message: 'Created Successfully',
+                  type: 'success',
+                  duration: 2000
+                })
+                // window.location.reload()
+                this.getList()
+              }else{
+                this.$notify({
+                  title: res.msg,
+                  message: res.msg,
+                  type: 'warning',
+                  duration: 2000
+                })
+              }
+
             })
           }
         })
@@ -269,9 +286,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             const tempData = Object.assign({}, this.temp)
-            // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
             addPromoCode(tempData).then((res) => {
-              console.log(res)
               if (res.code == 200) {
                 this.dialogFormVisible = false
                 this.$notify({
@@ -288,8 +303,6 @@
         })
       },
       handleDelete(row) {
-
-        // this.list.splice(index, 1)
         addPromoCode({ is_delete: 1, id: row.id }).then(res => {
           console.log(res)
           if(res.code== 200){
