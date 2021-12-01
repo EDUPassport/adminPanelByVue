@@ -60,16 +60,22 @@
             />
           </template>
         </el-table-column>
-
+        <el-table-column label="Images " align="center" width="230" class-name="small-padding fixed-width">
+          <template slot-scope="{row}">
+            <el-button type="primary" size="mini" @click="handle6images(row)">
+              Add
+            </el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
           <template slot-scope="{row,$index}">
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               Edit
             </el-button>
-            <el-button v-if="row.is_delete===1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
+            <el-button v-if="row.is_delete===1"  size="mini" @click="handleRecover(row)">
               Recover
             </el-button>
-            <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger" @click="handleDelete(row,$index)">
+            <el-button v-if="row.is_delete===0" size="mini" type="danger" @click="handleDelete(row,$index)">
               Delete
             </el-button>
           </template>
@@ -135,12 +141,46 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="Images (6 max)" :visible.sync="dialog6FormVisible">
+      <div style="margin-top: 20px;">
+        <div class="title">Images (6 max)</div>
+        <div class="images6max-container">
+          <el-upload
+            class="upload-images6max"
+            drag
+            :headers="uploadHeaders"
+            name="file[]"
+            :action="uploadRequestUrl"
+            multiple
+            list-type="picture"
+            :limit="6"
+            :on-success="images6maxSuccess"
+            :file-list="images6maxFileList"
+            :before-remove="images6maxBeforeRemove"
+          >
+            <i class="el-icon-upload" />
+            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+          </el-upload>
+
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialog6FormVisible = false">
+          Cancel
+        </el-button>
+        <el-button type="primary" @click="addBlog6Banner()">
+          Confirm
+        </el-button>
+      </div>
+    </el-dialog>
+
+
   </div>
 </template>
 
 <script>
 import Tinymce from '@/components/Tinymce'
-import { blogList, addBlog ,blogCategoryList} from '@/api/blog'
+import { blogList, addBlog ,blogCategoryList,addBlogBanner} from '@/api/blog'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
@@ -210,7 +250,11 @@ export default {
       categoryTreeData:[],
       adsCategoryValue:undefined,
       bannerFileList:[],
-      bannerFileUrl:undefined
+      bannerFileUrl:undefined,
+      images6maxFileList:[],
+      images6maxData:[],
+      dialog6FormVisible:false,
+      blogId:0
     }
   },
   computed: {
@@ -228,6 +272,41 @@ export default {
     this.getAdsCategoryList()
   },
   methods: {
+    handle6images(row){
+      this.dialog6FormVisible =true;
+      this.blogId = row.id;
+    },
+    images6maxBeforeRemove(file){
+      if(file.status == 'success'){
+        let fileUrl = file.response.data[0]['file_url']
+        let index = this.images6maxData.indexOf(fileUrl)
+        this.images6maxData.splice(index,1)
+      }
+    },
+    images6maxSuccess(response){
+      // console.log(response);
+      if(response.code == 200){
+        let fileUrl = response.data[0].file_url;
+        this.images6maxData.push(fileUrl)
+      }else{
+        console.log(response.msg)
+      }
+      console.log(this.images6maxData)
+
+    },
+    addBlog6Banner(){
+      let params = {
+        blog_id:this.blogId,
+        img:this.images6maxData
+      }
+      addBlogBanner(params).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+          this.dialog6FormVisible = false;
+          this.getList()
+        }
+      })
+    },
     pidChange(e) {
       console.log(e)
       this.adsCategoryValue = e;
@@ -296,17 +375,18 @@ export default {
       }
     },
     handleCreate() {
+      this.$router.push({path:'/blog/form',query:{}})
       // console.log(this.adsCategoryValue)
-      this.resetTemp()
-
-      this.bannerFileUrl = undefined;
-      this.bannerFileList = [];
-      this.adsCategoryValue=undefined
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+      // this.resetTemp()
+      //
+      // this.bannerFileUrl = undefined;
+      // this.bannerFileList = [];
+      // this.adsCategoryValue=undefined
+      // this.dialogStatus = 'create'
+      // this.dialogFormVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs['dataForm'].clearValidate()
+      // })
     },
     createData() {
       this.temp.cate_id = this.adsCategoryValue;
@@ -331,28 +411,29 @@ export default {
       })
     },
     handleUpdate(row) {
+      this.$router.push({path:'/blog/form',query:{id:row.id}})
 
-      this.adsCategoryValue = row.cate_id;
-
-      this.temp = Object.assign({}, row) // copy obj
-
-      let categoryData = this.categoryData;
-      let filterData = categoryData.filter(item=>item.id == row.cate_id)
-
-      this.temp.cate_id = row.cate_id;
-      this.temp.id = row.id
-      this.temp.cate_name_en = filterData[0]['name_en']
-      this.temp.cate_name_cn = filterData[0]['name_cn']
-      this.bannerFileUrl = row.image_url
-
-      if(row.image_url !=''){
-        this.bannerFileList = [{name:'',url:row.image_url}]
-      }
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+      // this.adsCategoryValue = row.cate_id;
+      //
+      // this.temp = Object.assign({}, row) // copy obj
+      //
+      // let categoryData = this.categoryData;
+      // let filterData = categoryData.filter(item=>item.id == row.cate_id)
+      //
+      // this.temp.cate_id = row.cate_id;
+      // this.temp.id = row.id
+      // this.temp.cate_name_en = filterData[0]['name_en']
+      // this.temp.cate_name_cn = filterData[0]['name_cn']
+      // this.bannerFileUrl = row.image_url
+      //
+      // if(row.image_url !=''){
+      //   this.bannerFileList = [{name:'',url:row.image_url}]
+      // }
+      // this.dialogStatus = 'update'
+      // this.dialogFormVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs['dataForm'].clearValidate()
+      // })
 
     },
     updateData() {

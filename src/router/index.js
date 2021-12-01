@@ -581,6 +581,15 @@ export const constantRoutes = [
         }
       },
       {
+        path: 'form',
+        component: () => import('@/views/blog/form'),
+        name: 'blogForm',
+        hidden:true,
+        meta: {
+          title: 'Blog Form',noCache: true, activeMenu: '/blog/list'
+        }
+      },
+      {
         path: 'category/list',
         component: () => import('@/views/blog/category/list'),
         name: 'blogCategoryList',

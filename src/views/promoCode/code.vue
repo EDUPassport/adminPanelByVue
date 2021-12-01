@@ -59,10 +59,10 @@
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
           </el-button>
-          <el-button v-if="row.is_delete===1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
+          <el-button v-if="row.is_delete===1" size="mini" @click="handleRecover(row)">
             Activate
           </el-button>
-          <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="row.is_delete===0" size="mini" type="danger" @click="handleDelete(row,$index)">
             Deactivate
           </el-button>
         </template>
@@ -72,7 +72,7 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog title="Add Promo Code" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
 
         <el-form-item label="Promo Code" prop="code">
@@ -93,11 +93,37 @@
         <el-button @click="dialogFormVisible = false">
           Cancel
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="createData()">
           Confirm
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="Update Promo Code" :visible.sync="dialogUpdateFormVisible">
+      <el-form ref="dataForm" :rules="updateRules" :model="updateTemp"
+               label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
+
+        <el-form-item label="Duration(months)" prop="month">
+          <el-input v-model="updateTemp.month" type="number" placeholder="1~12"></el-input>
+        </el-form-item>
+        <el-form-item label="Amount(RMB * 100)" prop="money">
+          <el-input v-model="updateTemp.money" type="number" placeholder="money"></el-input>
+        </el-form-item>
+        <el-form-item label="Max Limit" prop="max_limit">
+          <el-input v-model="updateTemp.max_limit" type="number" placeholder="max limit"></el-input>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogUpdateFormVisible = false">
+          Cancel
+        </el-button>
+        <el-button type="primary" @click="updateData()">
+          Confirm
+        </el-button>
+      </div>
+    </el-dialog>
+
 
   </div>
 </template>
@@ -169,7 +195,18 @@
         downloadLoading: false,
         // uploadHeaders:undefined,
         fileUrl: undefined,
-        fileList: undefined
+        fileList: undefined,
+        dialogUpdateFormVisible:false,
+        updateTemp:{
+          id: undefined,
+          month:0,
+          money:0,
+          max_limit:0
+        },
+        updateRules:{
+          month: [{ required: true, message: 'month is required', trigger: 'change' }],
+          money: [{ required: true, message: 'money is required', trigger: 'change' }],
+        }
       }
     },
     computed: {
@@ -273,11 +310,11 @@
         })
       },
       handleUpdate(row) {
-        console.log(row)
-        this.temp = Object.assign({}, row) // copy obj
-        this.temp.id = row.id
-        this.dialogStatus = 'update'
-        this.dialogFormVisible = true
+
+        this.updateTemp = Object.assign({}, row) // copy obj
+        this.updateTemp.id = row.id
+        // this.dialogStatus = 'update'
+        this.dialogUpdateFormVisible = true
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
         })
@@ -285,10 +322,10 @@
       updateData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            const tempData = Object.assign({}, this.temp)
+            const tempData = Object.assign({}, this.updateTemp)
             addPromoCode(tempData).then((res) => {
               if (res.code == 200) {
-                this.dialogFormVisible = false
+                this.dialogUpdateFormVisible = false
                 this.$notify({
                   title: 'Success',
                   message: 'Update Successfully',

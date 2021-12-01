@@ -22,10 +22,25 @@ export function addBlog(data) {
     data
   })
 }
+export function addBlogBanner(data) {
+  return request({
+    url: '/admin/addBlogBanner',
+    method: 'post',
+    data
+  })
+}
 
 export function blogList(params) {
   return request({
     url: '/admin/blogList',
+    method: 'get',
+    params
+  })
+}
+
+export function blogDetail(params) {
+  return request({
+    url: '/home/blog',
     method: 'get',
     params
   })
