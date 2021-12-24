@@ -20,8 +20,8 @@
           <el-form-item v-permission="['lei']" label="Key" prop="name_key">
             <el-input v-model="ruleForm.name_key"></el-input>
           </el-form-item>
-          <el-form-item label="Money" prop="money">
-            <el-input v-model="ruleForm.money"></el-input>
+          <el-form-item label="Money" >
+            <el-input v-model="bMoney"></el-input>
           </el-form-item>
           <el-form-item label="Duration" prop="days">
             <el-input v-model="ruleForm.days"></el-input>
@@ -110,7 +110,6 @@
 
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">Confirm</el-button>
-            <el-button @click="resetForm('ruleForm')">Reset</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -203,7 +202,8 @@ export default {
       bannerImageFileUrl:'',
       iconFileList:[],
       selectIconFileList:[],
-      bannerImageFileList:[]
+      bannerImageFileList:[],
+      bMoney:undefined
 
     }
   },
@@ -253,18 +253,13 @@ export default {
     handleClose(done) {
       done();
       this.resetFileList();
-      // this.$confirm('确认关闭？')
-      //   .then(_ => {
-      //     done();
-      //   })
-      //   .catch(_ => {
-      //   });
     },
     submitForm(formName) {
       this.ruleForm.pid = this.categoryId;
       this.ruleForm.icon_before = this.iconFileUrl;
       this.ruleForm.icon_after = this.selectIconFileUrl;
       this.ruleForm.image_url = this.bannerImageFileUrl;
+      this.ruleForm.money = this.bMoney * 100;
 
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -292,9 +287,6 @@ export default {
         }
       });
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
     pidChange(e) {
       console.log(e)
       this.ruleForm.pid = e;
@@ -318,7 +310,7 @@ export default {
       this.addDialogVisible = true;
       // this.ruleForm.category_id = row.id;
       this.ruleForm = Object.assign({category_id: row.id}, row)
-      this.ruleForm.money = row.money / 100;
+      this.bMoney = row.money / 100
       this.categoryId = row.pid;
 
     },
@@ -357,7 +349,7 @@ export default {
       });
 
     },
-    uploadIconSuccess(response, file, fileList) {
+    uploadIconSuccess(response) {
 
       if (response.code == 200) {
         this.iconFileUrl = response.data[0].file_url
@@ -366,7 +358,7 @@ export default {
         console.log(response.msg)
       }
     },
-    uploadSelectIconSuccess(response, file, fileList) {
+    uploadSelectIconSuccess(response) {
 
       if (response.code == 200) {
         this.selectIconFileUrl = response.data[0].file_url
@@ -375,7 +367,7 @@ export default {
         console.log(response.msg)
       }
     },
-    uploadBannerImageSuccess(response, file, fileList) {
+    uploadBannerImageSuccess(response) {
 
       if (response.code == 200) {
         this.bannerImageFileUrl = response.data[0].file_url

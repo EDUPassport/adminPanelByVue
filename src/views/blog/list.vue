@@ -60,15 +60,21 @@
             />
           </template>
         </el-table-column>
-        <el-table-column label="Images " align="center" width="230" class-name="small-padding fixed-width">
+        <el-table-column label="Slider Images" align="center" width="230" class-name="small-padding fixed-width">
           <template slot-scope="{row}">
-            <el-button type="primary" size="mini" @click="handle6images(row)">
-              Add
-            </el-button>
+            <el-carousel height="100px">
+              <el-carousel-item v-for="(item,index) in row.banner" :key="index">
+                <el-image :src="item.url"></el-image>
+              </el-carousel-item>
+            </el-carousel>
+
           </template>
         </el-table-column>
-        <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
+        <el-table-column label="Actions" align="center" width="300" class-name="small-padding fixed-width">
           <template slot-scope="{row,$index}">
+            <el-button type="primary" size="mini" @click="handle6images(row)">
+              Add Slider
+            </el-button>
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               Edit
             </el-button>
@@ -273,26 +279,52 @@ export default {
   },
   methods: {
     handle6images(row){
+      console.log(row.banner)
+      this.images6maxFileList = [];
+      this.images6maxData = [];
+      let bannerData = []
+      if(row.banner){
+        bannerData = row.banner;
+      }
+
+      if(bannerData.length>0){
+
+        bannerData.forEach(item=>{
+          let bannerObj = {name:'',url:item.url}
+          this.images6maxFileList.push(bannerObj)
+          this.images6maxData.push(item.url)
+        })
+      }
+
       this.dialog6FormVisible =true;
       this.blogId = row.id;
     },
     images6maxBeforeRemove(file){
+      console.log(file)
       if(file.status == 'success'){
-        let fileUrl = file.response.data[0]['file_url']
+        let fileUrl = '';
+        if(file.response){
+          fileUrl = file.response.data[0]['file_url']
+        }else{
+          fileUrl = file.url;
+        }
         let index = this.images6maxData.indexOf(fileUrl)
+        let obj_index = this.images6maxFileList.findIndex(item=>item.url == fileUrl)
         this.images6maxData.splice(index,1)
+        this.images6maxFileList.splice(obj_index,1)
       }
     },
     images6maxSuccess(response){
       // console.log(response);
       if(response.code == 200){
         let fileUrl = response.data[0].file_url;
+        let fileObj = {name:'',url:fileUrl}
+        this.images6maxFileList.push(fileObj)
         this.images6maxData.push(fileUrl)
       }else{
         console.log(response.msg)
       }
-      console.log(this.images6maxData)
-
+      // console.log(this.images6maxData)
     },
     addBlog6Banner(){
       let params = {
@@ -339,9 +371,9 @@ export default {
       this.listQuery.category = this.$route.query.category;
       blogList(this.listQuery).then(response => {
         // console.log(response)
-        this.list = response.message.data.filter(item => item.is_delete === 0)
+        this.list = response.message.data
         this.total = response.message.total
-
+        // this.fileList = [{ name: '', url: row.url }]
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false

@@ -36,9 +36,9 @@
           <span> {{row.month}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Amount(RMB 单位分)" width="210px" align="center">
+      <el-table-column label="Amount" width="210px" align="center">
         <template slot-scope="{row}">
-          <span> {{row.money}}</span>
+          <span> {{row.money / 100}}</span>
         </template>
       </el-table-column>
       <el-table-column label="Max Limit" width="210px" align="center">
@@ -81,8 +81,8 @@
         <el-form-item label="Duration(months)" prop="month">
           <el-input v-model="temp.month" type="number" placeholder="1~12"></el-input>
         </el-form-item>
-        <el-form-item label="Amount(RMB * 100)" prop="money">
-          <el-input v-model="temp.money" type="number" placeholder="money"></el-input>
+        <el-form-item label="Amount" prop="money">
+          <el-input v-model="bMoney" type="number" placeholder="money"></el-input>
         </el-form-item>
         <el-form-item label="Max Limit" prop="max_limit">
           <el-input v-model="temp.max_limit" type="number" placeholder="max limit"></el-input>
@@ -106,8 +106,8 @@
         <el-form-item label="Duration(months)" prop="month">
           <el-input v-model="updateTemp.month" type="number" placeholder="1~12"></el-input>
         </el-form-item>
-        <el-form-item label="Amount(RMB * 100)" prop="money">
-          <el-input v-model="updateTemp.money" type="number" placeholder="money"></el-input>
+        <el-form-item label="Amount" prop="money">
+          <el-input v-model="uMoney" type="number" placeholder="money"></el-input>
         </el-form-item>
         <el-form-item label="Max Limit" prop="max_limit">
           <el-input v-model="updateTemp.max_limit" type="number" placeholder="max limit"></el-input>
@@ -189,8 +189,7 @@
         pvData: [],
         rules: {
           code: [{ required: true, message: 'code is required', trigger: 'change' }],
-          month: [{ required: true, message: 'month is required', trigger: 'change' }],
-          money: [{ required: true, message: 'money is required', trigger: 'change' }],
+          month: [{ required: true, message: 'month is required', trigger: 'change' }]
         },
         downloadLoading: false,
         // uploadHeaders:undefined,
@@ -204,9 +203,11 @@
           max_limit:0
         },
         updateRules:{
-          month: [{ required: true, message: 'month is required', trigger: 'change' }],
-          money: [{ required: true, message: 'money is required', trigger: 'change' }],
-        }
+          month: [{ required: true, message: 'month is required', trigger: 'change' }]
+        },
+        bMoney:undefined,
+        uMoney:undefined,
+
       }
     },
     computed: {
@@ -283,6 +284,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             // this.temp.max_limit = Number(this.temp.max_limit)
+            this.temp.money = this.bMoney * 100
             let params = Object.assign({},this.temp)
 
             addPromoCode(params).then((res) => {
@@ -312,6 +314,7 @@
       handleUpdate(row) {
 
         this.updateTemp = Object.assign({}, row) // copy obj
+        this.uMoney = row.money / 100
         this.updateTemp.id = row.id
         // this.dialogStatus = 'update'
         this.dialogUpdateFormVisible = true
@@ -322,6 +325,7 @@
       updateData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
+            this.updateTemp.money = this.uMoney * 100
             const tempData = Object.assign({}, this.updateTemp)
             addPromoCode(tempData).then((res) => {
               if (res.code == 200) {
