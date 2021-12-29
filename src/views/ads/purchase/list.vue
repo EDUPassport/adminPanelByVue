@@ -2,7 +2,11 @@
   <div class="container">
     <el-table
       :data="myAdsData"
-      style="width: 100%"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%;"
+      size="mini"
       max-height="850">
       <el-table-column
         fixed
@@ -73,14 +77,14 @@
       </el-table-column>
 
       <el-table-column
+        label="Action"
         fixed="right"
-        label="操作"
         width="120">
         <template slot-scope="scope">
           <el-button
             @click.native.prevent="redeem(scope.row)"
-            type="text"
-            size="small">
+            type="primary"
+            size="mini">
             Redeem
           </el-button>
         </template>
@@ -273,7 +277,7 @@ export default {
 .container {
   width: 94%;
   margin: 40px auto 0;
-  border: 1px solid #eeeeee;
+
 }
 
 </style>

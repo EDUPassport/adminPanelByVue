@@ -322,7 +322,7 @@ export default {
       dialogFormEventsVisible: false,
       eventsTempData: {
         user_id: 1,
-        identity:3,
+        identity:2,
         name: undefined,
         desc: undefined,
         is_all: undefined,

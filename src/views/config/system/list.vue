@@ -24,6 +24,8 @@
           fit
           highlight-current-row
           style="width: 100%;"
+
+          size="mini"
           @sort-change="sortChange"
         >
           <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80"
@@ -38,7 +40,7 @@
               <span v-if="row.cate==2" class="link-type">Admin Panel</span>
             </template>
           </el-table-column>
-          <el-table-column label="System Key" width="110px" align="center">
+          <el-table-column label="System Key" width="210px" align="center">
             <template slot-scope="{row}">
               <span v-if="row.sys_key == 1">Vendor Qrcode</span>
               <span v-if="row.sys_key == 2">Discount Card</span>

@@ -363,7 +363,42 @@ export const constantRoutes = [
         meta: {
           title: 'Applications', noCache: true, activeMenu: '/business/jobs/list'
         }
-      }
+      },
+      {
+        path: 'events/list',
+        component: () => import('@/views/business/events/list'),
+        name: 'businessEvents',
+        meta: {
+          title: 'Events List'
+        }
+      },
+      {
+        path: 'events/detail',
+        component: () => import('@/views/business/events/detail'),
+        hidden: true,
+        name: 'businessEventDetail',
+        meta: {
+          title: 'Event Detail', noCache: true, activeMenu: '/business/events/list'
+        }
+      },
+      {
+        path: 'events/editEvents',
+        component: () => import('@/views/business/events/add'),
+        hidden: true,
+        name: 'businessEditEvents',
+        meta: {
+          title: 'Edit Events', noCache: true, activeMenu: '/business/events/list'
+        }
+      },
+      {
+        path: 'events/addEvents',
+        component: () => import('@/views/business/events/add'),
+        hidden: true,
+        name: 'businessAddEvents',
+        meta: {
+          title: 'Add Events', noCache: true, activeMenu: '/business/events/list'
+        }
+      },
 
     ]
   },

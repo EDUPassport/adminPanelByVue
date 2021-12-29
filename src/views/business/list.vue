@@ -73,10 +73,13 @@
       :data="list"
       border
       fit
+      stripe
+      size="mini"
       highlight-current-row
       style="width: 100%;"
+      max-height="600px"
     >
-      <el-table-column type="expand">
+      <el-table-column fixed type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item v-if="props.row.nickname!=''" label="Nickname">
@@ -172,12 +175,12 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
+      <el-table-column fixed label="ID" prop="id" sortable="custom" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="User Id" prop="user_id" width="100">
+      <el-table-column fixed label="User Id" prop="user_id" width="100">
         <template slot-scope="{row}">
           <span>{{ row.user_id }}</span>
         </template>
@@ -187,19 +190,19 @@
           {{ scope.row.first_name }} {{ scope.row.last_name }}
         </template>
       </el-table-column>
-      <el-table-column label="Status" width="140">
+      <el-table-column label="Status" width="80">
         <template slot-scope="scope">
           <span v-if="scope.row.status == 0">Pending</span>
           <span v-if="scope.row.status == 1">Approve</span>
           <span v-if="scope.row.status == 2">Rejected</span>
         </template>
       </el-table-column>
-      <el-table-column label="Number of Jobs posted" width="160">
+      <el-table-column label="Number of Jobs posted" width="180">
         <template slot-scope="scope">
           {{ scope.row.job_num }}
         </template>
       </el-table-column>
-      <el-table-column label="Wechat Id" width="120">
+      <el-table-column label="Wechat Id" width="90">
         <template slot-scope="scope">
           {{ scope.row.wx_id }}
         </template>
@@ -226,22 +229,26 @@
           <span v-if="scope.row.level==3">Plus</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="480" class-name="small-padding fixed-width">
+      <el-table-column border fixed="right" label="Actions" align="center" width="480" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleReview(row)">
+          <el-button class="xll-btn" type="primary" size="mini" @click="handleReview(row)">
             Review
           </el-button>
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button class="xll-btn" type="primary" size="mini" @click="handleUpdate(row)">
             Edit
           </el-button>
-          <el-button type="primary" size="mini" @click="handleCreateJobs(row)">
+          <el-button class="xll-btn" type="primary" size="mini" @click="handleCreateJobs(row)">
             Jobs
           </el-button>
-          <el-button type="primary" size="mini" @click="handleMultiCreateJobs(row)">
+          <el-button class="xll-btn" type="primary" size="mini" @click="handleCreateEvents(row)">
+            Events
+          </el-button>
+          <el-button class="xll-btn" type="primary" size="mini" @click="handleMultiCreateJobs(row)">
             Multi Posts
           </el-button>
-          <el-button size="mini" type="primary" @click="handleMemberLevel(row,$index)">Upgrade</el-button>
+          <el-button class="xll-btn" size="mini" type="primary" @click="handleMemberLevel(row,$index)">Upgrade</el-button>
           <el-button
+            class="xll-btn"
             size="mini"
             type="primary"
             @click="handlePurchaseAds(row)"
@@ -250,6 +257,7 @@
           </el-button>
 
           <el-button
+            class="xll-btn"
             v-if="row.is_delete == 0"
             size="mini"
             type="danger"
@@ -259,6 +267,7 @@
           </el-button>
 
           <el-button
+            class="xll-btn"
             v-if="row.is_delete == 1"
             size="mini"
             type="warning"
@@ -668,6 +677,9 @@ export default {
     handleCreateJobs(row) {
       this.$router.push({ path: '/business/jobs/addJobs', query: { uid: row.user_id, business_id: row.id, business_name: row.business_name }})
     },
+    handleCreateEvents(row){
+      this.$router.push({ path: '/business/events/addEvents', query: { uid: row.user_id }})
+    },
     handleMultiCreateJobs(row) {
       this.tempMultiPosts.user_id = row.user_id
       this.dialogFormMultiPosts = true
@@ -790,7 +802,6 @@ export default {
 }
 
 .demo-table-expand label {
-  /*width: 90px;*/
   color: #99a9bf;
 }
 
@@ -798,5 +809,8 @@ export default {
   margin-right: 0;
   margin-bottom: 0;
   width: 20%;
+}
+.xll-btn{
+  margin-top: 10px;
 }
 </style>

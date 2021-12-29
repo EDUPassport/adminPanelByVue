@@ -18,6 +18,7 @@
       fit
       highlight-current-row
       style="width: 100%;"
+      size="mini"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
         <template slot-scope="{row}">
