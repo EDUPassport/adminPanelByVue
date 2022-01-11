@@ -154,6 +154,7 @@ export default {
       listLoading: false,
       total: 0,
       listQuery: {
+        is_delete:0,
         page: 1,
         limit: 10,
       },

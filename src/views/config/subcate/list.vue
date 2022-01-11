@@ -54,6 +54,9 @@
         <el-form-item label="Name EN" prop="name_en">
           <el-input v-model="temp.identity_name" type="text"/>
         </el-form-item>
+        <el-form-item label="Sort" prop="sort">
+          <el-input v-model="temp.sort" type="number"></el-input>
+        </el-form-item>
         <el-form-item label="Icon Image">
           <el-upload
             class="upload-demo"
@@ -125,6 +128,7 @@ export default {
         identity_name_cn: undefined,
         identity_name: undefined,
         icon_url: undefined,
+        sort:undefined,
         pid:undefined,
         identity_id:undefined,
         is_delete:0
