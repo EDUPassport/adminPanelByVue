@@ -68,7 +68,6 @@
       </el-button>
     </div>
     <el-table
-      :key="tableKey"
       v-loading="listLoading"
       :data="list"
       border
@@ -77,7 +76,6 @@
       size="mini"
       highlight-current-row
       style="width: 100%;"
-      max-height="600px"
     >
       <el-table-column fixed type="expand">
         <template slot-scope="props">
@@ -237,16 +235,23 @@
           <el-button class="xll-btn" type="primary" size="mini" @click="handleUpdate(row)">
             Edit
           </el-button>
-          <el-button class="xll-btn" type="primary" size="mini" @click="handleCreateJobs(row)">
+
+          <el-button class="xll-btn" type="primary" size="mini" @click="handleLookJobs(row)">
             Jobs
           </el-button>
-          <el-button class="xll-btn" type="primary" size="mini" @click="handleCreateEvents(row)">
-            Events
+          <el-button class="xll-btn" type="primary" size="mini" @click="handleCreateJobs(row)">
+            Post a Jobs
           </el-button>
+
           <el-button class="xll-btn" type="primary" size="mini" @click="handleMultiCreateJobs(row)">
             Multi Posts
           </el-button>
-          <el-button class="xll-btn" size="mini" type="primary" @click="handleMemberLevel(row,$index)">Upgrade</el-button>
+          <el-button class="xll-btn" type="primary" size="mini" @click="handleCreateEvents(row)">
+            Add Event
+          </el-button>
+          <el-button class="xll-btn" size="mini" type="primary" @click="handleMemberLevel(row,$index)">
+            Upgrade
+          </el-button>
           <el-button
             class="xll-btn"
             size="mini"
@@ -676,6 +681,10 @@ export default {
     },
     handleCreateJobs(row) {
       this.$router.push({ path: '/business/jobs/addJobs', query: { uid: row.user_id, business_id: row.id, business_name: row.business_name }})
+    },
+    handleLookJobs(row){
+      console.log(row)
+      this.$router.push({ path: '/business/filterJobs', query: { uid: row.user_id}})
     },
     handleCreateEvents(row){
       this.$router.push({ path: '/business/events/addEvents', query: { uid: row.user_id }})

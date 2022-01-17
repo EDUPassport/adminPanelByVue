@@ -96,3 +96,11 @@ export function getJobResume(params) {
     params
   })
 }
+
+export function userJobList(params){
+  return request({
+    url: 'admin/userJobList',
+    method: 'get',
+    params
+  })
+}

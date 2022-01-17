@@ -315,6 +315,16 @@ export const constantRoutes = [
         }
       },
       {
+        path: 'filterJobs',
+        component: () => import('@/views/business/filterJobs'),
+        name: 'Business Filter Jobs',
+        hidden: true,
+        meta: {
+          title: 'Business Filter Jobs',
+          activeMenu: '/business/list'
+        }
+      },
+      {
         path: 'editBusiness',
         component: () => import('@/views/business/edit'),
         name: 'EditBusiness',
@@ -329,6 +339,7 @@ export const constantRoutes = [
           title: 'Select Fields'
         }
       },
+
       {
         path: 'jobs/list',
         component: () => import('@/views/business/jobs/list'),
