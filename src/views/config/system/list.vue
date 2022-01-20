@@ -58,6 +58,7 @@
               <span v-if="row.sys_key == 14">Vendor_Upgrade_Plus</span>
               <span v-if="row.sys_key == 15">Lama</span>
               <span v-if="row.sys_key == 16">Vendor_Featured_logos</span>
+              <span v-if="row.sys_key == 17">Me_Upgrade_Discount_Icon</span>
             </template>
           </el-table-column>
           <el-table-column label="Comment" width="200px" align="center">
@@ -149,7 +150,6 @@ import {addSystem, getSystemInfo} from '@/api/system.js'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
-import {format} from 'date-fns'
 
 export default {
   name: 'Index',
@@ -198,8 +198,8 @@ export default {
         {label: 'Vendor_Upgrade_Pro', value: 13},
         {label: 'Vendor_Upgrade_Plus', value: 14},
         {label: 'Lama', value: 15},
-        {label:"Vendor_Featured_logos",value:16}
-
+        {label:"Vendor_Featured_logos",value:16},
+        {label:"Me_Upgrade_Discount_Icon",value:17}
       ],
       sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
       statusOptions: ['published', 'draft', 'deleted'],
