@@ -240,7 +240,7 @@
             Jobs
           </el-button>
           <el-button class="xll-btn" type="primary" size="mini" @click="handleCreateJobs(row)">
-            Post a Jobs
+            Post a Job
           </el-button>
 
           <el-button class="xll-btn" type="primary" size="mini" @click="handleMultiCreateJobs(row)">

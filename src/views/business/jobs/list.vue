@@ -206,7 +206,7 @@
                 Applications
               </el-button>
               <el-button type="primary" size="mini" @click="handleAds(row)">
-                Ads
+                Feature
               </el-button>
               <el-button type="primary" size="mini" @click="handleRefresh(row.id)">
                 Refresh
