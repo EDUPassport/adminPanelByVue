@@ -93,12 +93,12 @@
 import {addSubIdentity, getSubIdentity} from '@/api/system.js'
 import {tree} from "@/utils";
 import waves from '@/directive/waves' // waves directive
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+// import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
 
 export default {
   name: 'Index',
-  components: {Pagination},
+  components: {},
   directives: {waves, permission},
   filters: {
     statusFilter(status) {
@@ -224,7 +224,7 @@ export default {
         if (valid) {
           this.temp.icon_url = this.fileUrl
           addSubIdentity(this.temp).then((res) => {
-
+            console.log(res)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -284,7 +284,7 @@ export default {
       })
       // this.list.splice(index, 1)
       addSubIdentity({is_delete: 1, identity_id: row.id}).then(res => {
-        // console.log(res)
+        console.log(res)
         this.getList()
       }).catch(error => {
         console.log(error)
@@ -292,7 +292,7 @@ export default {
     },
     handleRecover(row) {
       addSubIdentity({is_delete: 0, identity_id: row.id}).then(res => {
-        // console.log(res)
+        console.log(res)
         this.getList()
       }).catch(error => {
         console.log(error)

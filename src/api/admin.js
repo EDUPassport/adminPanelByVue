@@ -130,3 +130,11 @@ export function promoCardUserList(params) {
   })
 }
 
+export function addVipLevel(data) {
+  return request({
+    url: '/admin/addVipLevel',
+    method: 'post',
+    data
+  })
+}
+

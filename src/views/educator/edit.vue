@@ -1,163 +1,181 @@
 <template>
   <div class="container">
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="160px" class="ruleForm">
-      <div class="business-info">
-        <div class="title">Basic Info</div>
-        <el-form-item label="First Name" prop="first_name">
-          <el-input v-model="ruleForm.first_name" />
-        </el-form-item>
-        <el-form-item label="Last Name" prop="last_name">
-          <el-input v-model="ruleForm.last_name" />
-        </el-form-item>
-        <el-form-item label="Nickname" prop="nickname">
-          <el-input v-model="ruleForm.nickname" />
-        </el-form-item>
-        <el-form-item label="Wechat Id" prop="wx_id">
-          <el-input v-model="ruleForm.wx_id" />
-        </el-form-item>
-        <el-form-item label="Contact No." prop="application_contact">
-          <el-input v-model="ruleForm.application_contact" />
-        </el-form-item>
-        <el-form-item label="Gender" prop="gender">
-          <el-select v-model="ruleForm.gender">
-            <el-option label="Male" :value="1" />
-            <el-option label="FeMale" :value="2" />
-            <el-option label="Undisclosed" :value="3" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Nationality" prop="nationality">
-          <el-select v-model="ruleForm.nationality">
-            <el-option v-for="item in nationalityList" :key="item.code" :label="item.name" :value="item.name" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Category (Multi)">
-          <el-select
-            v-model="eduCategory"
-            multiple
-            filterable
-            allow-create
-            default-first-option
-            placeholder="Please select"
-            @change="eduTypeChange"
-          >
-            <el-option
-              v-for="item in subCateData"
-              :key="item.id"
-              :label="item.identity_name"
-              :value="item.id"
+
+      <div class="account-info-container" v-if="educatorInfoData.vip_due_time">
+        <div class="title">Account Info</div>
+        <div class="account-item">
+          <div class="account-item-label">Vip Expired Time:</div>
+          <div class="account-item-time">
+            {{educatorInfoData.vip_due_time}}
+          </div>
+          <div class="account-item-action">
+            <el-button type="primary" @click="vipDialogVisible=true">Update</el-button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-one-container">
+        <div class="business-info">
+          <div class="title">Basic Info</div>
+          <el-form-item label="First Name" prop="first_name">
+            <el-input v-model="ruleForm.first_name" />
+          </el-form-item>
+          <el-form-item label="Last Name" prop="last_name">
+            <el-input v-model="ruleForm.last_name" />
+          </el-form-item>
+          <el-form-item label="Nickname" prop="nickname">
+            <el-input v-model="ruleForm.nickname" />
+          </el-form-item>
+          <el-form-item label="Wechat Id" prop="wx_id">
+            <el-input v-model="ruleForm.wx_id" />
+          </el-form-item>
+          <el-form-item label="Contact No." prop="application_contact">
+            <el-input v-model="ruleForm.application_contact" />
+          </el-form-item>
+          <el-form-item label="Gender" prop="gender">
+            <el-select v-model="ruleForm.gender">
+              <el-option label="Male" :value="1" />
+              <el-option label="FeMale" :value="2" />
+              <el-option label="Undisclosed" :value="3" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Nationality" prop="nationality">
+            <el-select v-model="ruleForm.nationality">
+              <el-option v-for="item in nationalityList" :key="item.code" :label="item.name" :value="item.name" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Category (Multi)">
+            <el-select
+              v-model="eduCategory"
+              multiple
+              filterable
+              allow-create
+              default-first-option
+              placeholder="Please select"
+              @change="eduTypeChange"
+            >
+              <el-option
+                v-for="item in subCateData"
+                :key="item.id"
+                :label="item.identity_name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Location">
+            <el-select
+              v-model="ruleForm.province"
+              placeholder="Province"
+              @change="chooseProvince"
+            >
+              <el-option
+                v-for="item in provinceList"
+                :key="item.id"
+                :label="item.Pinyin"
+                :value="{id:item.id,name:item.Pinyin}"
+              />
+            </el-select>
+            <el-select
+              v-model="ruleForm.city"
+              placeholder="City"
+              @change="chooseCity"
+            >
+              <el-option
+                v-for="item in cityList"
+                :key="item.id"
+                :label="item.Pinyin"
+                :value="{id:item.id,name:item.Pinyin}"
+              />
+            </el-select>
+            <el-select
+              v-model="ruleForm.district"
+              placeholder="District"
+              @change="chooseDistrict"
+            >
+              <el-option
+                v-for="item in districtList"
+                :key="item.id"
+                :label="item.Pinyin"
+                :value="{id:item.id,name:item.Pinyin}"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Job Seeking" prop="is_seeking">
+            <el-switch
+              v-model="ruleForm.is_seeking"
+              :active-value="1"
+              :inactive-value="0"
+              @change="seekingSwitchChange"
             />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Location">
-          <el-select
-            v-model="ruleForm.province"
-            placeholder="Province"
-            @change="chooseProvince"
-          >
-            <el-option
-              v-for="item in provinceList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
+          </el-form-item>
+          <el-form-item label="Public Profile" prop="is_public">
+            <el-switch
+              v-model="ruleForm.is_public"
+              :active-value="1"
+              :inactive-value="0"
+              @change="publicProfileSwitchChange"
             />
-          </el-select>
-          <el-select
-            v-model="ruleForm.city"
-            placeholder="City"
-            @change="chooseCity"
-          >
-            <el-option
-              v-for="item in cityList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-          <el-select
-            v-model="ruleForm.district"
-            placeholder="District"
-            @change="chooseDistrict"
-          >
-            <el-option
-              v-for="item in districtList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Job Seeking" prop="is_seeking">
-          <el-switch
-            v-model="ruleForm.is_seeking"
-            :active-value="1"
-            :inactive-value="0"
-            @change="seekingSwitchChange"
-          />
-        </el-form-item>
-        <el-form-item label="Public Profile" prop="is_public">
-          <el-switch
-            v-model="ruleForm.is_public"
-            :active-value="1"
-            :inactive-value="0"
-            @change="publicProfileSwitchChange"
-          />
+          </el-form-item>
+
+        </div>
+        <div class="basic-info-container">
+          <div class="title">Interest</div>
+          <el-form-item label="Bio" prop="bio">
+            <el-input v-model="ruleForm.bio" type="textarea" />
+          </el-form-item>
+          <el-form-item label="Hobbies" prop="hobbies">
+            <el-input v-model="ruleForm.hobbies" />
+          </el-form-item>
+        </div>
+        <div class="media-container">
+          <div class="title">Media</div>
+          <el-form-item label="Profile Photo">
+            <el-upload
+              class="upload-demo"
+              drag
+              :headers="uploadHeaders"
+              name="file[]"
+              :action="uploadRequestUrl"
+              multiple
+              list-type="picture"
+              :limit="1"
+              :on-success="profilePhotoSuccess"
+              :file-list="profilePhotoFileList"
+            >
+              <i class="el-icon-upload" />
+              <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="Header Photo">
+            <el-upload
+              class="upload-demo"
+              drag
+              :headers="uploadHeaders"
+              name="file[]"
+              :action="uploadRequestUrl"
+              multiple
+              list-type="picture"
+              :limit="1"
+              :on-success="headerPhotoSuccess"
+              :file-list="headerPhotoFileList"
+            >
+              <i class="el-icon-upload" />
+              <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            </el-upload>
+          </el-form-item>
+
+        </div>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')">Update</el-button>
+          <el-button @click="resetForm('ruleForm')">Reset</el-button>
         </el-form-item>
 
       </div>
-      <div class="basic-info-container">
-        <div class="title">Interest</div>
-        <el-form-item label="Bio" prop="bio">
-          <el-input v-model="ruleForm.bio" type="textarea" />
-        </el-form-item>
-        <el-form-item label="Hobbies" prop="hobbies">
-          <el-input v-model="ruleForm.hobbies" />
-        </el-form-item>
-      </div>
-
-      <div class="media-container">
-        <div class="title">Media</div>
-        <el-form-item label="Profile Photo">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="profilePhotoSuccess"
-            :file-list="profilePhotoFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="Header Photo">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="headerPhotoSuccess"
-            :file-list="headerPhotoFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
-          </el-upload>
-        </el-form-item>
-
-      </div>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')">Update</el-button>
-        <el-button @click="resetForm('ruleForm')">Reset</el-button>
-      </el-form-item>
 
     </el-form>
+
+
     <div style="margin-top: 20px;">
       <div class="title">Images (6 max)</div>
       <div class="images6max-container">
@@ -453,6 +471,27 @@
       </el-form>
     </div>
 
+    <el-dialog
+      title="Update Vip Expired Time"
+      :visible.sync="vipDialogVisible"
+      width="40%">
+      <div>
+        <el-date-picker
+          v-model="vipDueTime"
+          type="datetime"
+          placeholder="select datetime"
+          default-time="12:00:00"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          @change="vipDueTimeChange"
+        >
+        </el-date-picker>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="vipDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="vipConfirm()">Confirm</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -554,7 +593,10 @@ export default {
       subCateData: [],
       eduCategory: [],
       images6maxFileList:[],
-      images6maxData:[]
+      images6maxData:[],
+      educatorInfoData:{},
+      vipDialogVisible:false,
+      vipDueTime:''
 
     }
   },
@@ -979,6 +1021,10 @@ export default {
           const educatorInfo = res.message.educator_info
           console.log(educatorInfo)
           this.ruleForm = educatorInfo
+
+          this.educatorInfoData = educatorInfo;
+          this.vipDueTime =educatorInfo.vip_due_time
+
           const profilePhoto = educatorInfo.profile_photo
           const headerPhoto = educatorInfo.header_photo
 
@@ -1309,6 +1355,35 @@ export default {
        }).catch(err=>{
          console.log(err)
        })
+    },
+    vipDueTimeChange(e){
+      console.log(e)
+      this.vipDueTime = e;
+    },
+    vipConfirm(){
+
+      let params = {
+        user_id:this.educatorInfoData.user_id,
+        vip_due_time:this.vipDueTime
+      }
+
+      let userId = this.$route.query.uid
+
+      addEduBasic(params).then(res => {
+        console.log(res)
+        if (res.code === 200) {
+
+          this.$message.success(res.msg)
+          this.vipDialogVisible = false
+          this.getUserInfo(userId)
+
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+
     }
 
   }
@@ -1321,8 +1396,15 @@ export default {
   margin: 20px auto;
   background-color: #ffffff;
   padding: 20px;
+
 }
 
+.section-one-container{
+  background-color: #f5f6f7;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 20px;
+}
 .business-info, .school-container, .basic-info-container {
   border-bottom: 2px solid #0a76a4;
   margin-bottom: 10px;
@@ -1370,5 +1452,30 @@ export default {
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+.account-info-container{
+  background-color: #f5f6f7;
+  border-radius: 20px;
+}
+.account-item{
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.account-item-label{
+  font-size: 14px;
+  font-weight: bold;
+}
+.account-item-time{
+  font-size: 14px;
+  margin-left: 10px;
+  color: #00b3d2;
+}
+
+.account-item-action{
+  margin-left: 10px;
 }
 </style>

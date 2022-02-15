@@ -4,6 +4,7 @@ dist/
 test_esl_admin/
 pro_esl_admin/
 cn_prod_esl_admin/
+cn_test_esl_admin/
 
 npm-debug.log*
 yarn-debug.log*

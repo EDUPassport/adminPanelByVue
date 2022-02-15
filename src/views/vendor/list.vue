@@ -389,6 +389,15 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="Duration" prop="month_num">
+          <el-input v-model="tempUpgrade.month_num" type="text"
+                    :show-word-limit="true" placeholder="Duration">
+            <template #append>
+              (months)
+            </template>
+          </el-input>
+        </el-form-item>
+
       </el-form>
       <div
         slot="footer"
@@ -509,7 +518,8 @@ export default {
       },
       tempUpgrade: {
         identity: undefined,
-        levelId: undefined
+        levelId: undefined,
+        month_num: undefined
       },
       dialogFormVisible: false,
       dialogFormUpgrade: false,
@@ -810,12 +820,14 @@ export default {
       this.dialogFormUpgrade = true
       this.tempUpgrade.levelId = undefined
       this.tempUpgrade.identity = undefined
+      this.tempUpgrade.month_num = undefined
+
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },
     upgradeLevel() {
-      var that = this
+      let that = this
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           console.log(this.tempUpgrade)
@@ -826,7 +838,8 @@ export default {
           const data = {
             user_id: tempData.user_id,
             identity: tempData.identity,
-            level_id: tempData.levelId
+            level_id: tempData.levelId,
+            month_num: tempData.month_num
           }
           changeVipLevel(data).then(response => {
             console.log(response)

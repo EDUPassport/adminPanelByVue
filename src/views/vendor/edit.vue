@@ -1,243 +1,258 @@
 <template>
   <div class="container">
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="160px" class="ruleForm">
-      <div class="business-info">
-        <div class="title">Company Legal Info</div>
-        <el-form-item label="Article Banner Duetime">
-          <el-date-picker
-            v-model="ruleForm.article_banner_duetime"
-            type="datetime"
-            placeholder="Please pick a date"
-            @change="articleBannerDueDateChange"
-          />
-        </el-form-item>
-        <el-form-item label="Company Name" prop="vendor_name_en">
-          <el-input v-model="ruleForm.vendor_name_en" />
-        </el-form-item>
-        <el-form-item label="Legal Company Name" prop="legal_company_name">
-          <el-input v-model="ruleForm.legal_company_name" type="textarea" />
-        </el-form-item>
-        <el-form-item label="Business Registration ID" prop="busin_reg_num">
-          <el-input v-model="ruleForm.busin_reg_num" />
-        </el-form-item>
-        <el-form-item label="Business License">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="businessLicenseSuccess"
-            :file-list="businessLicenseFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
-          </el-upload>
-        </el-form-item>
-      </div>
-      <div class="company-general-info">
-        <div class="title">Company General Info</div>
-        <el-form-item label="Vendor Introduction" prop="vendor_bio">
-          <el-input v-model="ruleForm.vendor_bio" type="textarea" />
-        </el-form-item>
-        <el-form-item label="WeChat Official Account ID" prop="wechat_public_name">
-          <el-input v-model="ruleForm.wechat_public_name" type="text" />
-        </el-form-item>
-        <el-form-item label="Work Email" prop="work_email">
-          <el-input v-model="ruleForm.work_email" type="text" />
-        </el-form-item>
-        <el-form-item label="Website" prop="website">
-          <el-input v-model="ruleForm.website" />
-        </el-form-item>
-        <el-form-item label="Phone" prop="phone">
-          <el-input v-model="ruleForm.phone" />
-        </el-form-item>
-        <el-form-item label="Location">
-          <el-select
-            v-model="ruleForm.province"
-            placeholder="Province"
-            @change="chooseProvince"
-          >
-            <el-option
-              v-for="item in provinceList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-          <el-select
-            v-model="ruleForm.city"
-            placeholder="City"
-            @change="chooseCity"
-          >
-            <el-option
-              v-for="item in cityList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-          <el-select
-            v-model="ruleForm.district"
-            placeholder="District"
-            @change="chooseDistrict"
-          >
-            <el-option
-              v-for="item in districtList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Complete Address" prop="address">
-          <el-input v-model="ruleForm.address" type="text" />
-        </el-form-item>
-        <el-form-item label="Dog Friendly" prop="is_dog_friendly">
-          <el-switch
-            v-model="ruleForm.is_dog_friendly"
-            :active-value="1"
-            :inactive-value="0"
-            @change="dogSwitchChange"
-          />
-        </el-form-item>
-        <el-form-item label="Do you have events？" prop="is_events">
-          <el-switch
-            v-model="ruleForm.is_events"
-            :active-value="1"
-            :inactive-value="0"
-            @change="eventsSwitchChange"
-          />
-        </el-form-item>
+
+      <div class="account-info-container" v-if="vendorInfoData.vip_due_time">
+        <div class="title">Account Info</div>
+        <div class="account-item">
+          <div class="account-item-label">Vip Expired Time:</div>
+          <div class="account-item-time">
+            {{vendorInfoData.vip_due_time}}
+          </div>
+          <div class="account-item-action">
+            <el-button type="primary" @click="vipDialogVisible=true">Update</el-button>
+          </div>
+        </div>
       </div>
 
-      <div class="basic-info-container">
-        <div class="title">Your Basic Info</div>
-        <el-form-item label="First Name" prop="first_name">
-          <el-input v-model="ruleForm.first_name" />
-        </el-form-item>
-        <el-form-item label="Last Name" prop="last_name">
-          <el-input v-model="ruleForm.last_name" />
-        </el-form-item>
-        <el-form-item label="Nickname" prop="nickname">
-          <el-input v-model="ruleForm.nickname" />
-        </el-form-item>
-        <el-form-item label="Wechat Id" prop="wx_id">
-          <el-input v-model="ruleForm.wx_id" />
-        </el-form-item>
 
-        <el-form-item label="Nationality" prop="nationality">
-          <el-select v-model="ruleForm.nationality">
-            <el-option v-for="item in nationalityList" :key="item.code" :label="item.name" :value="item.name" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Job Title" prop="job_title">
-          <el-input v-model="ruleForm.job_title" />
-        </el-form-item>
-        <el-form-item label="Preferred Language" prop="first_language">
-          <el-input v-model="ruleForm.first_language" />
-        </el-form-item>
-      </div>
-
-      <div class="media-container">
-        <div class="title">Media</div>
-        <el-form-item label="Profile Photo">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="profilePhotoSuccess"
-            :file-list="profilePhotoFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="Header Photo">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="headerPhotoSuccess"
-            :file-list="headerPhotoFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="Vendor Logo">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="vendorLogoSuccess"
-            :file-list="vendorLogoFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
-          </el-upload>
-        </el-form-item>
-
-        <el-form-item label="Official Account QR Code">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="qrcodeSuccess"
-            :file-list="qrcodeFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
-          </el-upload>
-        </el-form-item>
-
-        <el-form-item label="Business Category (Choose 1)">
-          <el-select
-            v-model="ruleForm.vendor_type_id"
-            filterable
-            allow-create
-            default-first-option
-            placeholder="Please select"
-            @change="vendorTypeChange"
-          >
-            <el-option
-              v-for="item in subCateData"
-              :key="item.id"
-              :label="item.identity_name"
-              :value="item.id"
+      <div class="section-one-container">
+        <div class="business-info">
+          <div class="title">Company Legal Info</div>
+          <el-form-item label="Article Banner Duetime">
+            <el-date-picker
+              v-model="ruleForm.article_banner_duetime"
+              type="datetime"
+              placeholder="Please pick a date"
+              @change="articleBannerDueDateChange"
             />
-          </el-select>
+          </el-form-item>
+          <el-form-item label="Company Name" prop="vendor_name_en">
+            <el-input v-model="ruleForm.vendor_name_en" />
+          </el-form-item>
+          <el-form-item label="Legal Company Name" prop="legal_company_name">
+            <el-input v-model="ruleForm.legal_company_name" type="textarea" />
+          </el-form-item>
+          <el-form-item label="Business Registration ID" prop="busin_reg_num">
+            <el-input v-model="ruleForm.busin_reg_num" />
+          </el-form-item>
+          <el-form-item label="Business License">
+            <el-upload
+              class="upload-demo"
+              drag
+              :headers="uploadHeaders"
+              name="file[]"
+              :action="uploadRequestUrl"
+              multiple
+              list-type="picture"
+              :limit="1"
+              :on-success="businessLicenseSuccess"
+              :file-list="businessLicenseFileList"
+            >
+              <i class="el-icon-upload" />
+              <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            </el-upload>
+          </el-form-item>
+        </div>
+        <div class="company-general-info">
+          <div class="title">Company General Info</div>
+          <el-form-item label="Vendor Introduction" prop="vendor_bio">
+            <el-input v-model="ruleForm.vendor_bio" type="textarea" />
+          </el-form-item>
+          <el-form-item label="WeChat Official Account ID" prop="wechat_public_name">
+            <el-input v-model="ruleForm.wechat_public_name" type="text" />
+          </el-form-item>
+          <el-form-item label="Work Email" prop="work_email">
+            <el-input v-model="ruleForm.work_email" type="text" />
+          </el-form-item>
+          <el-form-item label="Website" prop="website">
+            <el-input v-model="ruleForm.website" />
+          </el-form-item>
+          <el-form-item label="Phone" prop="phone">
+            <el-input v-model="ruleForm.phone" />
+          </el-form-item>
+          <el-form-item label="Location">
+            <el-select
+              v-model="ruleForm.province"
+              placeholder="Province"
+              @change="chooseProvince"
+            >
+              <el-option
+                v-for="item in provinceList"
+                :key="item.id"
+                :label="item.Pinyin"
+                :value="{id:item.id,name:item.Pinyin}"
+              />
+            </el-select>
+            <el-select
+              v-model="ruleForm.city"
+              placeholder="City"
+              @change="chooseCity"
+            >
+              <el-option
+                v-for="item in cityList"
+                :key="item.id"
+                :label="item.Pinyin"
+                :value="{id:item.id,name:item.Pinyin}"
+              />
+            </el-select>
+            <el-select
+              v-model="ruleForm.district"
+              placeholder="District"
+              @change="chooseDistrict"
+            >
+              <el-option
+                v-for="item in districtList"
+                :key="item.id"
+                :label="item.Pinyin"
+                :value="{id:item.id,name:item.Pinyin}"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Complete Address" prop="address">
+            <el-input v-model="ruleForm.address" type="text" />
+          </el-form-item>
+          <el-form-item label="Dog Friendly" prop="is_dog_friendly">
+            <el-switch
+              v-model="ruleForm.is_dog_friendly"
+              :active-value="1"
+              :inactive-value="0"
+              @change="dogSwitchChange"
+            />
+          </el-form-item>
+          <el-form-item label="Do you have events？" prop="is_events">
+            <el-switch
+              v-model="ruleForm.is_events"
+              :active-value="1"
+              :inactive-value="0"
+              @change="eventsSwitchChange"
+            />
+          </el-form-item>
+        </div>
+        <div class="basic-info-container">
+          <div class="title">Your Basic Info</div>
+          <el-form-item label="First Name" prop="first_name">
+            <el-input v-model="ruleForm.first_name" />
+          </el-form-item>
+          <el-form-item label="Last Name" prop="last_name">
+            <el-input v-model="ruleForm.last_name" />
+          </el-form-item>
+          <el-form-item label="Nickname" prop="nickname">
+            <el-input v-model="ruleForm.nickname" />
+          </el-form-item>
+          <el-form-item label="Wechat Id" prop="wx_id">
+            <el-input v-model="ruleForm.wx_id" />
+          </el-form-item>
+
+          <el-form-item label="Nationality" prop="nationality">
+            <el-select v-model="ruleForm.nationality">
+              <el-option v-for="item in nationalityList" :key="item.code" :label="item.name" :value="item.name" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Job Title" prop="job_title">
+            <el-input v-model="ruleForm.job_title" />
+          </el-form-item>
+          <el-form-item label="Preferred Language" prop="first_language">
+            <el-input v-model="ruleForm.first_language" />
+          </el-form-item>
+        </div>
+        <div class="media-container">
+          <div class="title">Media</div>
+          <el-form-item label="Profile Photo">
+            <el-upload
+              class="upload-demo"
+              drag
+              :headers="uploadHeaders"
+              name="file[]"
+              :action="uploadRequestUrl"
+              multiple
+              list-type="picture"
+              :limit="1"
+              :on-success="profilePhotoSuccess"
+              :file-list="profilePhotoFileList"
+            >
+              <i class="el-icon-upload" />
+              <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="Header Photo">
+            <el-upload
+              class="upload-demo"
+              drag
+              :headers="uploadHeaders"
+              name="file[]"
+              :action="uploadRequestUrl"
+              multiple
+              list-type="picture"
+              :limit="1"
+              :on-success="headerPhotoSuccess"
+              :file-list="headerPhotoFileList"
+            >
+              <i class="el-icon-upload" />
+              <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="Vendor Logo">
+            <el-upload
+              class="upload-demo"
+              drag
+              :headers="uploadHeaders"
+              name="file[]"
+              :action="uploadRequestUrl"
+              multiple
+              list-type="picture"
+              :limit="1"
+              :on-success="vendorLogoSuccess"
+              :file-list="vendorLogoFileList"
+            >
+              <i class="el-icon-upload" />
+              <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            </el-upload>
+          </el-form-item>
+
+          <el-form-item label="Official Account QR Code">
+            <el-upload
+              class="upload-demo"
+              drag
+              :headers="uploadHeaders"
+              name="file[]"
+              :action="uploadRequestUrl"
+              multiple
+              list-type="picture"
+              :limit="1"
+              :on-success="qrcodeSuccess"
+              :file-list="qrcodeFileList"
+            >
+              <i class="el-icon-upload" />
+              <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            </el-upload>
+          </el-form-item>
+
+          <el-form-item label="Business Category (Choose 1)">
+            <el-select
+              v-model="ruleForm.vendor_type_id"
+              filterable
+              allow-create
+              default-first-option
+              placeholder="Please select"
+              @change="vendorTypeChange"
+            >
+              <el-option
+                v-for="item in subCateData"
+                :key="item.id"
+                :label="item.identity_name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+
+        </div>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')">Update</el-button>
+          <el-button @click="resetForm('ruleForm')">Reset</el-button>
         </el-form-item>
 
       </div>
-
-      <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')">Update</el-button>
-        <el-button @click="resetForm('ruleForm')">Reset</el-button>
-      </el-form-item>
 
     </el-form>
 
@@ -265,11 +280,32 @@
 
     </div>
 
+    <el-dialog
+      title="Update Vip Expired Time"
+      :visible.sync="vipDialogVisible"
+      width="40%">
+      <div>
+        <el-date-picker
+          v-model="vipDueTime"
+          type="datetime"
+          placeholder="select datetime"
+          default-time="12:00:00"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          @change="vipDueTimeChange"
+        >
+        </el-date-picker>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="vipDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="vipConfirm()">Confirm</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { userInfo, addVendorBasic, subCateLists ,addUserImg} from '@/api/member'
+import {userInfo, addVendorBasic, subCateLists, addUserImg} from '@/api/member'
 import { getAreas } from '@/api/location'
 import nationality from '@/utils/nationality'
 import { format } from 'date-fns'
@@ -329,7 +365,11 @@ export default {
       },
       subCateData: [],
       images6maxFileList:[],
-      images6maxData:[]
+      images6maxData:[],
+      vendorInfoData:{},
+      vipDialogVisible:false,
+      vipDueTime:''
+
     }
   },
   computed: {
@@ -387,7 +427,13 @@ export default {
       userInfo(data).then(res => {
         // console.log(res)
         if (res.code === 200) {
+
           console.log(res.message.vendor_info)
+          const vendorInfo = res.message.vendor_info
+
+          this.vendorInfoData = vendorInfo
+          this.vipDueTime = vendorInfo.vip_due_time
+
           this.ruleForm = res.message.vendor_info
           const profilePhoto = res.message.vendor_info.profile_photo
           const headerPhoto = res.message.vendor_info.header_photo
@@ -598,7 +644,36 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
+    },
+    vipDueTimeChange(e){
+      console.log(e)
+      this.vipDueTime = e;
+    },
+    vipConfirm(){
+      let userId = this.$route.query.uid
+
+      let params = {
+        user_id:userId,
+        vip_due_time:this.vipDueTime
+      }
+
+      addVendorBasic(params).then(res => {
+        console.log(res)
+        if (res.code === 200) {
+
+          this.$message.success(res.msg)
+          this.vipDialogVisible = false
+          this.getUserInfo(userId)
+
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+
     }
+
   }
 }
 </script>
@@ -627,5 +702,36 @@ export default {
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+.section-one-container{
+  background-color: #f5f6f7;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 20px;
+}
+.account-info-container{
+  background-color: #f5f6f7;
+  border-radius: 20px;
+}
+.account-item{
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.account-item-label{
+  font-size: 14px;
+  font-weight: bold;
+}
+.account-item-time{
+  font-size: 14px;
+  margin-left: 10px;
+  color: #00b3d2;
+}
+
+.account-item-action{
+  margin-left: 10px;
 }
 </style>

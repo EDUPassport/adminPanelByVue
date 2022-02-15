@@ -158,7 +158,16 @@ export const constantRoutes = [
         meta: {
           title: 'Sub Category'
         }
+      },
+      {
+        path: 'vip/list',
+        component: () => import('@/views/config/vip/list'),
+        name: 'Vip List',
+        meta: {
+          title: 'Vip List'
+        }
       }
+
     ]
   },
   {
