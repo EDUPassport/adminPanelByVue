@@ -317,11 +317,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Level" prop="levelId">
-          <el-select v-model="tempUpgrade.levelId" class="filter-item" placeholder="Choose Level">
+          <el-select v-model="tempUpgrade.levelId"
+                     @change="selectLevelChange"
+                     class="filter-item"
+                     placeholder="Choose Level">
             <el-option v-for="item in levelOptions" :key="item.id" :label="item.level_en" :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Duration" prop="month_num">
+        <el-form-item v-if="showMonthNumStatus" label="Duration" prop="month_num">
           <el-input v-model="tempUpgrade.month_num" type="text"
                     :show-word-limit="true" placeholder="Duration">
             <template #append>
@@ -510,6 +513,7 @@ export default {
         business_id: undefined,
         status: undefined
       },
+      showMonthNumStatus:true
 
     }
   },
@@ -813,7 +817,24 @@ export default {
           })
         }
       })
+    },
+    selectLevelChange(e){
+      // console.log(e)
+      // console.log(this.levelOptions)
+      let levelOptionsData = this.levelOptions
+
+      let filterData = levelOptionsData.filter(item=>item.id === e)
+      // console.log(filterData)
+      if(filterData.length>0){
+        if(filterData[0]['level'] == 4){
+          this.showMonthNumStatus = false
+        }else{
+          this.showMonthNumStatus = true
+        }
+      }
+
     }
+
 
   }
 }

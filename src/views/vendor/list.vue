@@ -378,6 +378,7 @@
         >
           <el-select
             v-model="tempUpgrade.levelId"
+            @change="selectLevelChange"
             class="filter-item"
             placeholder="Choose Level"
           >
@@ -389,7 +390,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Duration" prop="month_num">
+        <el-form-item v-if="showMonthNumStatus" label="Duration" prop="month_num">
           <el-input v-model="tempUpgrade.month_num" type="text"
                     :show-word-limit="true" placeholder="Duration">
             <template #append>
@@ -559,7 +560,8 @@ export default {
         emitPath: false,
         value: 'id',
         label: 'name_en'
-      }
+      },
+      showMonthNumStatus:true
 
     }
   },
@@ -901,7 +903,25 @@ export default {
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
+    },
+    selectLevelChange(e){
+      // console.log(e)
+      // console.log(this.levelOptions)
+      let levelOptionsData = this.levelOptions
+
+      let filterData = levelOptionsData.filter(item=>item.id === e)
+      // console.log(filterData)
+      if(filterData.length>0){
+        if(filterData[0]['level'] == 4){
+          this.showMonthNumStatus = false
+        }else{
+          this.showMonthNumStatus = true
+        }
+      }
+
     }
+
+
   }
 }
 </script>

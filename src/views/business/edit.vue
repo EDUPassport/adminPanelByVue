@@ -5,13 +5,32 @@
       <div class="account-info-container" v-if="businessInfoData.vip_due_time">
         <div class="title">Account Info</div>
         <div class="account-item">
-          <div class="account-item-label">Vip Expired Time:</div>
+          <div class="account-item-label">Membership:</div>
           <div class="account-item-time">
-            {{businessInfoData.vip_due_time}}
+            <span v-if="businessInfoData.level == 1">Basic</span>
+            <span v-if="businessInfoData.level == 2">Pro</span>
+            <span v-if="businessInfoData.level == 3">Plus</span>
+            <span v-if="businessInfoData.level == 4">Lifetime</span>
           </div>
-          <div class="account-item-action">
-            <el-button type="primary" @click="vipDialogVisible=true">Update</el-button>
-          </div>
+        </div>
+
+        <div class="account-item">
+          <div class="account-item-label">Expires on:</div>
+
+          <template v-if="businessInfoData.level == 4">
+            <div class="account-item-time" >
+              -
+            </div>
+          </template>
+          <template v-else>
+            <div class="account-item-time">
+              {{businessInfoData.vip_due_time}}
+            </div>
+            <div class="account-item-action">
+              <el-button type="primary" @click="vipDialogVisible=true">Update</el-button>
+            </div>
+          </template>
+
         </div>
       </div>
 
