@@ -30,12 +30,15 @@
       />
       <el-button
         v-waves
-        class="filter-item"
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
       >
         Search
+      </el-button>
+
+      <el-button v-loading="exportDataLoading" v-waves  type="primary" @click="exportBusinessAsExcel()">
+        Export Data
       </el-button>
     </div>
 
@@ -460,6 +463,7 @@ import {parseTime, tree} from '@/utils'
 import Pagination from '@/components/Pagination'
 import {addEvent} from '@/api/events'
 import {adCategoryList, buyAd} from "@/api/ads";
+import { adminExportVendor} from "@/api/admin";
 
 export default {
   name: 'Index',
@@ -478,7 +482,7 @@ export default {
   },
   data() {
     return {
-
+      exportDataLoading:false,
       tableKey: 0,
       list: null,
       total: 0,
@@ -919,7 +923,20 @@ export default {
         }
       }
 
+    },
+    exportBusinessAsExcel(){
+      this.exportDataLoading = true
+      adminExportVendor().then(res=>{
+        if(res.code == 200){
+          this.exportDataLoading = false
+          window.open(res.message,'_blank')
+        }
+
+      }).catch(err=>{
+        console.log(err)
+      })
     }
+
 
 
   }

@@ -146,3 +146,10 @@ export function adminExportBusiness(params) {
   })
 }
 
+export function adminExportVendor(params) {
+  return request({
+    url: '/admin/export/vendor',
+    method: 'get',
+    params
+  })
+}
