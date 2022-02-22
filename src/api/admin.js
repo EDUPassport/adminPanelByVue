@@ -138,3 +138,11 @@ export function addVipLevel(data) {
   })
 }
 
+export function adminExportBusiness(params) {
+  return request({
+    url: '/admin/export/business',
+    method: 'get',
+    params
+  })
+}
+

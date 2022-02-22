@@ -63,8 +63,12 @@
         style="width: 200px;"
         @keyup.enter.native="handleFilter"
       />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves  type="primary" icon="el-icon-search" @click="handleFilter">
         Search
+      </el-button>
+
+      <el-button v-loading="exportDataLoading" v-waves  type="primary" @click="exportBusinessAsExcel()">
+        Export Data
       </el-button>
     </div>
     <el-table
@@ -422,7 +426,7 @@ import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { uploadJobs } from '@/api/jobs'
 import {adCategoryList, buyAd} from "@/api/ads";
-import {approveBusiness} from "@/api/admin"
+import {approveBusiness,adminExportBusiness} from "@/api/admin"
 import {tree} from "@/utils";
 
 export default {
@@ -442,6 +446,7 @@ export default {
   },
   data() {
     return {
+      exportDataLoading:false,
       userListData: [],
       tableKey: 0,
       list: null,
@@ -833,6 +838,18 @@ export default {
         }
       }
 
+    },
+    exportBusinessAsExcel(){
+      this.exportDataLoading = true
+      adminExportBusiness().then(res=>{
+        if(res.code == 200){
+          this.exportDataLoading = false
+          window.open(res.message,'_blank')
+        }
+
+      }).catch(err=>{
+        console.log(err)
+      })
     }
 
 
