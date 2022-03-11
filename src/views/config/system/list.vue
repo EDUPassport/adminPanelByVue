@@ -30,18 +30,18 @@
         >
           <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80"
                            :class-name="getSortClass('id')">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span>{{ row.id }}</span>
             </template>
           </el-table-column>
           <el-table-column label="Category" width="110px" align="center">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span v-if="row.cate==1" class="link-type">APP</span>
               <span v-if="row.cate==2" class="link-type">Admin Panel</span>
             </template>
           </el-table-column>
           <el-table-column label="System Key" width="210px" align="center">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span v-if="row.sys_key == 1">Vendor Qrcode</span>
               <span v-if="row.sys_key == 2">Discount Card</span>
               <span v-if="row.sys_key == 3">Contact Qrcode</span>
@@ -62,13 +62,13 @@
             </template>
           </el-table-column>
           <el-table-column label="Comment" width="200px" align="center">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span>{{ row.comment }}</span>
             </template>
           </el-table-column>
 
           <el-table-column label="System Value" width="110px" align="center">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <el-image
                 style="width: 100px; height: 50px"
                 :src=" row.sys_value "
@@ -77,16 +77,16 @@
             </template>
           </el-table-column>
           <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
-            <template slot-scope="{row,$index}">
+            <template v-slot="{row,$index}">
               <el-button type="primary" size="mini" @click="handleUpdate(row)">
                 Edit
               </el-button>
-              <el-button v-if="row.is_delete===1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
-                Recover
+              <el-button v-if="row.is_delete===1" size="mini" @click="handleRecover(row)">
+                Enable
               </el-button>
-              <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger"
+              <el-button v-if="row.is_delete===0"  size="mini" type="danger"
                          @click="handleDelete(row,$index)">
-                Delete
+                Disable
               </el-button>
             </template>
           </el-table-column>
@@ -258,7 +258,7 @@ export default {
       getSystemInfo(this.listQuery).then(response => {
         console.log(response)
         // this.list = response.message.data
-        this.list = response.message.data.filter(item => item.is_delete === 0)
+        this.list = response.message.data
         this.total = response.message.total
 
         // Just to simulate the time of the request
