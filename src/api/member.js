@@ -178,3 +178,12 @@ export function unbindAccount(data) {
     data
   })
 }
+
+
+export function setVipDiscount(data) {
+  return request({
+    url: '/admin/vip/discount',
+    method: 'post',
+    data
+  })
+}

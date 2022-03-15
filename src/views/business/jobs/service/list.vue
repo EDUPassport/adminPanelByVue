@@ -1,13 +1,14 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.position" placeholder="Position" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="getList">
+      <el-input v-model="listQuery.position" placeholder="Position" style="width: 200px;"/>
+      <el-button v-waves type="primary" icon="el-icon-search" @click="getList">
         Search
       </el-button>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleCreate">
+      <el-button v-waves type="primary" icon="el-icon-search" @click="handleCreate">
         Add
       </el-button>
+      <el-button type="primary" @click="handleSettingAdsDiscount()">Discount Setting</el-button>
     </div>
 
     <el-table
@@ -19,43 +20,48 @@
       style="width: 100%;"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Field Name(CN)" prop="user_id" width="160">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.services_cn }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Field Name(EN)" width="160">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           {{ row.services_en }}
         </template>
       </el-table-column>
       <el-table-column label="Field Description(EN)" width="140">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.services_desc }}
         </template>
       </el-table-column>
       <el-table-column label="Field Description(CN)" width="140">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.services_desc_cn }}
         </template>
       </el-table-column>
       <el-table-column label="Amount" width="110">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.money / 100 }}
         </template>
       </el-table-column>
       <el-table-column label="Original Amount" width="140">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.originally_money / 100}}
+        </template>
+      </el-table-column>
+      <el-table-column label="Discount(%)" width="140">
+        <template v-slot="scope">
+          {{ scope.row.discount}}
         </template>
       </el-table-column>
 
       <el-table-column label="Account Type" width="100">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <div v-if="row.identity==0">None</div>
           <div v-if="row.identity==1">Educator</div>
           <div v-if="row.identity==2">Business</div>
@@ -63,7 +69,7 @@
         </template>
       </el-table-column>
       <el-table-column label="Membership" width="100">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <div v-if="row.level == 0">None</div>
           <div v-if="row.level == 1">Basic</div>
           <div v-if="row.level == 2">Pro</div>
@@ -71,16 +77,16 @@
         </template>
       </el-table-column>
       <!--    <el-table-column label="Position" width="110" align="center">-->
-      <!--      <template slot-scope="scope">-->
+      <!--      <template v-slot="scope">-->
       <!--        <span>{{ scope.row.position }}</span>-->
       <!--      </template>-->
       <!--    </el-table-column>-->
       <el-table-column label="Actions" align="center" width="280" class-name="small-padding fixed-width">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
           </el-button>
-          <el-button type="primary" size="mini" @click="handleDelete(row)">
+          <el-button type="danger" size="mini" @click="handleDelete(row)">
             Delete
           </el-button>
         </template>
@@ -108,6 +114,11 @@
         </el-form-item>
         <el-form-item label="Original Amount" >
           <el-input v-model="bOriginallyMoney"  />
+        </el-form-item>
+        <el-form-item label="Discount" >
+          <el-input v-model="tempUpdateData.discount"  >
+            <template slot="append">%</template>
+          </el-input>
         </el-form-item>
 
         <el-form-item label="Account Type">
@@ -147,19 +158,58 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog
+      title="Discount Setting"
+      :visible.sync="adsDiscountVisible"
+      width="60%"
+    >
+      <div>
+        <el-form
+          :model="discountForm"
+          :rules="discountRules"
+          ref="discountForm"
+          label-width="160px"
+          class="demo-ruleForm">
+          <el-form-item label="Discount" prop="discount" >
+            <el-input v-model="discountForm.discount">
+              <template slot="append">%</template>
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary"
+                       @click="submitDiscountForm('discountForm')">Confirm</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+            <el-button @click="adsDiscountVisible = false">Close</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { getServiceList, addServices } from '@/api/jobs'
+import { getServiceList, addServices, setJobServiceDiscount} from '@/api/jobs'
 import Pagination from '@/components/Pagination'
-import waves from '@/directive/waves' // waves directive
+import waves from '@/directive/waves'
+
 export default {
   name: 'List',
   components: { Pagination },
   directives: { waves },
   data() {
     return {
+      adsDiscountVisible:false,
+      discountForm:{
+        discount: 0
+      },
+      discountRules:{
+        discount: [
+          {required: true, message: 'Please input', trigger: 'blur'}
+        ],
+      },
       tableKey: 0,
       list: undefined,
       total: 0,
@@ -180,6 +230,7 @@ export default {
         identity: undefined,
         money: undefined,
         originally_money: undefined,
+        discount:undefined
 
       },
       bMoney:undefined,
@@ -210,6 +261,7 @@ export default {
           identity: undefined,
           money: undefined,
           originally_money: undefined,
+          discount:undefined
 
       }
       this.tempUpdateData = tempObj
@@ -289,7 +341,40 @@ export default {
       }).catch(error => {
         console.log(error)
       })
-    }
+    },
+    handleSettingAdsDiscount(){
+      this.adsDiscountVisible = true
+    },
+    submitDiscountForm(formName) {
+
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // alert('submit!');
+          let data = Object.assign({}, this.discountForm)
+          setJobServiceDiscount(data).then(res => {
+            console.log(res)
+            if (res.code == 200) {
+              this.$message({
+                message: 'Success',
+                type: 'success'
+              });
+              this.getList();
+              this.adsDiscountVisible = false;
+
+            } else {
+              this.$message.error(res.msg);
+            }
+          }).catch(err => {
+            console.log(err)
+          })
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+
+
   }
 }
 </script>

@@ -10,7 +10,7 @@ export function eventsList(params) {
 
 export function approveEvent(data) {
   return request({
-    url: 'admin/approveEvent',
+    url: '/admin/approveEvent',
     method: 'post',
     data
   })
@@ -18,7 +18,7 @@ export function approveEvent(data) {
 // /admin/addEvent
 export function addEvent(data) {
   return request({
-    url: 'admin/addEvent',
+    url: '/admin/addEvent',
     method: 'post',
     data
   })

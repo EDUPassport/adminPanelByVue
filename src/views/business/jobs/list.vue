@@ -15,7 +15,7 @@
           @sort-change="sortChange"
         >
           <el-table-column type="expand">
-            <template slot-scope="props">
+            <template v-slot="props">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="File" style="color: #20a0ff;">
                   <span><a :href="props.row.file">{{ props.row.file }}</a></span>
@@ -138,17 +138,22 @@
             width="80"
             :class-name="getSortClass('id')"
           >
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span>{{ row.id }}</span>
             </template>
           </el-table-column>
           <el-table-column label="User Id" prop="user_id" width="80px">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span>{{ row.user_id }}</span>
             </template>
           </el-table-column>
+          <el-table-column label="Viewed"  width="80px">
+            <template v-slot="{row}">
+              <span>{{ row.views }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="Job Title" width="180px" align="center">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span v-if="row.employment_type == 1" class="xll-tag">FT</span>
               <span v-if="row.employment_type == 2" class="xll-tag">PT</span>
               <span v-if="row.employment_type == 3" class="xll-tag">S</span>
@@ -156,39 +161,39 @@
             </template>
           </el-table-column>
           <el-table-column label="Location" width="110px" align="center">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span v-if="row.city>0 && row.city != null">{{ row.citys.Pinyin }} {{ row.citys.ShortName }}</span>
             </template>
           </el-table-column>
           <el-table-column label="Detail Address" width="110px" align="center">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span>{{ row.job_location }}</span>
             </template>
           </el-table-column>
 
           <el-table-column label="Due Date" width="110px" align="center">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span>{{ row.apply_due_date }}</span>
             </template>
           </el-table-column>
           <el-table-column label="Refresh Time" width="110px" align="center">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span>{{ row.refresh_time | refreshTimeFilter }}</span>
             </template>
           </el-table-column>
           <el-table-column label="Business Name" width="110px" align="center">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span>{{ row.business_name }}</span>
             </template>
           </el-table-column>
           <el-table-column label="Salary" width="110px" align="center">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <span class="xll-tag">{{ row.currency }}</span> <br> <span>{{ row.salary_min }} - {{ row.salary_max }}</span>
             </template>
           </el-table-column>
 
           <el-table-column label="Status" class-name="status-col" width="100">
-            <template slot-scope="{row}">
+            <template v-slot="{row}">
               <el-tag v-if="row.status === 0" :type="row.status | statusFilter">
                 Pending
               </el-tag>
@@ -201,7 +206,7 @@
             </template>
           </el-table-column>
           <el-table-column label="Actions" align="center" width="500" class-name="small-padding fixed-width">
-            <template slot-scope="{row,$index}">
+            <template v-slot="{row,$index}">
               <el-button type="primary" size="mini" @click="handleApplications(row)">
                 Applications
               </el-button>
@@ -226,7 +231,7 @@
             </template>
           </el-table-column>
           <el-table-column label="Create Time" width="180">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               {{ scope.row.c_time }}
             </template>
           </el-table-column>

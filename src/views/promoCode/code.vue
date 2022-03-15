@@ -1,9 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button  class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button   style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
       </el-button>
+      <el-button type="primary" @click="handleSettingAdsDiscount()">Discount Setting</el-button>
     </div>
 
     <el-table
@@ -17,42 +18,47 @@
       @sort-change="sortChange"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Promo Code" width="110px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span  class="link-type">{{row.card_no}}</span>
         </template>
       </el-table-column>
       <el-table-column label="Redeem Time" width="210px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span> {{row.exchange_time}}</span>
         </template>
       </el-table-column>
       <el-table-column label="Duration(months)" width="210px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span> {{row.month}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Amount" width="210px" align="center">
-        <template slot-scope="{row}">
+      <el-table-column label="Amount" width="110px" align="center">
+        <template v-slot="{row}">
           <span> {{row.money / 100}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Max Limit" width="210px" align="center">
-        <template slot-scope="{row}">
+      <el-table-column label="Discount(%)" width="110px" align="center">
+        <template v-slot="{row}">
+          <span> {{row.discount}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Max Limit" width="110px" align="center">
+        <template v-slot="{row}">
           <span> {{row.max_limit}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Number of Users" width="210px" align="center">
-        <template slot-scope="{row}">
+      <el-table-column label="Number of Users" width="160px"  align="center">
+        <template v-slot="{row}">
           <span> {{row.use_count}}</span>
         </template>
       </el-table-column>
       <el-table-column label="Actions" align="center" width="260" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
+        <template v-slot="{row,$index}">
           <el-button type="primary" size="mini" @click="showUseUsers(row.card_no)">
             Used list
           </el-button>
@@ -69,7 +75,6 @@
       </el-table-column>
     </el-table>
 
-
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog title="Add Promo Code" :visible.sync="dialogFormVisible">
@@ -83,6 +88,11 @@
         </el-form-item>
         <el-form-item label="Amount" prop="money">
           <el-input v-model="bMoney" type="number" placeholder="money"></el-input>
+        </el-form-item>
+        <el-form-item label="Discount" prop="discount">
+          <el-input v-model="temp.discount"  placeholder="discount">
+            <template slot="append">%</template>
+          </el-input>
         </el-form-item>
         <el-form-item label="Max Limit" prop="max_limit">
           <el-input v-model="temp.max_limit" type="number" placeholder="max limit"></el-input>
@@ -109,6 +119,11 @@
         <el-form-item label="Amount" prop="money">
           <el-input v-model="uMoney" type="number" placeholder="money"></el-input>
         </el-form-item>
+        <el-form-item label="Discount" prop="discount">
+          <el-input v-model="updateTemp.discount"  placeholder="discount">
+            <template slot="append">%</template>
+          </el-input>
+        </el-form-item>
         <el-form-item label="Max Limit" prop="max_limit">
           <el-input v-model="updateTemp.max_limit" type="number" placeholder="max limit"></el-input>
         </el-form-item>
@@ -124,16 +139,46 @@
       </div>
     </el-dialog>
 
+    <el-dialog
+      title="Discount Setting"
+      :visible.sync="adsDiscountVisible"
+      width="60%"
+    >
+      <div>
+        <el-form
+          :model="discountForm"
+          :rules="discountRules"
+          ref="discountForm"
+          label-width="160px"
+          class="demo-ruleForm">
+          <el-form-item label="Discount" prop="discount" >
+            <el-input v-model="discountForm.discount">
+              <template slot="append">%</template>
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary"
+                       @click="submitDiscountForm('discountForm')">Confirm</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+            <el-button @click="adsDiscountVisible = false">Close</el-button>
+      </span>
+    </el-dialog>
+
+
 
   </div>
 </template>
 
 <script>
-  import { addPromoCode, promoCardList } from '@/api/admin'
+  import { addPromoCode, promoCardList, setPromoCodeDiscount } from '@/api/admin'
   import waves from '@/directive/waves' // waves directive
   import { parseTime } from '@/utils'
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import permission from '@/directive/permission/permission'
+
   // import { format } from 'date-fns'
 
   export default {
@@ -152,6 +197,15 @@
     },
     data() {
       return {
+        adsDiscountVisible:false,
+        discountForm:{
+          discount: 0
+        },
+        discountRules:{
+          discount: [
+            {required: true, message: 'Please input', trigger: 'blur'}
+          ],
+        },
         uploadRequestUrl: process.env.VUE_APP_UPLOAD_API,
         tableKey: 0,
         list: null,
@@ -233,7 +287,7 @@
         this.listLoading = true
         promoCardList(this.listQuery).then(response => {
           // console.log(response)
-          this.list = response.message.data.filter(item => item.is_delete === 0)
+          this.list = response.message.data
           this.total = response.message.total
 
           setTimeout(() => {
@@ -388,6 +442,38 @@
         const sort = this.listQuery.sort
         return sort === `+${key}` ? 'ascending' : 'descending'
       },
+      handleSettingAdsDiscount(){
+        this.adsDiscountVisible = true
+      },
+      submitDiscountForm(formName) {
+
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            // alert('submit!');
+            let data = Object.assign({}, this.discountForm)
+            setPromoCodeDiscount(data).then(res => {
+              console.log(res)
+              if (res.code == 200) {
+                this.$message({
+                  message: 'Success',
+                  type: 'success'
+                });
+                this.getList();
+                this.adsDiscountVisible = false;
+
+              } else {
+                this.$message.error(res.msg);
+              }
+            }).catch(err => {
+              console.log(err)
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+
     }
   }
 </script>

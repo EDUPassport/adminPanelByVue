@@ -153,3 +153,11 @@ export function adminExportVendor(params) {
     params
   })
 }
+
+export function setPromoCodeDiscount(data) {
+  return request({
+    url: '/admin/promoCard/discount',
+    method: 'post',
+    data
+  })
+}

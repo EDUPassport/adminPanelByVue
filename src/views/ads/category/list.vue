@@ -2,6 +2,7 @@
   <div class="container">
     <div class="add-container">
       <el-button type="primary" @click="handleCreate()">Add+</el-button>
+      <el-button type="primary" @click="handleSettingAdsDiscount()">Discount Setting</el-button>
     </div>
 
     <el-dialog
@@ -22,6 +23,11 @@
           </el-form-item>
           <el-form-item label="Money" >
             <el-input v-model="bMoney"></el-input>
+          </el-form-item>
+          <el-form-item label="Discount">
+            <el-input v-model="ruleForm.discount" >
+              <template slot="append">%</template>
+            </el-input>
           </el-form-item>
           <el-form-item label="Duration" prop="days">
             <el-input v-model="ruleForm.days"></el-input>
@@ -118,6 +124,34 @@
       </span>
     </el-dialog>
 
+    <el-dialog
+      title="Discount Setting"
+      :visible.sync="adsDiscountVisible"
+      width="60%"
+      :before-close="handleClose">
+      <div>
+        <el-form
+          :model="discountForm"
+          :rules="discountRules"
+          ref="discountForm"
+          label-width="160px"
+          class="demo-ruleForm">
+          <el-form-item label="Discount" prop="discount" >
+            <el-input v-model="discountForm.discount">
+              <template slot="append">%</template>
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary"
+                       @click="submitDiscountForm('discountForm')">Confirm</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+            <el-button @click="adsDiscountVisible = false">Close</el-button>
+      </span>
+    </el-dialog>
+
     <div class="tree-container">
       <el-tree
         :data="tableData"
@@ -126,8 +160,8 @@
         auto-expand-parent
         highlight-current
         :expand-on-click-node="false">
-
-      <span class="custom-tree-node" slot-scope="{ node, data }">
+      <template v-slot="{ node, data }">
+       <span  class="custom-tree-node">
         <span>{{ node.data.name_en }}</span>
         <span>
           <el-button
@@ -150,6 +184,8 @@
           </el-button>
         </span>
       </span>
+
+      </template>
       </el-tree>
     </div>
 
@@ -157,7 +193,7 @@
 </template>
 
 <script>
-import {adCategoryList, addCategory} from "@/api/ads";
+import {adCategoryList, addCategory,setAdsCategoryDiscount} from "@/api/ads";
 import permission from '@/directive/permission/permission'
 import waves from "@/directive/waves";
 
@@ -167,11 +203,21 @@ export default {
     return {
       uploadRequestUrl: process.env.VUE_APP_UPLOAD_API,
       addDialogVisible: false,
+      adsDiscountVisible:false,
+      discountForm:{
+        discount: 0
+      },
+      discountRules:{
+        discount: [
+          {required: true, message: 'Please input', trigger: 'blur'}
+        ],
+      },
       ruleForm: {
         name_en: '',
         name_cn: '',
         name_key:'',
         money:'',
+        discount:'',
         title_cn:'',
         title_en:'',
         desc_en:'',
@@ -379,6 +425,37 @@ export default {
     addAds(data){
       console.log(data)
       this.$router.push({path: '/ads/list', query: {category: data.id}})
+    },
+    handleSettingAdsDiscount(){
+      this.adsDiscountVisible = true
+    },
+    submitDiscountForm(formName) {
+
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // alert('submit!');
+          let data = Object.assign({}, this.discountForm)
+          setAdsCategoryDiscount(data).then(res => {
+            console.log(res)
+            if (res.code == 200) {
+              this.$message({
+                message: 'Success',
+                type: 'success'
+              });
+              this.getAdsCategoryList();
+              this.adsDiscountVisible = false;
+
+            } else {
+              this.$message.error(res.msg);
+            }
+          }).catch(err => {
+            console.log(err)
+          })
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
     }
 
   }

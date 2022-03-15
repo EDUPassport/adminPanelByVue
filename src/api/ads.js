@@ -79,3 +79,10 @@ export function buyAd(data) {
   })
 }
 
+export function setAdsCategoryDiscount(data) {
+  return request({
+    url: '/admin/adCategory/discount',
+    method: 'post',
+    data
+  })
+}

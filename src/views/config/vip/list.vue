@@ -19,6 +19,7 @@
       <el-button style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
       </el-button>
+      <el-button type="primary" @click="handleSettingAdsDiscount()">Discount Setting</el-button>
     </div>
 
     <el-table
@@ -32,56 +33,61 @@
       size="mini"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Level CN" width="110px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{row.level_cn}}</span>
         </template>
       </el-table-column>
       <el-table-column label="Level EN" width="110px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{row.level_en}}</span>
         </template>
       </el-table-column>
 
       <el-table-column label="Identity" width="200px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span v-if="row.identity == 1">Educator</span>
           <span v-if="row.identity == 2">Business</span>
           <span v-if="row.identity == 3">Vendor</span>
         </template>
       </el-table-column>
       <el-table-column label="Money(CNY)" width="200px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.money }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Money($)" width="200px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.dollar }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Discount(%)" width="100px" align="center">
+        <template v-slot="{row}">
+          <span>{{ row.discount }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Duration" width="200px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.month_num }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Deals Num" width="200px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.deals_num }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Events Num" width="200px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.events_num }}</span>
         </template>
       </el-table-column>
 
       <el-table-column  fixed="right" label="Actions" align="center" width="230" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
+        <template v-slot="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
           </el-button>
@@ -137,6 +143,11 @@
         <el-form-item label="Money($)" prop="dollar">
           <el-input v-model="temp.dollar" type="text"/>
         </el-form-item>
+        <el-form-item label="Discount" prop="discount">
+          <el-input v-model="temp.discount" >
+            <template slot="append">%</template>
+          </el-input>
+        </el-form-item>
         <el-form-item label="Duration" prop="month_num">
           <el-input v-model="temp.month_num" type="text"/>
         </el-form-item>
@@ -152,6 +163,34 @@
       </div>
     </el-dialog>
 
+    <el-dialog
+      title="Discount Setting"
+      :visible.sync="adsDiscountVisible"
+      width="60%"
+      >
+      <div>
+        <el-form
+          :model="discountForm"
+          :rules="discountRules"
+          ref="discountForm"
+          label-width="160px"
+          class="demo-ruleForm">
+          <el-form-item label="Discount" prop="discount" >
+            <el-input v-model="discountForm.discount">
+              <template slot="append">%</template>
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary"
+                       @click="submitDiscountForm('discountForm')">Confirm</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+            <el-button @click="adsDiscountVisible = false">Close</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -160,7 +199,7 @@
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
-import {vipList} from "@/api/member";
+import {vipList,setVipDiscount} from "@/api/member";
 import {addVipLevel} from "@/api/admin";
 
 export default {
@@ -179,6 +218,15 @@ export default {
   },
   data() {
     return {
+      adsDiscountVisible:false,
+      discountForm:{
+        discount: 0
+      },
+      discountRules:{
+        discount: [
+          {required: true, message: 'Please input', trigger: 'blur'}
+        ],
+      },
       identityValue:1,
       identityOptions:[
         {
@@ -204,7 +252,6 @@ export default {
         page: 1,
         limit: 20
       },
-
       temp: {
        identity: undefined,
         level:undefined,
@@ -214,6 +261,7 @@ export default {
         events_num:undefined,
         money:undefined,
         dollar:undefined,
+        discount:undefined,
         month_num:undefined
       },
       dialogFormVisible: false,
@@ -333,7 +381,7 @@ export default {
         }
       })
     },
-    handleDelete(row, index) {
+    handleDelete(row) {
       this.$notify({
         title: 'Success',
         message: 'Delete Successfully',
@@ -355,7 +403,38 @@ export default {
       }).catch(error => {
         console.log(error)
       })
-    }
+    },
+    handleSettingAdsDiscount(){
+      this.adsDiscountVisible = true
+    },
+    submitDiscountForm(formName) {
+
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // alert('submit!');
+          let data = Object.assign({}, this.discountForm)
+          setVipDiscount(data).then(res => {
+            console.log(res)
+            if (res.code == 200) {
+              this.$message({
+                message: 'Success',
+                type: 'success'
+              });
+              this.getList();
+              this.adsDiscountVisible = false;
+
+            } else {
+              this.$message.error(res.msg);
+            }
+          }).catch(err => {
+            console.log(err)
+          })
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
 
 
   }
