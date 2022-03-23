@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       title: 'ESL Passport Admin',
-      logo: 'https://i.loli.net/2020/10/29/zgFvraCTjbd7fEs.png'
+      logo: 'https://cdn.jsdelivr.net/gh/unilei/images@master/20220321/xxx.6ir2zvqa3l00.webp'
     }
   }
 }

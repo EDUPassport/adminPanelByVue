@@ -60,6 +60,28 @@
             placeholder="Please select"
           />
         </el-form-item>
+        <el-form-item label="Online">
+          <el-select
+            v-model="eventsTempData.is_online"
+            class="filter-item"
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="item in onlineOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="Event Link">
+          <el-input
+            v-model="eventsTempData.online_url"
+            class="filter-item"
+            placeholder="Please select"
+          />
+        </el-form-item>
         <el-form-item label="Location">
           <el-select
             v-model="eventsTempData.province_name"
@@ -283,6 +305,7 @@ export default {
           this.getFormattedAddress()
         }
       },
+      onlineOptions: [{label: 'online', value: 1}, {label: 'offline', value: 2},{label: 'both', value: 3}],
       provinceList: [],
       cityList: [],
       districtList: [],
@@ -333,6 +356,8 @@ export default {
         end_time: undefined,
         file: undefined,
         event_place: undefined,
+        is_online:undefined,
+        online_url:undefined,
         location: undefined,
         province: undefined,
         province_name: undefined,

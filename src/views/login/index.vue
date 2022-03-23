@@ -130,8 +130,6 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    console.log(process.env.VUE_APP_ENV)
-    console.log(process.env.NODE_ENV)
     const myEnv = process.env.VUE_APP_ENV
     if (myEnv === 'development' || myEnv === 'staging') {
       this.isTestDev = true

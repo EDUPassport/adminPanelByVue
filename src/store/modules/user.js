@@ -5,7 +5,7 @@ import router, { resetRouter } from '@/router'
 const state = {
   token: getToken(),
   name: '',
-  avatar: 'https://i.loli.net/2020/10/29/zgFvraCTjbd7fEs.png',
+  avatar: 'https://cdn.jsdelivr.net/gh/unilei/images@master/20220321/xxx.6ir2zvqa3l00.webp',
   introduction: '',
   roles: getRoles()
 }
@@ -38,11 +38,22 @@ const actions = {
         const roles = []
         roles.push(data.info.account)
         const name = data.info.account
-        const avatar = 'https://i.loli.net/2020/10/29/zgFvraCTjbd7fEs.png'
+        const avatar = 'https://cdn.jsdelivr.net/gh/unilei/images@master/20220321/xxx.6ir2zvqa3l00.webp'
         const introduction = data.info.realname
 
         commit('SET_TOKEN', data.token)
         setToken(data.token)
+
+        setTimeout(function () {
+          console.log('token time expired')
+          commit('SET_TOKEN', '')
+          commit('SET_ROLES', [])
+          removeToken()
+          removeRoles()
+          router.push('/login')
+
+          resolve()
+        },86400000)
 
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
@@ -63,11 +74,11 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      console.log('get info')
-    })
-  },
+  // getInfo({ commit, state }) {
+  //   return new Promise((resolve, reject) => {
+  //     console.log('get info')
+  //   })
+  // },
   // user logout
   logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
@@ -81,6 +92,7 @@ const actions = {
         // reset visited views and cached views
         // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
         dispatch('tagsView/delAllViews', null, { root: true })
+
         resolve()
       }).catch(error => {
         reject(error)

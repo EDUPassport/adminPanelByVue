@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
-    <div class="filter-container" />
+    <div class="filter-container" >
+      <el-select v-model="listQuery.refresh_time" placeholder="Active" clearable class="filter-item">
+        <el-option :key="0" label="Default" :value="0"/>
+        <el-option :key="1" label="Active" :value="1"/>
+      </el-select>
+      <el-button v-waves  type="primary" class="filter-item" icon="el-icon-search" @click="getList()">
+        Search
+      </el-button>
+    </div>
 
     <el-tabs value="All" style="margin-top:15px;" type="border-card" @tab-click="tabClickJobs">
       <el-tab-pane v-for="item in adsTypeOptions2" :key="item.value" :label="item.label" :name="item.label">
@@ -162,7 +170,7 @@
           </el-table-column>
           <el-table-column label="Location" width="110px" align="center">
             <template v-slot="{row}">
-              <span v-if="row.city>0 && row.city != null">{{ row.citys.Pinyin }} {{ row.citys.ShortName }}</span>
+              <span v-if="row.city && row.citys">{{ row.citys.Pinyin }} {{ row.citys.ShortName }}</span>
             </template>
           </el-table-column>
           <el-table-column label="Detail Address" width="110px" align="center">
@@ -176,8 +184,16 @@
               <span>{{ row.apply_due_date }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="Refresh Time" width="110px" align="center">
+          <el-table-column
+            label="Refresh Time"
+            width="110px"
+            align="center"
+          >
             <template v-slot="{row}">
+              <el-tag  :type="row.refresh_time | refreshActiveStatusFilter">
+                {{ row.refresh_time | refreshIsActive }}
+              </el-tag>
+              <br>
               <span>{{ row.refresh_time | refreshTimeFilter }}</span>
             </template>
           </el-table-column>
@@ -319,7 +335,7 @@
 import { jobList, approveJobs, delJobs, setJobFeature, refreshJobs } from '@/api/jobs'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import { format , formatDistanceToNow} from 'date-fns'
+import { format , formatDistanceToNow,add , isAfter} from 'date-fns'
 
 export default {
   name: 'ComplexTable',
@@ -337,7 +353,26 @@ export default {
     refreshTimeFilter(a){
       // console.log(a)
       return  formatDistanceToNow(new Date(a), { addSuffix: false }) + ' ago'
-    }
+    },
+    refreshIsActive(a){
+      const aaa = add(new Date(a),{days:15})
+      // console.log(aaa)
+      // console.log(new Date())
+      const rrr = isAfter(aaa,new Date())
+      // console.log(rrr)
+
+      return rrr ? 'Active' : 'Expired';
+    },
+    refreshActiveStatusFilter(a) {
+      const aaa = add(new Date(a),{days:15})
+      // console.log(aaa)
+      // console.log(new Date())
+      const rrr = isAfter(aaa,new Date())
+      // console.log(rrr)
+
+      return rrr ? 'success' : 'danger';
+
+    },
 
   },
   data() {
@@ -349,6 +384,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 50,
+        refresh_time: undefined,
         ad_type: undefined
       },
       importanceOptions: [1, 2, 3],
@@ -585,6 +621,7 @@ export default {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
     }
+
   }
 }
 </script>
