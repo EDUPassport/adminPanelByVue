@@ -11,7 +11,7 @@
       @sort-change="sortChange"
     >
       <el-table-column type="expand">
-        <template slot-scope="props">
+        <template v-slot="props">
           <el-form
             label-position="left"
             inline
@@ -61,7 +61,7 @@
         width="80"
         :class-name="getSortClass('id')"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
@@ -70,7 +70,7 @@
         prop="user_id"
         width="80"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.user_id }}</span>
         </template>
       </el-table-column>
@@ -80,7 +80,7 @@
       >
         <template
           v-if="row.user_info.vendor_name_en"
-          slot-scope="{row}"
+          v-slot="{row}"
         >
           {{ row.user_info.vendor_name_en }}
         </template>
@@ -90,7 +90,7 @@
         width="200px"
         align="center"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span v-if="row.title">{{ row.title }}</span>
         </template>
       </el-table-column>
@@ -99,7 +99,7 @@
         width="150px"
         align="center"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <a :href="row.file">{{ row.file_name }}</a>
         </template>
       </el-table-column>
@@ -109,7 +109,7 @@
         width="150px"
         align="center"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span v-if="row.city>0 && row.citys != null ">{{ row.citys.Pinyin }}</span>
         </template>
       </el-table-column>
@@ -118,7 +118,7 @@
         width="150px"
         align="center"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span v-if="row.location">{{ row.location }}</span>
         </template>
       </el-table-column>
@@ -128,7 +128,7 @@
         width="150px"
         align="center"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.reason }}</span>
         </template>
       </el-table-column>
@@ -137,7 +137,7 @@
         width="150px"
         align="center"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.views }}</span>
         </template>
       </el-table-column>
@@ -147,7 +147,7 @@
         width="150px"
         align="center"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span v-if="row.is_online==1">online</span>
           <span v-if="row.is_online==2">offline</span>
           <span v-if="row.is_online==3">Both</span>
@@ -159,7 +159,7 @@
         class-name="status-col"
         width="100"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <el-tag
             v-if="row.status === 0"
             :type="row.status | statusFilter"
@@ -186,7 +186,7 @@
         width="230"
         class-name="small-padding fixed-width"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
          {{row.is_featured}}
         </template>
       </el-table-column>
@@ -197,7 +197,7 @@
         width="230"
         class-name="small-padding fixed-width"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <el-button
             type="primary"
             size="mini"

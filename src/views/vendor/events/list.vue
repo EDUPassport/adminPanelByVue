@@ -11,7 +11,7 @@
       @sort-change="sortChange"
     >
       <el-table-column type="expand">
-        <template slot-scope="props">
+        <template v-slot="props">
           <el-form
             label-position="left"
             inline
@@ -84,7 +84,7 @@
         width="80"
         :class-name="getSortClass('id')"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
@@ -93,7 +93,7 @@
         width="150px"
         align="center"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span @click="handleDetail(row)">{{ row.name }}</span>
         </template>
       </el-table-column>
@@ -102,7 +102,7 @@
         width="150px"
         align="center"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <el-image
             style="width: 180px; height:80px"
             :src="row.file"
@@ -117,7 +117,7 @@
         width="150px"
         align="center"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span v-if="row.is_all == 1">Social</span>
           <span v-if="row.is_all == 2">Professional</span>
         </template>
@@ -127,7 +127,7 @@
         width="150px"
         align="center"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.reason }}</span>
         </template>
       </el-table-column>
@@ -136,7 +136,7 @@
         width="110px"
         align="center"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.pay_money }}</span>
         </template>
       </el-table-column>
@@ -146,7 +146,7 @@
         class-name="status-col"
         width="100"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <el-tag
             v-if="row.status === 0"
             :type="row.status | statusFilter"
@@ -168,12 +168,29 @@
         </template>
       </el-table-column>
       <el-table-column
+        label="Booking List"
+        align="center"
+        width="130"
+        class-name="small-padding fixed-width"
+      >
+        <template v-slot="{row}">
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleBookingList(row)"
+          >
+            View List
+          </el-button>
+        </template>
+      </el-table-column>
+
+      <el-table-column
         label="Actions"
         align="center"
         width="230"
         class-name="small-padding fixed-width"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <el-button
             type="primary"
             size="mini"
@@ -218,6 +235,18 @@
           Confirm
         </el-button>
       </div>
+    </el-dialog>
+
+    <el-dialog title="Booking List"
+               :visible.sync="bookingDialogVisible">
+      <el-table :data="bookingListData"
+                :max-height="400"
+      >
+        <el-table-column property="first_name" label="First Name" width="150"></el-table-column>
+        <el-table-column property="last_name" label="Last Name" width="200"></el-table-column>
+        <el-table-column property="contact" label="Email"></el-table-column>
+        <el-table-column property="bookings" label="Bookings"></el-table-column>
+      </el-table>
     </el-dialog>
 
   </div>
@@ -315,7 +344,9 @@ export default {
       eventStartTime: undefined,
       eventEndTime: undefined,
       eventsOne: [{ label: 'Social', value: 1 }, { label: 'Professional', value: 2 }],
-      popuCityList: []
+      popuCityList: [],
+      bookingListData:[],
+      bookingDialogVisible:false
 
     }
   },
@@ -477,6 +508,10 @@ export default {
     },
     handleUpdate(row) {
       this.$router.push({ path: '/vendor/events/editEvents', query: { event_id: row.id }})
+    },
+    handleBookingList(row){
+      this.bookingListData = row.applicants
+      this.bookingDialogVisible = true;
     },
     eventsTempDateChange(e) {
       this.eventsTempData.date = format(e, 'yyyy-MM-dd')
