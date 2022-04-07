@@ -21,28 +21,33 @@
       size="mini"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Name CN" width="110px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{row.name_cn}}</span>
         </template>
       </el-table-column>
       <el-table-column label="Name EN" width="110px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{row.name_en}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Type" width="110px" align="center">
+        <template v-slot="{row}">
+          <span>{{row.type}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Description" width="200px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.desc }}</span>
         </template>
       </el-table-column>
 
       <el-table-column label="Image" width="110px" align="center">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <el-image
             style="width: 100px; height: 50px"
             :src=" row.image_url "
@@ -51,11 +56,11 @@
         </template>
       </el-table-column>
       <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
+        <template v-slot="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
           </el-button>
-          <el-button v-if="row.is_delete===1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
+          <el-button v-if="row.is_delete===1"  size="mini" @click="handleRecover(row)">
             Recover
           </el-button>
           <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger"
@@ -65,7 +70,6 @@
         </template>
       </el-table-column>
     </el-table>
-
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit"
                 @pagination="getList"/>
@@ -80,7 +84,14 @@
           <el-input v-model="temp.name_en" type="text"/>
         </el-form-item>
         <el-form-item label="Description" prop="desc">
-          <el-input v-model="temp.desc" type="text"/>
+          <el-input v-model="temp.desc" type="textarea" />
+        </el-form-item>
+        <el-form-item label="Type" prop="type">
+          <el-select v-model="temp.type" placeholder="Type" clearable >
+            <el-option v-for="item in typeOptions" :key="item.value"
+                       :label="item.label" :value="item.value"/>
+          </el-select>
+
         </el-form-item>
 
         <el-form-item label="Image">
@@ -116,7 +127,7 @@
 </template>
 
 <script>
-import {addSystemTag, tagList,tagInfo} from '@/api/system.js'
+import {addSystemTag, tagList} from '@/api/system.js'
 
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -153,10 +164,21 @@ export default {
         name_cn: undefined,
         name_en: undefined,
         desc: undefined,
+        type:undefined,
         image_url: undefined,
         tag_id:undefined,
         is_delete:0
       },
+      typeOptions:[
+        {
+          label:"2",
+          value:2
+        },
+        {
+          label:'1',
+          value:1
+        }
+      ],
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -164,8 +186,8 @@ export default {
         create: 'Create'
       },
       rules: {
-        name_cn: [{required: true, message: 'category is required', trigger: 'change'}],
-        name_en: [{required: true, message: 'position is required', trigger: 'change'}]
+        name_cn: [{required: true, message: 'please input', trigger: 'change'}],
+        name_en: [{required: true, message: 'please input', trigger: 'change'}]
       },
       downloadLoading: false,
       // uploadHeaders:undefined,
@@ -266,8 +288,10 @@ export default {
       console.log(row)
       this.temp = Object.assign({}, row) // copy obj
       this.temp.tag_id = row.id
+      if(row.image_url){
+        this.fileList = [{name: '', url: row.image_url}]
+      }
 
-      this.fileList = [{name: '', url: row.image_url}]
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true

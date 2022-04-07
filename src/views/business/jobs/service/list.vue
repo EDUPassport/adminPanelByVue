@@ -8,7 +8,7 @@
       <el-button v-waves type="primary" icon="el-icon-search" @click="handleCreate">
         Add
       </el-button>
-      <el-button type="primary" @click="handleSettingAdsDiscount()">Discount Setting</el-button>
+      <el-button type="primary" @click="handleSettingAdsDiscount()"> Apply Universal Discount</el-button>
     </div>
 
     <el-table
@@ -160,7 +160,7 @@
     </el-dialog>
 
     <el-dialog
-      title="Discount Setting"
+      title=" Apply Universal Discount"
       :visible.sync="adsDiscountVisible"
       width="60%"
     >

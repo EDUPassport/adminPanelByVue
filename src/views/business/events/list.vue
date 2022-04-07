@@ -163,7 +163,19 @@
             v-if="row.status === 2"
             :type="row.status | statusFilter"
           >
-            Refuse
+            Rejected
+          </el-tag>
+          <el-tag
+            v-if="row.status === 3"
+            :type="row.status | statusFilter"
+          >
+            Expired
+          </el-tag>
+          <el-tag
+            v-if="row.status === 4"
+            :type="row.status | statusFilter"
+          >
+            Submitted
           </el-tag>
         </template>
       </el-table-column>
@@ -270,7 +282,9 @@ export default {
       const statusMap = {
         1: 'success',
         0: 'info',
-        2: 'danger'
+        2: 'danger',
+        3:'warning',
+        4:'warning'
       }
       return statusMap[status]
     }
@@ -293,7 +307,13 @@ export default {
         pay_money: undefined,
         status: undefined
       },
-      statusOptions: [{ label: 'Pending', value: 0 }, { label: 'Successful', value: 1 }, { label: 'Rejected', value: 2 }],
+      statusOptions: [
+        { label: 'Pending', value: 0 },
+        { label: 'Successful', value: 1 },
+        { label: 'Rejected', value: 2 },
+        { label: 'Expired', value:3 },
+        { label: 'Submitted', value:4 }
+      ],
       temp: {
         event_id: undefined,
         reason: '',

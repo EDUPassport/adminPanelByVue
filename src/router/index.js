@@ -141,17 +141,17 @@ export const constantRoutes = [
       {
         path: 'subcate/list',
         component: () => import('@/views/config/subcate/list'),
-        name: 'Sub Category',
+        name: 'Profile & Sub Category',
         meta: {
-          title: 'Sub Category'
+          title: 'Profile & Sub Category'
         }
       },
       {
         path: 'vip/list',
         component: () => import('@/views/config/vip/list'),
-        name: 'Vip List',
+        name: 'Membership plans',
         meta: {
-          title: 'Vip List'
+          title: 'Membership plans'
         }
       }
 

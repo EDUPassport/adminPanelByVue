@@ -35,20 +35,20 @@
               <span>{{ props.row.districts.Pinyin }}, {{ props.row.citys.Pinyin }}, {{ props.row.provinces.Pinyin }}</span>
               <span>{{ props.row.districts.ShortName }}, {{ props.row.citys.ShortName }}, {{ props.row.provinces.ShortName }}</span>
             </el-form-item>
-            <el-form-item label="Company Name (EN)">
-              <span> {{ props.row.user_info.vendor_name_en }}</span>
+            <el-form-item label="Company Name (EN)" >
+              <span v-if="props.row.user_info"> {{ props.row.user_info.vendor_name_en }}</span>
             </el-form-item>
             <el-form-item label="Legal Company Name">
-              <span> {{ props.row.user_info.legal_company_name }}</span>
+              <span v-if="props.row.user_info"> {{ props.row.user_info.legal_company_name }}</span>
             </el-form-item>
             <el-form-item label="Vendor Type Name">
-              <span> {{ props.row.user_info.vendor_type_name }}</span>
+              <span v-if="props.row.user_info"> {{ props.row.user_info.vendor_type_name }}</span>
             </el-form-item>
             <el-form-item label="Work Email">
-              <span> {{ props.row.user_info.work_email }}</span>
+              <span v-if="props.row.user_info"> {{ props.row.user_info.work_email }}</span>
             </el-form-item>
             <el-form-item label="Wechat Id">
-              <span> {{ props.row.user_info.wx_id }}</span>
+              <span v-if="props.row.user_info"> {{ props.row.user_info.wx_id }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -79,10 +79,9 @@
         width="150"
       >
         <template
-          v-if="row.user_info.vendor_name_en"
           v-slot="{row}"
         >
-          {{ row.user_info.vendor_name_en }}
+          <span  v-if="row.user_info"> {{ row.user_info.vendor_name_en }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -178,6 +177,18 @@
           >
             Refuse
           </el-tag>
+          <el-tag
+            v-if="row.status === 3"
+            :type="row.status | statusFilter"
+          >
+            Inactive
+          </el-tag>
+          <el-tag
+            v-if="row.status === 4"
+            :type="row.status | statusFilter"
+          >
+            Submitted
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -230,203 +241,6 @@
       :limit.sync="listQuery.limit"
       @pagination="getList"
     />
-    <!--    deals-->
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormDealsVisible"
-    >
-      <el-form
-        ref="dataForm"
-        :model="dealsTempData"
-        label-position="top"
-        label-width="240px"
-      >
-        <el-form-item label="Deal Ranking Time">
-          <el-date-picker
-            v-model="dealsTempData.deal_ranking_time"
-            type="datetime"
-            placeholder="Please pick a date"
-            @change="dealRankingDueDateChange"
-          />
-        </el-form-item>
-        <el-form-item label="Deal or Discount">
-          <el-select
-            v-model="dealsTempData.type"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in dealsType"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Deal/Discount Name">
-          <el-input
-            v-model="dealsTempData.title"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Deal/Discount Desc">
-          <el-input
-            v-model="dealsTempData.desc"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Multiple Locations or 1">
-          <el-select
-            v-model="dealsTempData.is_all"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in dealsTwo"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Location">
-          <el-select
-            v-model="dealsTempData.province_name"
-            placeholder="Province"
-            @change="chooseProvince($event,1)"
-          >
-            <el-option
-              v-for="item in provinceList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-          <el-select
-            v-model="dealsTempData.city_name"
-            placeholder="City"
-            @change="chooseCity($event,1)"
-          >
-            <el-option
-              v-for="item in cityList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-          <el-select
-            v-model="dealsTempData.district_name"
-            placeholder="District"
-            @change="chooseDistrict($event,1)"
-          >
-            <el-option
-              v-for="item in districtList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="Add Location Pin">
-          <div class="amap-page-container">
-            <!--使用element UI作为输入框-->
-            <el-input
-              id="tipinput"
-              v-model="mapInfo.address"
-              placeholder="请输入内容"
-            />
-            <el-amap
-              vid="amapDemo"
-              :center="mapInfo.lnglat"
-              :amap-manager="amapManager"
-              :zoom="zoom"
-              :events="events"
-              class="amap-demo"
-              style="height: 300px"
-            >
-              <el-amap-marker
-                ref="marker"
-                vid="component-marker"
-                :position="mapInfo.lnglat"
-              />
-            </el-amap>
-            <p>标记点：{{ mapInfo.address }}，经度：{{ mapInfo.lng }}，纬度：{{ mapInfo.lat }}</p>
-          </div>
-        </el-form-item>
-
-        <!--        <el-form-item label="Detail Address">-->
-        <!--          <el-input v-model="dealsTempData.location" class="filter-item" placeholder="Please select" />-->
-        <!--        </el-form-item>-->
-        <el-form-item label="Deal/Discount Duration">
-          <el-select
-            v-model="dealsTempData.due_contract"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in dealsThree"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Dog Friendly">
-          <el-select
-            v-model="dealsTempData.allowed_dog"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in allowedDogOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="Url">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="uploadFileSuccess"
-            :file-list="fileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">
-              Drag the file here, or <em>click to upload</em>
-            </div>
-            <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
-          </el-upload>
-        </el-form-item>
-      </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="dialogFormDealsVisible = false">
-          Cancel
-        </el-button>
-        <el-button
-          type="primary"
-          @click="editData()"
-        >
-          Confirm
-        </el-button>
-      </div>
-    </el-dialog>
 
     <el-dialog
       :title="textMap[dialogStatus]"
@@ -517,15 +331,11 @@
 </template>
 
 <script>
-import { dealsList, approveDeal, addDeals } from '@/api/deals'
-import { userObjectList } from '@/api/member'
+import { dealsList, approveDeal } from '@/api/deals'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
-import { format } from 'date-fns' // secondary package based on el-pagination
-import { getAreas } from '@/api/location'
-import {AMapManager} from 'vue-amap'
-const amapManager = new AMapManager()
 import {setFeaturedDeals} from '@/api/admin'
+
 export default {
   name: 'Index',
   components: { Pagination },
@@ -535,69 +345,15 @@ export default {
       const statusMap = {
         1: 'success',
         0: 'info',
-        2: 'danger'
+        2: 'danger',
+        3:'warning',
+        4:'warning'
       }
       return statusMap[status]
     }
   },
   data() {
     return {
-      mapInfo: {
-        // 初始值默认为天安门
-        address: '北京市东城区东华门街道天安门',
-        lng: 116.397451,
-        lat: 39.909187,
-        lnglat: [116.397451, 39.909187]
-      },
-      zoom: 12,
-      amapManager,
-      events: {
-        click: (e) => {
-          this.mapInfo.lng = e.lnglat.lng
-          this.mapInfo.lat = e.lnglat.lat
-          this.mapInfo.lnglat = [e.lnglat.lng, e.lnglat.lat]
-          this.getFormattedAddress()
-        }
-      },
-      provinceList: [],
-      cityList: [],
-      districtList: [],
-      uploadRequestUrl: process.env.VUE_APP_UPLOAD_API,
-      dealsType: [{ label: 'Deal', value: 1 }, { label: 'Discount', value: 2 }],
-      dealsTwo: [{ label: 'All Locations', value: 1 }, { label: 'Limited', value: 0 }],
-      dealsThree: [{ label: '1 year', value: 1 }, { label: '2 year', value: 2 }],
-      dealsFour: [{ label: 'Shanghai', value: 1 }, { label: 'Other', value: 0 }],
-      allowedDogOptions: [{ label: 'Yes', value: 1 }, { label: 'No', value: 0 }],
-      userListData: [],
-      popuCityList: [],
-
-      dealsTempData: {
-        user_id: 1,
-        type: undefined,
-        is_all: undefined,
-        file: undefined,
-        due_contract: undefined,
-        pay_money: undefined,
-        title: undefined,
-        desc: undefined,
-        deal_id: undefined,
-        province: undefined,
-        province_name: undefined,
-        city: undefined,
-        city_name: undefined,
-        district: undefined,
-        district_name: undefined,
-        location: undefined,
-        identity: undefined,
-        file_name: undefined,
-        allowed_dog: undefined,
-        deal_ranking_time: undefined,
-        lng: undefined,
-        lat: undefined
-
-      },
-      fileUrl: undefined,
-      fileList: undefined,
 
       tableKey: 0,
       list: null,
@@ -609,7 +365,13 @@ export default {
         pay_money: undefined,
         status: undefined
       },
-      statusOptions: [{ label: 'Pending', value: 0 }, { label: 'Successful', value: 1 }, { label: 'Rejected', value: 2 }],
+      statusOptions: [
+        { label: 'Pending', value: 0 },
+        { label: 'Successful', value: 1 },
+        { label: 'Rejected', value: 2 },
+        { label: 'Inactive', value: 3 },
+        { label: 'Submitted', value: 4 }
+      ],
       temp: {
         deal_id: undefined,
         reason: '',
@@ -651,129 +413,13 @@ export default {
   },
   created() {
     this.getList()
-    this.getAreas()
-    // this.getUserList()
-    this.getUserObjList()
+
   },
   mounted() {
-    this.initMapByInput()
+
   },
   methods: {
-    getFormattedAddress() {
-      AMap.plugin('AMap.Geocoder', () => {
-        const GeocoderOptions = {
-          city: '全国'
-        }
-        const geocoder = new AMap.Geocoder(GeocoderOptions)
-        geocoder.getAddress(this.mapInfo.lnglat, (status, result) => {
-          console.log('通过经纬度拿到的地址', result)
-          if (status === 'complete' && result.info === 'OK') {
-            this.mapInfo.address = result.regeocode.formattedAddress
-          } else {
-            this.mapInfo.address = '无法获取地址'
-          }
-        })
-      })
-    },
-    initMapByInput() {
-      AMap.plugin('AMap.Autocomplete', () => {
-        const autoOptions = {
-          city: '全国',
-          input: 'tipinput'
-        }
-        const autoComplete = new AMap.Autocomplete(autoOptions)
-        AMap.event.addListener(autoComplete, 'select', (e) => {
-          console.log('通过输入拿到的地址', e)
-          this.mapInfo.lat = e.poi.location.lat
-          this.mapInfo.lng = e.poi.location.lng
-          this.mapInfo.lnglat = [e.poi.location.lng, e.poi.location.lat]
-          this.getFormattedAddress()
-        })
-      })
-    },
-    getAreas() {
-      const params = {}
-      getAreas(params).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          this.provinceList = res.message
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(error => {
-        console.log(error)
-      })
-    },
-    chooseProvince(e, value) {
-      console.log(e)
-      if (value === 1) {
-        this.dealsTempData.province = e.id
-        this.dealsTempData.province_name = e.name
-        this.dealsTempData.city = undefined
-        this.dealsTempData.city_name = undefined
-        this.dealsTempData.district = undefined
-        this.dealsTempData.district_name = undefined
-      }
 
-      const params = {
-        pid: e.id
-      }
-      getAreas(params).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          this.cityList = res.message
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(error => {
-        console.log(error)
-      })
-    },
-    chooseCity(e, value) {
-      if (value === 1) {
-        this.dealsTempData.city = e.id
-        this.dealsTempData.city_name = e.name
-        this.dealsTempData.district = undefined
-        this.dealsTempData.district_name = undefined
-      }
-
-      const params = {
-        pid: e.id
-      }
-      getAreas(params).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          this.districtList = res.message
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(error => {
-        console.log(error)
-      })
-    },
-    chooseDistrict(e, value) {
-      this.dealsTempData.district = e.id
-      this.dealsTempData.district_name = e.name
-      console.log(this.dealsTempData)
-      this.$forceUpdate()
-    },
-    dealRankingDueDateChange(e) {
-      console.log(format(e, 'yyyy-MM-dd HH:mm:ss'))
-      this.dealsTempData.deal_ranking_time = format(e, 'yyyy-MM-dd HH:mm:ss')
-    },
-    getUserObjList() {
-      userObjectList({ pid: 71 }).then(res => {
-        this.popuCityList = res.message
-      })
-    },
-    uploadFileSuccess(response, file, fileList) {
-      if (response.code == 200) {
-        this.dealsTempData.file = response.data[0].file_url
-        this.dealsTempData.file_name = file.name
-      } else {
-        console.log(response.msg)
-      }
-    },
     getList() {
       this.listLoading = true
       // console.log(this.listQuery)
@@ -827,61 +473,6 @@ export default {
     handleEdit(row) {
 
       this.$router.push({ path: '/vendor/deals/editDeals', query: { deal_id: row.id }})
-      return;
-      if(row.lat){
-        this.mapInfo.lat = row.lat
-      }
-      if(row.lng){
-        this.mapInfo.lng = row.lng
-      }
-      if(row.lat && row.lng){
-        this.mapInfo.lnglat = [row.lng, row.lat]
-      }
-      if(row.location){
-        this.mapInfo.address = row.location
-      }
-
-      this.dealsTempData = Object.assign({}, row) // copy obj
-      this.dealsTempData.deal_id = row.id
-      if (row.deal_ranking_time === '0000-00-00 00:00:00') {
-        this.dealsTempData.deal_ranking_time = undefined
-      }
-      if (row.province > 0 && row.provinces != null) {
-        this.dealsTempData.province_name = row.provinces.Pinyin
-      }
-      if (row.city > 0 && row.citys != null) {
-        this.dealsTempData.city_name = row.citys.Pinyin
-      }
-      if (row.district > 0 && row.districts != null) {
-        this.dealsTempData.district_name = row.districts.Pinyin
-      }
-      this.dialogStatus = 'update'
-      this.dialogFormDealsVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    editData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.dealsTempData.lat = this.mapInfo.lat
-          this.dealsTempData.lng = this.mapInfo.lng
-          this.dealsTempData.location = this.mapInfo.address
-
-          const tempData = Object.assign({}, this.dealsTempData)
-
-          addDeals(tempData).then(() => {
-            this.getList()
-            this.dialogFormDealsVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
     },
     handleFeatured(row){
       this.featuredTemp.deal_id = row.id;

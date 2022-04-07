@@ -2,7 +2,9 @@
   <div class="container">
     <div class="add-container">
       <el-button type="primary" @click="handleCreate()">Add+</el-button>
-      <el-button type="primary" @click="handleSettingAdsDiscount()">Discount Setting</el-button>
+      <el-button type="primary" @click="handleSettingAdsDiscount()">
+        Apply Universal Discount
+      </el-button>
     </div>
 
     <el-dialog
@@ -125,7 +127,7 @@
     </el-dialog>
 
     <el-dialog
-      title="Discount Setting"
+      title=" Apply Universal Discount"
       :visible.sync="adsDiscountVisible"
       width="60%"
       :before-close="handleClose">
