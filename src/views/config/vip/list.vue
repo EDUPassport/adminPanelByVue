@@ -47,6 +47,11 @@
           <span>{{row.level_en}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Description" width="310px" align="center">
+        <template v-slot="{row}">
+          <span>{{row.desc}}</span>
+        </template>
+      </el-table-column>
 
       <el-table-column label="Identity" width="200px" align="center">
         <template v-slot="{row}">
@@ -113,6 +118,9 @@
         </el-form-item>
         <el-form-item label="Level EN" prop="level_en">
           <el-input v-model="temp.level_en" type="text"/>
+        </el-form-item>
+        <el-form-item label="Description" prop="desc">
+          <el-input v-model="temp.desc" type="textarea"/>
         </el-form-item>
         <el-form-item label="Level" prop="level">
           <el-input v-model="temp.level" type="text"/>
@@ -257,6 +265,7 @@ export default {
         level:undefined,
         level_cn:undefined,
         level_en:undefined,
+        desc:undefined,
         deals_num:undefined,
         events_num:undefined,
         money:undefined,
@@ -310,6 +319,7 @@ export default {
         level:undefined,
         level_cn:undefined,
         level_en:undefined,
+        desc:undefined,
         deals_num:undefined,
         events_num:undefined,
         money:undefined,

@@ -203,9 +203,9 @@
           :headers="uploadHeaders"
           name="file[]"
           :action="uploadRequestUrl"
-          multiple
           list-type="picture"
           :limit="6"
+          :on-remove="removeImages6max"
           :on-success="images6maxSuccess"
           :file-list="images6maxFileList"
         >
@@ -1060,13 +1060,16 @@ export default {
           let userImages = educatorInfo.user_images;
           if(userImages.length>0){
             let imagesData = [];
+            let imagesArr = [];
             userImages.forEach(item=>{
               let obj = {
                 name:'',
                 url:item.url
               }
               imagesData.push(obj)
+              imagesArr.push(item.url)
             })
+            this.images6maxData = imagesArr;
             this.images6maxFileList = imagesData;
           }
 
@@ -1278,15 +1281,19 @@ export default {
         console.log(response.msg)
       }
     },
+    removeImages6max(file,fileList){
+      console.log(file)
+      // console.log(fileList)
+      this.images6maxFileList = fileList
+    },
     images6maxSuccess(response){
       // console.log(response);
       if(response.code == 200){
         let fileUrl = response.data[0].file_url;
-        this.images6maxData.push(fileUrl)
+        this.images6maxFileList.push({ name: '', url: fileUrl })
       }else{
         console.log(response.msg)
       }
-      console.log(this.images6maxData)
 
     },
     submitForm(formName) {
@@ -1355,17 +1362,26 @@ export default {
       })
     },
     updateImages6max(){
-       let data = {
-          user_id:this.$route.query.uid,
+      let self = this;
+      let uid = this.$route.query.uid
+      let imgFileList = this.images6maxFileList
+      let img6maxData = []
+      imgFileList.forEach(item=>{
+        img6maxData.push(item.url)
+      })
+
+      let data = {
+        user_id:this.$route.query.uid,
          identity:1,
-         img:this.images6maxData
+         img:img6maxData
        }
        addUserImg(data).then(res=>{
          console.log(res)
          if(res.code == 200){
            this.$message.success(res.msg)
            setTimeout(function() {
-             window.location.reload()
+             // window.location.reload()
+             self.getUserInfo(uid)
            }, 1000)
          }else{
            this.$message.error(res.msg)
