@@ -4,6 +4,7 @@
       <el-select
         v-model="listQuery.identity"
         filterable
+        @change="getList()"
         default-first-option
         placeholder="Please Select Identity">
         <el-option
@@ -14,7 +15,7 @@
         </el-option>
       </el-select>
       <el-button v-waves style="margin-left: 10px;"  type="primary" icon="el-icon-search" @click="getList()">
-        Search
+        Apply Filter
       </el-button>
       <el-button style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
@@ -49,7 +50,7 @@
       </el-table-column>
       <el-table-column label="Description" width="310px" align="center">
         <template v-slot="{row}">
-          <span>{{row.desc}}</span>
+          <div v-html="row.desc"></div>
         </template>
       </el-table-column>
 
@@ -60,12 +61,12 @@
           <span v-if="row.identity == 3">Vendor</span>
         </template>
       </el-table-column>
-      <el-table-column label="Money(CNY)" width="200px" align="center">
+      <el-table-column label="Amount(Price CNY)" width="200px" align="center">
         <template v-slot="{row}">
           <span>{{ row.money }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Money($)" width="200px" align="center">
+      <el-table-column label="Amount(Price $)" width="200px" align="center">
         <template v-slot="{row}">
           <span>{{ row.dollar }}</span>
         </template>
@@ -96,10 +97,10 @@
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
           </el-button>
-          <el-button v-if="row.is_delete===1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
+          <el-button v-if="row.is_delete===1"  size="mini" @click="handleRecover(row)">
             Recover
           </el-button>
-          <el-button v-if="row.is_delete===0" v-permission="['lei']" size="mini" type="danger"
+          <el-button v-if="row.is_delete===0"  size="mini" type="danger"
                      @click="handleDelete(row,$index)">
             Delete
           </el-button>
@@ -111,7 +112,9 @@
                 @pagination="getList"/>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="top" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="top"
+               style=" margin-left:50px;"
+      >
 
         <el-form-item label="Level CN" prop="level_cn">
           <el-input v-model="temp.level_cn" type="text"/>
@@ -120,7 +123,8 @@
           <el-input v-model="temp.level_en" type="text"/>
         </el-form-item>
         <el-form-item label="Description" prop="desc">
-          <el-input v-model="temp.desc" type="textarea"/>
+<!--          <el-input v-model="temp.desc" type="textarea"/>-->
+          <tinymce v-model="temp.desc" width="100%" :height="300" />
         </el-form-item>
         <el-form-item label="Level" prop="level">
           <el-input v-model="temp.level" type="text"/>
@@ -145,10 +149,10 @@
         <el-form-item label="Events Num" prop="events_num">
           <el-input v-model="temp.events_num" type="text"/>
         </el-form-item>
-        <el-form-item label="Money(CNY)" prop="money">
+        <el-form-item label="Amount(Price CNY)" prop="money">
           <el-input v-model="temp.money" type="text"/>
         </el-form-item>
-        <el-form-item label="Money($)" prop="dollar">
+        <el-form-item label="Amount(Price $)" prop="dollar">
           <el-input v-model="temp.dollar" type="text"/>
         </el-form-item>
         <el-form-item label="Discount" prop="discount">
@@ -203,7 +207,7 @@
 </template>
 
 <script>
-
+import Tinymce from '@/components/Tinymce'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
@@ -212,7 +216,7 @@ import {addVipLevel} from "@/api/admin";
 
 export default {
   name: 'Index',
-  components: {Pagination},
+  components: {Pagination,Tinymce},
   directives: {waves, permission},
   filters: {
     statusFilter(status) {
