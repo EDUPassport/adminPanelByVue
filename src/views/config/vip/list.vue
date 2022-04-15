@@ -48,9 +48,9 @@
           <span>{{row.level_en}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Description" width="310px" align="center">
+      <el-table-column label="Description" width="310px" >
         <template v-slot="{row}">
-          <div v-html="row.desc"></div>
+          <div  v-html="row.desc"></div>
         </template>
       </el-table-column>
 
@@ -66,9 +66,19 @@
           <span>{{ row.money }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Actual Amount(Price CNY)" width="200px" align="center">
+        <template v-slot="{row}">
+          <span>{{ row.original_money }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Amount(Price $)" width="200px" align="center">
         <template v-slot="{row}">
           <span>{{ row.dollar }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Actual Amount(Price $)" width="200px" align="center">
+        <template v-slot="{row}">
+          <span>{{ row.original_dollar }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Discount(%)" width="100px" align="center">
@@ -111,69 +121,6 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit"
                 @pagination="getList"/>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="top"
-               style=" margin-left:50px;"
-      >
-
-        <el-form-item label="Level CN" prop="level_cn">
-          <el-input v-model="temp.level_cn" type="text"/>
-        </el-form-item>
-        <el-form-item label="Level EN" prop="level_en">
-          <el-input v-model="temp.level_en" type="text"/>
-        </el-form-item>
-        <el-form-item label="Description" prop="desc">
-<!--          <el-input v-model="temp.desc" type="textarea"/>-->
-          <tinymce v-model="temp.desc" width="100%" :height="300" />
-        </el-form-item>
-        <el-form-item label="Level" prop="level">
-          <el-input v-model="temp.level" type="text"/>
-        </el-form-item>
-        <el-form-item label="Identity" prop="identity">
-          <el-select
-            v-model="temp.identity"
-            filterable
-            default-first-option
-            placeholder="Please Select Identity">
-            <el-option
-              v-for="item in identityOptions"
-              :key="item.id"
-              :label="item.label"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Deals Num" prop="deals_num">
-          <el-input v-model="temp.deals_num" type="text"/>
-        </el-form-item>
-        <el-form-item label="Events Num" prop="events_num">
-          <el-input v-model="temp.events_num" type="text"/>
-        </el-form-item>
-        <el-form-item label="Amount(Price CNY)" prop="money">
-          <el-input v-model="temp.money" type="text"/>
-        </el-form-item>
-        <el-form-item label="Amount(Price $)" prop="dollar">
-          <el-input v-model="temp.dollar" type="text"/>
-        </el-form-item>
-        <el-form-item label="Discount" prop="discount">
-          <el-input v-model="temp.discount" >
-            <template slot="append">%</template>
-          </el-input>
-        </el-form-item>
-        <el-form-item label="Duration" prop="month_num">
-          <el-input v-model="temp.month_num" type="text"/>
-        </el-form-item>
-
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          Cancel
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          Confirm
-        </el-button>
-      </div>
-    </el-dialog>
 
     <el-dialog
       title=" Apply Universal Discount"
@@ -194,10 +141,12 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary"
+
                        @click="submitDiscountForm('discountForm')">Confirm</el-button>
           </el-form-item>
         </el-form>
       </div>
+
       <span slot="footer" class="dialog-footer">
             <el-button @click="adsDiscountVisible = false">Close</el-button>
       </span>
@@ -207,16 +156,17 @@
 </template>
 
 <script>
-import Tinymce from '@/components/Tinymce'
+
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
 import {vipList,setVipDiscount} from "@/api/member";
 import {addVipLevel} from "@/api/admin";
+import {encode} from 'js-base64'
 
 export default {
   name: 'Index',
-  components: {Pagination,Tinymce},
+  components: {Pagination},
   directives: {waves, permission},
   filters: {
     statusFilter(status) {
@@ -230,6 +180,7 @@ export default {
   },
   data() {
     return {
+
       adsDiscountVisible:false,
       discountForm:{
         discount: 0
@@ -263,19 +214,6 @@ export default {
         identity:1,
         page: 1,
         limit: 20
-      },
-      temp: {
-       identity: undefined,
-        level:undefined,
-        level_cn:undefined,
-        level_en:undefined,
-        desc:undefined,
-        deals_num:undefined,
-        events_num:undefined,
-        money:undefined,
-        dollar:undefined,
-        discount:undefined,
-        month_num:undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -332,68 +270,12 @@ export default {
       }
     },
     handleCreate() {
-      this.resetTemp()
-      this.fileList = undefined
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          // this.temp.author = 'vue-element-admin'
-          this.temp.image_url = this.fileUrl
-          addVipLevel(this.temp).then((res) => {
-            console.log(res)
-            // this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
-              type: 'success',
-              duration: 2000
-            })
-            window.location.reload()
-          })
-        }
-      })
+      this.$router.push({path:'/config/vip/edit',query:{}})
     },
     handleUpdate(row) {
-      console.log(row)
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.id = row.id
+      let rowStr = encode(JSON.stringify(row))
 
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    updateData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-
-          const tempData = Object.assign({}, this.temp)
-
-          addVipLevel(tempData).then((res) => {
-            console.log(res)
-            if (res.code == 200) {
-              this.dialogFormVisible = false
-              this.$notify({
-                title: 'Success',
-                message: 'Update Successfully',
-                type: 'success',
-                duration: 2000
-              })
-              this.getList()
-
-            }
-          })
-        }
-      })
+      this.$router.push({path:'/config/vip/edit',query:{id:row.id,info:rowStr}})
     },
     handleDelete(row) {
       this.$notify({

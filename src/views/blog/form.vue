@@ -230,9 +230,10 @@
 
             this.temp.image_url = this.bannerFileUrl
             const tempData = Object.assign({}, this.temp)
-            if(tempData.id != undefined && tempData.id){
-              tempData.title = ''
-            }
+
+            // if(tempData.id != undefined && tempData.id){
+            //   tempData.title = ''
+            // }
 
             addBlog(tempData).then((res) => {
               console.log(res)

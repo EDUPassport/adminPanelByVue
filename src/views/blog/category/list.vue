@@ -5,7 +5,7 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="getList()">
         Search
       </el-button>
-      <el-button v-permission="['lei','admin']" class="filter-item" style="margin-left: 10px;" type="primary"
+      <el-button  class="filter-item" style="margin-left: 10px;" type="primary"
                  icon="el-icon-edit" @click="handleCreateParent()">
         Add
       </el-button>
@@ -18,8 +18,8 @@
         auto-expand-parent
         highlight-current
         :expand-on-click-node="false">
-
-      <span class="custom-tree-node" slot-scope="{ node, data }">
+      <template  v-slot="{ node, data }">
+      <span class="custom-tree-node">
         <span>{{ node.data.name_en }}</span>
         <span>
           <el-button
@@ -42,6 +42,8 @@
           </el-button>
         </span>
       </span>
+
+      </template>
       </el-tree>
     </div>
 

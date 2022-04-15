@@ -153,6 +153,15 @@ export const constantRoutes = [
         meta: {
           title: 'Membership plans'
         }
+      },
+      {
+        path: 'vip/edit',
+        hidden: true,
+        component: () => import('@/views/config/vip/edit'),
+        name: 'Edit Membership plan',
+        meta: {
+          title: 'Edit Membership plan'
+        }
       }
 
     ]
