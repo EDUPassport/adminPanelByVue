@@ -65,7 +65,7 @@
       style="width: 100%;"
     >
       <el-table-column type="expand">
-        <template slot-scope="props">
+        <template v-slot="props">
           <el-form
             label-position="left"
             inline
@@ -296,7 +296,7 @@
         align="center"
         width="80"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
@@ -306,16 +306,24 @@
         align="center"
         width="120"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.pid }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        label="Username"
+        label="Source"
         width="180"
       >
-        <template slot-scope="scope">
-          {{ scope.row.username }}
+        <template v-slot="scope">
+          {{ scope.row.source }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="Create Time"
+        width="180"
+      >
+        <template v-slot="scope">
+          {{ scope.row.c_time }}
         </template>
       </el-table-column>
       <el-table-column
@@ -323,18 +331,8 @@
         width="110"
         align="center"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span>{{ scope.row.phone }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Is Seeking"
-        width="110"
-        align="center"
-      >
-        <template slot-scope="scope">
-          <span v-if="scope.row.is_seeking===0">Unknown</span>
-          <span v-if="scope.row.is_seeking===1">Yes</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -342,7 +340,7 @@
         width="110"
         align="center"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span v-if="scope.row.sex === 1">Male</span>
           <span v-if="scope.row.sex === 2">Female</span>
           <span v-if="scope.row.sex === 0">Unc</span>
@@ -354,7 +352,7 @@
         width="110"
         align="center"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-tag
             v-if="scope.row.identity ===0"
             effect="dark"
@@ -392,7 +390,7 @@
         width="680"
         class-name="small-padding fixed-width"
       >
-        <template slot-scope="{row,$index}">
+        <template v-slot="{row,$index}">
           <el-button
             type="primary"
             size="mini"
