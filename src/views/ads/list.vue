@@ -22,37 +22,37 @@
         size="mini"
       >
         <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.id }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Category" width="160px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{row.category_en}}</span>
           </template>
         </el-table-column>
         <el-table-column label="Profile" width="190px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{row.name_key}}</span>
           </template>
         </el-table-column>
         <el-table-column label="Link" width="200px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.link }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Title" width="200px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.title }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Relative Link" width="200px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.relative_link }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Default Image" width="160px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <el-image
               style="width: 100px; height: 50px"
               :src=" row.url "
@@ -61,7 +61,7 @@
           </template>
         </el-table-column>
         <el-table-column label="Ads Banner Image" width="160px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <el-image
               style="width: 100px; height: 50px"
               :src=" row.user_url "
@@ -70,7 +70,7 @@
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="Actions" align="center" width="230" class-name="small-padding fixed-width">
-          <template slot-scope="{row,$index}">
+          <template v-slot="{row,$index}">
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               Edit
             </el-button>
@@ -339,7 +339,7 @@ export default {
           this.temp.url = this.fileUrl
           this.temp.user_url = this.adsBannerFileUrl
           add(this.temp).then((res) => {
-            // console.log(res)
+            console.log(res)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -353,7 +353,7 @@ export default {
       })
     },
     handleUpdate(row) {
-      console.log(row)
+      // console.log(row)
       this.adsCategoryValue = row.category;
 
       this.temp = Object.assign({}, row) // copy obj
@@ -363,13 +363,21 @@ export default {
       this.temp.days = Number(row.days)
       this.temp.money = Number(row.money)
       this.fileUrl = row.url
+
+
       if(row.url != ''){
         this.fileList = [{ name: '', url: row.url }]
+      }else{
+        this.fileList = []
       }
+
       this.adsBannerFileUrl = row.user_url
       if(row.user_url !=''){
         this.adsBannerFileList = [{name:'',url:row.user_url}]
+      }else{
+        this.adsBannerFileList = []
       }
+
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {

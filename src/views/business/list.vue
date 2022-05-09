@@ -82,7 +82,7 @@
       style="width: 100%;"
     >
       <el-table-column fixed type="expand">
-        <template slot-scope="props">
+        <template v-slot="props">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item v-if="props.row.nickname!=''" label="Nickname">
               <span>{{ props.row.nickname }}</span>
@@ -178,61 +178,62 @@
         </template>
       </el-table-column>
       <el-table-column fixed label="ID" prop="id" sortable="custom" align="center" width="80">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column fixed label="User Id" prop="user_id" width="100">
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.user_id }}</span>
         </template>
       </el-table-column>
+
       <el-table-column label="First&Last Name" width="140">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.first_name }} {{ scope.row.last_name }}
         </template>
       </el-table-column>
       <el-table-column label="Status" width="80">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span v-if="scope.row.status == 0">Pending</span>
           <span v-if="scope.row.status == 1">Approve</span>
           <span v-if="scope.row.status == 2">Rejected</span>
         </template>
       </el-table-column>
       <el-table-column label="Number of Jobs posted" width="180">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.job_num }}
         </template>
       </el-table-column>
       <el-table-column label="Wechat Id" width="90">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.wx_id }}
         </template>
       </el-table-column>
       <el-table-column label="Business Name" width="130">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.business_name }}
         </template>
       </el-table-column>
       <el-table-column label="Business Phone" width="140" align="center">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span>{{ scope.row.business_phone }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Email" width="140" align="center">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span>{{ scope.row.work_email }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Level" width="110" align="center">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span v-if="scope.row.level==1">Basic</span>
           <span v-if="scope.row.level==2">Pro</span>
           <span v-if="scope.row.level==3">Plus</span>
         </template>
       </el-table-column>
       <el-table-column border fixed="right" label="Actions" align="center" width="480" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
+        <template v-slot="{row,$index}">
           <el-button class="xll-btn" type="primary" size="mini" @click="handleReview(row)">
             Review
           </el-button>
@@ -288,7 +289,7 @@
         </template>
       </el-table-column>
       <el-table-column label="Create Time" width="180">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.c_time }}
         </template>
       </el-table-column>
@@ -782,7 +783,7 @@ export default {
       });
 
     },
-    handleMemberLevel(row, index) {
+    handleMemberLevel(row) {
       // this.tempUpgrade = Object.assign({}, row) // copy obj
       this.tempUpgrade.user_id = row.user_id
       console.log(row)

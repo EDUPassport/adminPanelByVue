@@ -150,6 +150,11 @@
               <span>{{ row.id }}</span>
             </template>
           </el-table-column>
+          <el-table-column label="Sort" prop="sort">
+            <template v-slot="{row}">
+              <span>{{ row.sort }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="User Id" prop="user_id" width="80px">
             <template v-slot="{row}">
               <span>{{ row.user_id }}</span>
@@ -221,7 +226,9 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="Actions" align="center" width="500" class-name="small-padding fixed-width">
+          <el-table-column label="Actions" align="center" width="500"
+                           fixed="right"
+                           class-name="small-padding fixed-width">
             <template v-slot="{row,$index}">
               <el-button type="primary" size="mini" @click="handleApplications(row)">
                 Applications
@@ -272,7 +279,7 @@
         label-width="70px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="Status">
+        <el-form-item label="Status" prop="status">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
             <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
@@ -296,35 +303,70 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="Ads" :visible.sync="dialogAdsFormVisible">
-      <el-form
-        ref="dataForm"
-        :rules="rules"
-        :model="temp"
-        label-position="left"
-        label-width="70px"
-        style="width: 400px; margin-left:50px;"
-      >
-        <el-form-item label="Type">
-          <el-select v-model="adsTemp.ad_type" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in adsTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Sort">
-          <el-input v-model="adsTemp.sort" type="number" placeholder="Please input" />
-        </el-form-item>
-        <el-form-item label="Date" prop="timestamp">
-          <el-date-picker v-model="adsTemp.ad_due_time" type="datetime" placeholder="Please pick a date" @change="adsDueDateChange" />
-        </el-form-item>
+    <el-dialog title="Feature" :visible.sync="dialogAdsFormVisible">
 
-      </el-form>
+      <div class="feature-ads">
+        <h4>Feature Ads</h4>
+        <el-form
+          ref="adsForm"
+          :rules="adsRules"
+          :model="adsTemp"
+          label-position="left"
+          label-width="70px"
+          style="width: 400px; margin-left:50px;"
+        >
+          <el-form-item label="Type" prop="ad_type">
+            <el-select v-model="adsTemp.ad_type" class="filter-item" placeholder="Please select">
+              <el-option v-for="item in adsTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Sort">
+            <el-input v-model="adsTemp.sort" type="number" placeholder="Please input" />
+          </el-form-item>
+          <el-form-item label="Date" prop="ad_due_time">
+            <el-date-picker v-model="adsTemp.ad_due_time" type="datetime" placeholder="Please pick a date" @change="adsDueDateChange" />
+          </el-form-item>
+
+        </el-form>
+        <div class="feature-ads-btn">
+          <el-button @click="dialogAdsFormVisible = false">
+            Cancel
+          </el-button>
+          <el-button type="primary" @click="reviewAds">
+            Confirm
+          </el-button>
+        </div>
+
+      </div>
+
+      <div class="feature-sort">
+        <h4>Feature Sort</h4>
+        <el-form
+          ref="sortForm"
+          :rules="sortRules"
+          :model="sortTemp"
+          label-position="left"
+          label-width="70px"
+          style="width: 400px; margin-left:50px;"
+        >
+          <el-form-item label="Sort" prop="sort">
+            <el-input v-model="sortTemp.sort" type="number" placeholder="Please input" />
+          </el-form-item>
+        </el-form>
+
+        <div class="feature-sort-btn">
+          <el-button @click="dialogAdsFormVisible = false">
+            Cancel
+          </el-button>
+          <el-button type="primary" @click="reviewSort">
+            Confirm
+          </el-button>
+        </div>
+
+      </div>
+
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogAdsFormVisible = false">
-          Cancel
-        </el-button>
-        <el-button type="primary" @click="reviewAds">
-          Confirm
-        </el-button>
+
       </div>
     </el-dialog>
 
@@ -332,7 +374,8 @@
 </template>
 
 <script>
-import { jobList, approveJobs, delJobs, setJobFeature, refreshJobs } from '@/api/jobs'
+
+import {setJobSort, jobList, approveJobs, delJobs, setJobFeature, refreshJobs} from '@/api/jobs'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { format , formatDistanceToNow,add , isAfter} from 'date-fns'
@@ -356,22 +399,13 @@ export default {
     },
     refreshIsActive(a){
       const aaa = add(new Date(a),{days:15})
-      // console.log(aaa)
-      // console.log(new Date())
       const rrr = isAfter(aaa,new Date())
-      // console.log(rrr)
-
       return rrr ? 'Active' : 'Expired';
     },
     refreshActiveStatusFilter(a) {
       const aaa = add(new Date(a),{days:15})
-      // console.log(aaa)
-      // console.log(new Date())
       const rrr = isAfter(aaa,new Date())
-      // console.log(rrr)
-
       return rrr ? 'success' : 'danger';
-
     },
 
   },
@@ -417,13 +451,27 @@ export default {
         sort: undefined,
         ad_type: undefined,
         ad_due_time: undefined
+      },
+      adsRules: {
+        ad_type: [{ required: true, message: 'this is required', trigger: 'change' }],
+        ad_due_time: [{ required: true, message: 'this is required', trigger: 'change' }]
+      },
+      sortTemp:{
+        job_id:undefined,
+        sort:undefined
+      },
+      sortRules:{
+        sort: [{ required: true, message: 'this is required', trigger: 'change' }],
       }
+
+
     }
   },
   created() {
     this.getList()
   },
   methods: {
+
     tabClickJobs(e) {
       console.log(e)
       if (e.index == 0) {
@@ -543,6 +591,7 @@ export default {
     handleAds(row) {
       this.dialogAdsFormVisible = true
       this.adsTemp.job_id = row.id
+      this.sortTemp.job_id = row.id
     },
     handleRefresh(jobId) {
       const data = {
@@ -574,11 +623,30 @@ export default {
       this.adsTemp.ad_due_time = format(e, 'yyyy-MM-dd HH:mm:ss')
     },
     reviewAds() {
-      this.$refs['dataForm'].validate((valid) => {
+      this.$refs['adsForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.adsTemp)
 
           setJobFeature(tempData).then((res) => {
+            console.log(res)
+            this.dialogAdsFormVisible = false
+            this.$notify({
+              title: 'Success',
+              message: 'Update Successfully',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          })
+        }
+      })
+    },
+    reviewSort() {
+      this.$refs['sortForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.sortTemp)
+
+          setJobSort(tempData).then((res) => {
             console.log(res)
             this.dialogAdsFormVisible = false
             this.$notify({
@@ -633,4 +701,18 @@ export default {
   font-size: 10px;
   border-radius: 10px;
 }
+
+.feature-ads{
+  padding: 20px;
+  border: 1px solid #808080;
+  border-radius: 10px;
+}
+
+.feature-sort{
+  margin-top:20px;
+  padding: 20px;
+  border: 1px solid #808080;
+  border-radius: 10px;
+}
+
 </style>

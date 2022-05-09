@@ -15,6 +15,14 @@ export function approveJobs(data) {
   })
 }
 
+export function setJobSort(data) {
+  return request({
+    url: '/admin/setJobSort',
+    method: 'post',
+    data
+  })
+}
+
 export function delJobs(data) {
   return request({
     url: '/admin/delJobs',
