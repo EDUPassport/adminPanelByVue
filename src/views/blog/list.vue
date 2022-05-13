@@ -21,38 +21,43 @@
         style="width: 100%;"
       >
         <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.id }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Category" width="160px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{row.cate_name_en}}</span>
           </template>
         </el-table-column>
         <el-table-column label="Title" width="200px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.title }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Description" width="200px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.desc }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="Link" width="200px" align="center">
+          <template v-slot="{row}">
+            <span>{{ row.link_url }}</span>
+          </template>
+        </el-table-column>
 <!--        <el-table-column label="Content" width="200px" align="center">-->
-<!--          <template slot-scope="{row}">-->
+<!--          <template v-slot="{row}">-->
 <!--            <span>{{ row.content }}</span>-->
 <!--          </template>-->
 <!--        </el-table-column>-->
         <el-table-column label="Tags" width="200px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.tags }}</span>
           </template>
         </el-table-column>
 
         <el-table-column label="Banner Image" width="160px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <el-image
               style="width: 100px; height: 50px"
               :src=" row.image_url "
@@ -60,21 +65,21 @@
             />
           </template>
         </el-table-column>
-        <el-table-column label="Slider Images" align="center" width="230" class-name="small-padding fixed-width">
-          <template slot-scope="{row}">
-            <el-carousel height="100px">
-              <el-carousel-item v-for="(item,index) in row.banner" :key="index">
-                <el-image :src="item.url"></el-image>
-              </el-carousel-item>
-            </el-carousel>
+<!--        <el-table-column label="Slider Images" align="center" width="230" class-name="small-padding fixed-width">-->
+<!--          <template v-slot="{row}">-->
+<!--            <el-carousel height="100px">-->
+<!--              <el-carousel-item v-for="(item,index) in row.banner" :key="index">-->
+<!--                <el-image :src="item.url"></el-image>-->
+<!--              </el-carousel-item>-->
+<!--            </el-carousel>-->
 
-          </template>
-        </el-table-column>
+<!--          </template>-->
+<!--        </el-table-column>-->
         <el-table-column label="Actions" align="center" width="300" class-name="small-padding fixed-width">
-          <template slot-scope="{row,$index}">
-            <el-button type="primary" size="mini" @click="handle6images(row)">
-              Add Slider
-            </el-button>
+          <template v-slot="{row,$index}">
+<!--            <el-button type="primary" size="mini" @click="handle6images(row)">-->
+<!--              Add Slider-->
+<!--            </el-button>-->
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               Edit
             </el-button>

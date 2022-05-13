@@ -19,10 +19,13 @@
         <el-form-item label="Description">
           <el-input v-model="temp.desc" type="textarea" />
         </el-form-item>
-        <el-form-item label="Content">
-          <!--          <el-input v-model="temp.content"  type="textarea"/>-->
-          <tinymce v-model="temp.content" :height="300" />
+        <el-form-item label="Link">
+          <el-input v-model="temp.link_url" type="text" />
         </el-form-item>
+<!--        <el-form-item label="Content">-->
+<!--          &lt;!&ndash;          <el-input v-model="temp.content"  type="textarea"/>&ndash;&gt;-->
+<!--          <tinymce v-model="temp.content" :height="300" />-->
+<!--        </el-form-item>-->
         <el-form-item label="Tags">
           <el-input v-model="temp.tags" type="textarea" />
         </el-form-item>
@@ -105,6 +108,7 @@
           cate_name_en:undefined,
           title:undefined,
           desc:undefined,
+          link_url:undefined,
           content:undefined,
           image_url:undefined,
           tags:undefined,
