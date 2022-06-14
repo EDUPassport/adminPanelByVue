@@ -513,7 +513,7 @@
 <script>
 
 import {userObjectList, userInfo} from '@/api/member'
-import {addJobs, addJobProfile, jobDetail, uploadExcel} from '@/api/jobs'
+import {addJobs, addJobProfile, jobDetail } from '@/api/jobs'
 import nationality from '@/utils/nationality'
 import {randomString} from '@/utils'
 import {getAreas} from '@/api/location'
@@ -528,7 +528,7 @@ export default {
     return {
       mapInfo: {
         // 初始值默认为天安门
-        address: '北京市东城区东华门街道天安门',
+        address: '',
         lng: 116.397451,
         lat: 39.909187,
         lnglat: [116.397451, 39.909187]
@@ -868,11 +868,23 @@ export default {
     },
     updateJob() {
       this.updateLoadingStatus = true;
+      if(this.jobForm.district_name && this.jobForm.city_name && this.jobForm.province_name){
+        this.jobForm.job_location = this.jobForm.district_name + ', ' + this.jobForm.city_name + ', ' + this.jobForm.province_name
+      }
+      if(this.mapInfo.address){
+        this.jobForm.address = this.mapInfo.address
+        if(this.mapInfo.lat){
+          this.jobForm.lat = this.mapInfo.lat
+        }
+        if(this.mapInfo.lng){
+          this.jobForm.lng = this.mapInfo.lng
+        }
+      }else{
+        this.jobForm.address = ''
+        this.jobForm.lat = 0
+        this.jobForm.lng = 0
+      }
 
-      this.jobForm.job_location = this.jobForm.district_name + ', ' + this.jobForm.city_name + ', ' + this.jobForm.province_name
-      this.jobForm.address = this.mapInfo.address
-      this.jobForm.lat = this.mapInfo.lat
-      this.jobForm.lng = this.mapInfo.lng
       this.jobForm.working_hours = JSON.stringify(this.workingHoursData);
       const data = Object.assign({}, this.jobForm)
 
@@ -899,12 +911,14 @@ export default {
             this.getJobDetail(jobId)
             this.$message.success('Success')
             setTimeout(function (){
-              window.location.reload();
+              // window.location.reload();
               this.updateLoadingStatus = false;
             },1000)
+
           } else {
             this.$message.error(res.msg)
           }
+
         }).catch(err => {
           console.log(err)
         })

@@ -150,7 +150,7 @@
               <span>{{ row.id }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="Sort" prop="sort">
+          <el-table-column label="Sort" prop="sort" width="80px">
             <template v-slot="{row}">
               <span>{{ row.sort }}</span>
             </template>
@@ -202,7 +202,7 @@
               <span>{{ row.refresh_time | refreshTimeFilter }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="Business Name" width="110px" align="center">
+          <el-table-column label="Business Name" width="210px" align="center">
             <template v-slot="{row}">
               <span>{{ row.business_name }}</span>
             </template>
@@ -226,30 +226,15 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="Actions" align="center" width="500"
+          <el-table-column label="Actions" align="center" width="240"
                            fixed="right"
                            class-name="small-padding fixed-width">
             <template v-slot="{row,$index}">
-              <el-button type="primary" size="mini" @click="handleApplications(row)">
-                Applications
-              </el-button>
-              <el-button type="primary" size="mini" @click="handleAds(row)">
-                Feature
-              </el-button>
-              <el-button type="primary" size="mini" @click="handleRefresh(row.id)">
-                Refresh
-              </el-button>
-              <el-button type="primary" size="mini" @click="handleReview(row)">
-                Review
-              </el-button>
               <el-button size="mini" type="success" @click="handleUpdate(row)">
                 Edit
               </el-button>
-              <el-button v-if="row.is_delete===1" size="mini" @click="handleRecover(row)">
-                Recover
-              </el-button>
-              <el-button v-if="row.is_delete===0" size="mini" type="danger" @click="handleDelete(row,$index)">
-                Delete
+              <el-button size="mini" type="primary" @click="showMoreAction(row,$index)">
+                More
               </el-button>
             </template>
           </el-table-column>
@@ -370,6 +355,36 @@
       </div>
     </el-dialog>
 
+
+    <el-dialog title="More Action" :visible.sync="moreActionDialog">
+      <div class="dialog-action-container">
+        <el-button type="primary" size="mini" @click="handleApplications(nowRow)">
+          Applications
+        </el-button>
+        <el-button type="primary" size="mini" @click="handleAds(nowRow)">
+          Feature
+        </el-button>
+        <el-button type="primary" size="mini" @click="handleRefresh(nowRow.id)">
+          Refresh
+        </el-button>
+        <el-button type="primary" size="mini" @click="handleReview(nowRow)">
+          Review
+        </el-button>
+        <el-button size="mini" type="success" @click="handleUpdate(nowRow)">
+          Edit
+        </el-button>
+        <el-button v-if="nowRow.is_delete===1" size="mini" @click="handleRecover(nowRow)">
+          Recover
+        </el-button>
+        <el-button v-if="nowRow.is_delete===0" size="mini" type="danger" @click="handleDelete(nowRow,nowRowIndex)">
+          Delete
+        </el-button>
+      </div>
+      <div slot="footer" class="dialog-footer">
+
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -411,6 +426,9 @@ export default {
   },
   data() {
     return {
+      nowRowIndex:'',
+      nowRow:{},
+      moreActionDialog:false,
       tableKey: 0,
       list: null,
       total: 0,
@@ -471,7 +489,11 @@ export default {
     this.getList()
   },
   methods: {
-
+    showMoreAction(row,index){
+      this.nowRow = row
+      this.moreActionDialog = true
+      this.nowRowIndex = index
+    },
     tabClickJobs(e) {
       console.log(e)
       if (e.index == 0) {
@@ -502,7 +524,7 @@ export default {
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
-        }, 500)
+        }, 300)
       })
     },
     handleFilter() {
