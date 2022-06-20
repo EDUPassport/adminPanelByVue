@@ -8,8 +8,6 @@ import Layout from '@/layout'
 
 /* Router Modules */
 import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
 
 /**
@@ -130,6 +128,7 @@ export const constantRoutes = [
           title: 'MP Image Asset'
         }
       },
+
       {
         path: 'system/tags',
         component: () => import('@/views/config/system/tags'),
@@ -162,7 +161,8 @@ export const constantRoutes = [
         meta: {
           title: 'Edit Membership plan'
         }
-      }
+      },
+
 
     ]
   },
@@ -717,57 +717,7 @@ export const asyncRoutes = [
 
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
-  chartsRouter,
   nestedRouter,
-  tableRouter,
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/list',
-    name: 'Example',
-    hidden: true,
-    meta: {
-      title: 'Example',
-      icon: 'el-icon-s-help'
-    },
-    children: [
-      {
-        path: 'create',
-        component: () => import('@/views/example/create'),
-        name: 'CreateArticle',
-        meta: { title: 'Create Article', icon: 'edit' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/example/edit'),
-        name: 'EditArticle',
-        meta: { title: 'Edit Article', noCache: true, activeMenu: '/example/list' },
-        hidden: true
-      },
-      {
-        path: 'list',
-        component: () => import('@/views/example/list'),
-        name: 'ArticleList',
-        meta: { title: 'Article List', icon: 'list' }
-      }
-    ]
-  },
-
-  {
-    path: '/tab',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/tab/index'),
-        name: 'Tab',
-        meta: { title: 'Tab', icon: 'tab' }
-      }
-    ]
-  },
-
   {
     path: '/error',
     component: Layout,
@@ -850,24 +800,6 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/zip',
-    component: Layout,
-    redirect: '/zip/download',
-    alwaysShow: true,
-    name: 'Zip',
-    hidden: true,
-    meta: { title: 'Zip', icon: 'zip' },
-    children: [
-      {
-        path: 'download',
-        component: () => import('@/views/zip/index'),
-        name: 'ExportZip',
-        meta: { title: 'Export Zip' }
-      }
-    ]
-  },
-
-  {
     path: '/pdf',
     component: Layout,
     redirect: '/pdf/index',
@@ -887,33 +819,6 @@ export const asyncRoutes = [
     hidden: true
   },
 
-  {
-    path: '/theme',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/theme/index'),
-        name: 'Theme',
-        meta: { title: 'Theme', icon: 'theme' }
-      }
-    ]
-  },
-
-  {
-    path: '/clipboard',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/clipboard/index'),
-        name: 'ClipboardDemo',
-        meta: { title: 'Clipboard', icon: 'clipboard' }
-      }
-    ]
-  },
 
   {
     path: 'external-link',

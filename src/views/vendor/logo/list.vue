@@ -100,13 +100,12 @@
 <script>
 
 import waves from '@/directive/waves' // waves directive
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
 import {addSixLogo, getSixLogo} from '@/api/admin';
 
 export default {
   name: 'list',
-  components: { Pagination },
+  components: {  },
   directives: { waves, permission },
   filters: {
     statusFilter(status) {

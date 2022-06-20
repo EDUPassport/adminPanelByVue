@@ -34,6 +34,9 @@
                 <el-form-item label="Education">
                   <span>{{ props.row.education }}</span>
                 </el-form-item>
+                <el-form-item label="Street Address">
+                  <span>{{ props.row.street_address }}</span>
+                </el-form-item>
                 <el-form-item label="Employment_type">
                   <span v-if="props.row.employment_type == 1">FT</span>
                   <span v-if="props.row.employment_type == 2">PT</span>

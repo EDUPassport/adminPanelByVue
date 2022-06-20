@@ -56,4 +56,19 @@ export function addSubIdentity(data) {
   })
 }
 
+export function addMenuForAdminUser(data) {
+  return request({
+    url: '/admin/function/menu/add',
+    method: 'post',
+    data
+  })
+}
+
+export function getAdminUserMenuList(params) {
+  return request({
+    url: '/admin/function/menu/list',
+    method: 'get',
+    params
+  })
+}
 

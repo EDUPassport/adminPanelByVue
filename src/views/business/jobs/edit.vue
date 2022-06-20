@@ -11,69 +11,76 @@
 
         <el-form-item label="Job Location">
           <el-select
-            v-model="jobForm.province_name"
-            placeholder="Province"
-            @change="chooseProvince"
+            v-model="jobForm.country_name"
+            placeholder="Country"
+            @change="chooseCountry"
           >
             <el-option
-              v-for="item in provinceList"
+              v-for="item in countryList"
               :key="item.id"
               :label="item.Pinyin"
               :value="{id:item.id,name:item.Pinyin}"
             />
           </el-select>
+          <template v-if="provinceList.length>0 || jobForm.province_name">
+            <el-select
+              v-model="jobForm.province_name"
+              placeholder="Province"
+              @change="chooseProvince"
+            >
+              <el-option
+                v-for="item in provinceList"
+                :key="item.id"
+                :label="item.Pinyin"
+                :value="{id:item.id,name:item.Pinyin}"
+              />
+            </el-select>
 
-          <el-select
-            v-model="jobForm.city_name"
-            placeholder="City"
-            @change="chooseCity"
-          >
-            <el-option
-              v-for="item in cityList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-          <el-select
-            v-model="jobForm.district_name"
-            placeholder="District"
-            @change="chooseDistrict"
-          >
-            <el-option
-              v-for="item in districtList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
+          </template>
+          <template v-if="cityList.length>0 || jobForm.city_name">
+            <el-select
+              v-model="jobForm.city_name"
+              placeholder="City"
+              @change="chooseCity"
+            >
+              <el-option
+                v-for="item in cityList"
+                :key="item.id"
+                :label="item.Pinyin"
+                :value="{id:item.id,name:item.Pinyin}"
+              />
+            </el-select>
+
+          </template>
+          <template v-if="districtList.length>0 || jobForm.district_name">
+            <el-select
+              v-model="jobForm.district_name"
+              placeholder="District"
+              @change="chooseDistrict"
+            >
+              <el-option
+                v-for="item in districtList"
+                :key="item.id"
+                :label="item.Pinyin"
+                :value="{id:item.id,name:item.Pinyin}"
+              />
+            </el-select>
+
+          </template>
         </el-form-item>
 
         <el-form-item label="Add Location Pin">
-          <div class="amap-page-container">
-            <!--使用element UI作为输入框-->
-            <el-input
-              id="tipinput"
-              v-model="mapInfo.address"
-              placeholder="请输入内容"
-            />
-            <el-amap
-              vid="amapDemo"
-              :center="mapInfo.lnglat"
-              :amap-manager="amapManager"
-              :zoom="zoom"
-              :events="events"
-              class="amap-demo"
-              style="height: 300px"
-            >
-              <el-amap-marker
-                ref="marker"
-                vid="component-marker"
-                :position="mapInfo.lnglat"
-              />
-            </el-amap>
-            <p>标记点：{{ mapInfo.address }}，经度：{{ mapInfo.lng }}，纬度：{{ mapInfo.lat }}</p>
-          </div>
+         <div id="map" style="width:90%;height:400px;"></div>
+        </el-form-item>
+
+        <el-form-item
+          label="Street Address"
+          prop="street_address"
+        >
+          <el-input
+            v-model="jobForm.street_address"
+            type="text"
+          />
         </el-form-item>
 
         <el-form-item
@@ -511,38 +518,21 @@
 </template>
 
 <script>
+import mapboxgl from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 import {userObjectList, userInfo} from '@/api/member'
 import {addJobs, addJobProfile, jobDetail } from '@/api/jobs'
 import nationality from '@/utils/nationality'
 import {randomString} from '@/utils'
-import {getAreas} from '@/api/location'
-import {AMapManager} from 'vue-amap'
-
-const amapManager = new AMapManager()
+import {getAreas,getCountry} from '@/api/location'
 
 export default {
   name: 'Edit',
   components: {},
   data() {
     return {
-      mapInfo: {
-        // 初始值默认为天安门
-        address: '',
-        lng: 116.397451,
-        lat: 39.909187,
-        lnglat: [116.397451, 39.909187]
-      },
-      zoom: 12,
-      amapManager,
-      events: {
-        click: (e) => {
-          this.mapInfo.lng = e.lnglat.lng
-          this.mapInfo.lat = e.lnglat.lat
-          this.mapInfo.lnglat = [e.lnglat.lng, e.lnglat.lat]
-          this.getFormattedAddress()
-        }
-      },
+      countryList:[],
       provinceList: [],
       cityList: [],
       districtList: [],
@@ -579,6 +569,7 @@ export default {
       ],
       nationalityList: [],
       jobForm: {
+        street_address:undefined,
         age: undefined,
         age_max: undefined,
         age_min: undefined,
@@ -605,6 +596,8 @@ export default {
         is_teaching_license: undefined,
         job_due_time: undefined,
         job_location: undefined,
+        country:undefined,
+        country_name:undefined,
         province: undefined,
         province_name: undefined,
         city: undefined,
@@ -701,7 +694,8 @@ export default {
       isIndeterminate: true,
       workingHoursData: [],
       weekData:[],
-      workingHoursStr:''
+      workingHoursStr:'',
+      showForeignStatus:false
     }
 
   },
@@ -736,16 +730,59 @@ export default {
     if (typeof businessName !== 'undefined') {
       this.jobForm.business_name = businessName
     }
-    this.getAreas()
+    this.getAllCountry(0)
     this.getUserObjList()
     nationality.forEach(item => {
       this.nationalityList = this.nationalityList.concat(item.data)
     })
   },
   mounted() {
-    this.initMapByInput()
+    this.initMap(121.472644, 31.231706)
   },
   methods: {
+    initMap(lng,lat){
+      let _this = this;
+      mapboxgl.accessToken = 'pk.eyJ1Ijoic3JrbGluZ2UiLCJhIjoiY2t2NnR4anI2OWU5NDJ3bWE1dHd3c3h1aSJ9.O0JfjqiyBBkFuf4G-DQ-DQ';
+      const map = new mapboxgl.Map({
+
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [lng,lat],
+        zoom: 13
+      });
+      map.addControl(new mapboxgl.FullscreenControl());
+
+      const geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        marker: {
+          color: 'orange'
+        },
+        mapboxgl: mapboxgl
+      });
+
+      map.addControl(geocoder);
+
+      const marker = new mapboxgl.Marker()
+
+      marker.setLngLat([lng,lat]).addTo(map)
+
+      geocoder.on('result', (e) => {
+        console.log(e)
+        marker.setLngLat(e.result.center).addTo(map)
+        _this.jobForm.address = e.result.place_name
+        _this.jobForm.lng = e.result.center[0]
+        _this.jobForm.lat = e.result.center[1]
+
+      })
+
+      geocoder.on('clear', (e) => {
+        console.log(e)
+        _this.jobForm.address = ''
+        _this.jobForm.lng = ''
+        _this.jobForm.lat = ''
+      })
+
+    },
     handleCheckedWeeksChange(value) {
       // console.log(value);
       this.weekData = value;
@@ -772,36 +809,109 @@ export default {
       this.workingHoursData.push(obj);
       this.dialogWorkingHours = false;
     },
-    getFormattedAddress() {
-      AMap.plugin('AMap.Geocoder', () => {
-        const GeocoderOptions = {
-          city: '全国'
+    getAllCountry(pid){
+      let params = {
+        pid:pid
+      }
+      getCountry(params).then(res => {
+        console.log(res)
+        if (res.code === 200) {
+          this.countryList = res.message
+        } else {
+          this.$message.error(res.msg)
         }
-        const geocoder = new AMap.Geocoder(GeocoderOptions)
-        geocoder.getAddress(this.mapInfo.lnglat, (status, result) => {
-          console.log('通过经纬度拿到的地址', result)
-          if (status === 'complete' && result.info === 'OK') {
-            this.mapInfo.address = result.regeocode.formattedAddress
-          } else {
-            this.mapInfo.address = '无法获取地址'
-          }
-        })
+      }).catch(error => {
+        console.log(error)
       })
     },
-    initMapByInput() {
-      AMap.plugin('AMap.Autocomplete', () => {
-        const autoOptions = {
-          city: '全国',
-          input: 'tipinput'
+    getAllProvince(pid){
+      let params = {
+        pid:pid
+      }
+      getCountry(params).then(res => {
+        console.log(res)
+        if (res.code === 200) {
+          this.provinceList = res.message
+        } else {
+          this.$message.error(res.msg)
         }
-        const autoComplete = new AMap.Autocomplete(autoOptions)
-        AMap.event.addListener(autoComplete, 'select', (e) => {
-          console.log('通过输入拿到的地址', e)
-          this.mapInfo.lat = e.poi.location.lat
-          this.mapInfo.lng = e.poi.location.lng
-          this.mapInfo.lnglat = [e.poi.location.lng, e.poi.location.lat]
-          this.getFormattedAddress()
-        })
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    getAllCity(pid){
+      let params = {
+        pid:pid
+      }
+      getCountry(params).then(res => {
+        console.log(res)
+        if (res.code === 200) {
+          this.cityList = res.message
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    getAllDistricts(pid){
+      let params = {
+        pid:pid
+      }
+      getCountry(params).then(res => {
+        console.log(res)
+        if (res.code === 200) {
+          this.districtList = res.message
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    getProvinceList(pid){
+      const params = {
+        pid:pid
+      }
+      getAreas(params).then(res => {
+        console.log(res)
+        if (res.code === 200) {
+          this.provinceList = res.message
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    getCityList(pid){
+      const params = {
+        pid:pid
+      }
+      getAreas(params).then(res => {
+        console.log(res)
+        if (res.code === 200) {
+          this.cityList = res.message
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    getDistrictList(pid){
+      const params = {
+        pid:pid
+      }
+      getAreas(params).then(res => {
+        console.log(res)
+        if (res.code === 200) {
+          this.districtList = res.message
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(error => {
+        console.log(error)
       })
     },
     getAreas() {
@@ -817,8 +927,34 @@ export default {
         console.log(error)
       })
     },
+    chooseCountry(e){
+      // console.log(e);
+      this.jobForm.country = e.id
+      this.jobForm.country_name = e.name
+      this.jobForm.province = undefined
+      this.jobForm.province_name = undefined
+      this.jobForm.city = undefined
+      this.jobForm.city_name = undefined
+      this.jobForm.district = undefined
+      this.jobForm.district_name = undefined
+
+      this.provinceList = [];
+      this.cityList = [];
+      this.districtList = [];
+
+      if(e.id === 99999999){
+        this.showForeignStatus = false;
+        this.getProvinceList(0)
+      }else{
+        this.showForeignStatus = true;
+        this.getAllProvince(e.id)
+      }
+    },
     chooseProvince(e) {
       console.log(e)
+      this.cityList = [];
+      this.districtList = [];
+
       this.jobForm.province = e.id
       this.jobForm.province_name = e.name
       this.jobForm.city = undefined
@@ -826,39 +962,26 @@ export default {
       this.jobForm.district = undefined
       this.jobForm.district_name = undefined
 
-      const params = {
-        pid: e.id
+      if(this.showForeignStatus){
+        this.getAllCity(e.id)
+      }else{
+        this.getCityList(e.id)
       }
-      getAreas(params).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          this.cityList = res.message
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(error => {
-        console.log(error)
-      })
+
     },
     chooseCity(e) {
+      this.districtList = [];
+
       this.jobForm.city = e.id
       this.jobForm.city_name = e.name
       this.jobForm.district = undefined
       this.jobForm.district_name = undefined
 
-      const params = {
-        pid: e.id
+      if(this.showForeignStatus){
+        this.getAllDistricts(e.id)
+      }else{
+        this.getDistrictList(e.id)
       }
-      getAreas(params).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          this.districtList = res.message
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(error => {
-        console.log(error)
-      })
     },
     chooseDistrict(e) {
       // console.log(e)
@@ -867,22 +990,25 @@ export default {
       this.$forceUpdate()
     },
     updateJob() {
+      let self = this;
+      let countryName = this.jobForm.country_name;
+      let provinceName = this.jobForm.province_name;
+      let cityName = this.jobForm.city_name;
+      let districtName = this.jobForm.district_name;
+
       this.updateLoadingStatus = true;
-      if(this.jobForm.district_name && this.jobForm.city_name && this.jobForm.province_name){
-        this.jobForm.job_location = this.jobForm.district_name + ', ' + this.jobForm.city_name + ', ' + this.jobForm.province_name
+      if(countryName ){
+        this.jobForm.job_location =  countryName
       }
-      if(this.mapInfo.address){
-        this.jobForm.address = this.mapInfo.address
-        if(this.mapInfo.lat){
-          this.jobForm.lat = this.mapInfo.lat
-        }
-        if(this.mapInfo.lng){
-          this.jobForm.lng = this.mapInfo.lng
-        }
-      }else{
-        this.jobForm.address = ''
-        this.jobForm.lat = 0
-        this.jobForm.lng = 0
+      if(countryName && provinceName ){
+        this.jobForm.job_location =  provinceName + ', ' + countryName
+      }
+      if(countryName && provinceName && cityName ){
+        this.jobForm.job_location = cityName + ', ' + provinceName + ', ' + countryName
+      }
+
+      if(countryName && provinceName && cityName && districtName){
+        this.jobForm.job_location = districtName + ', ' + cityName + ', ' + provinceName + ', ' + countryName
       }
 
       this.jobForm.working_hours = JSON.stringify(this.workingHoursData);
@@ -912,7 +1038,7 @@ export default {
             this.$message.success('Success')
             setTimeout(function (){
               // window.location.reload();
-              this.updateLoadingStatus = false;
+              self.updateLoadingStatus = false;
             },1000)
 
           } else {
@@ -1153,6 +1279,7 @@ export default {
         console.log(res)
         if (res.code === 200) {
           this.jobForm.job_location = res.message.job_location
+
           this.jobForm.numbers = res.message.numbers
           this.jobForm.employment_type = res.message.employment_type
           this.jobForm.is_online = res.message.is_online
@@ -1198,29 +1325,47 @@ export default {
           this.jobForm.age_max = res.message.age_max
 
           if (res.message.address) {
-            self.mapInfo.address = res.message.address
+            self.jobForm.address = res.message.address
           }
           if (res.message.lat) {
-            self.mapInfo.lat = res.message.lat
+            self.jobForm.lat = res.message.lat
           }
           if (res.message.lng) {
-            self.mapInfo.lng = res.message.lng
+            self.jobForm.lng = res.message.lng
           }
-          if (res.message.lat && res.message.lng) {
-            self.mapInfo.lnglat = [res.message.lng, res.message.lat]
+          if(res.message.lng && res.message.lat ){
+            this.initMap(res.message.lng,res.message.lat)
           }
-
-          if (res.message.province > 0) {
-            this.jobForm.province = res.message.province
-            this.jobForm.province_name = res.message.provinces.Pinyin
+          if (res.message.country ) {
+            this.jobForm.country = res.message.country.id;
+            this.jobForm.country_name = res.message.country.Pinyin
           }
-          if (res.message.city > 0) {
-            this.jobForm.city = res.message.city
-            this.jobForm.city_name = res.message.citys.Pinyin
-          }
-          if (res.message.district > 0) {
-            this.jobForm.district = res.message.district
-            this.jobForm.district_name = res.message.districts.Pinyin
+          if(res.message.country.id === 99999999){
+            if (res.message.province) {
+              this.jobForm.province = res.message.province
+              this.jobForm.province_name = res.message.provinces.Pinyin
+            }
+            if (res.message.city) {
+              this.jobForm.city = res.message.city
+              this.jobForm.city_name = res.message.citys.Pinyin
+            }
+            if (res.message.district) {
+              this.jobForm.district = res.message.district
+              this.jobForm.district_name = res.message.districts.Pinyin
+            }
+          }else{
+            if (res.message.foreign_provinces ) {
+              this.jobForm.province = res.message.foreign_provinces.id;
+              this.jobForm.province_name = res.message.foreign_provinces.Pinyin
+            }
+            if (res.message.foreign_citys ) {
+              this.jobForm.city = res.message.foreign_citys.id;
+              this.jobForm.city_name = res.message.foreign_citys.Pinyin
+            }
+            if (res.message.foreign_districts ) {
+              this.jobForm.district = res.message.foreign_districts.id;
+              this.jobForm.district_name = res.message.foreign_districts.Pinyin
+            }
           }
 
           const ageToTeach = res.message.age_to_teach
@@ -1306,6 +1451,7 @@ export default {
           } else {
             this.thirdHeaderPhotoFileList = undefined
           }
+          this.jobForm.street_address = res.message.street_address
           this.jobForm.third_com_logo = res.message.third_com_logo
           this.jobForm.third_com_bg = res.message.third_com_bg
           this.jobForm.third_com_name = res.message.third_com_name
