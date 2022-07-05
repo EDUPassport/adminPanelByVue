@@ -100,11 +100,11 @@
             drag
             :headers="uploadHeaders"
             name="file[]"
-            :action="uploadRequestUrl"
+            action=""
             multiple
             list-type="picture"
             :limit="1"
-            :on-success="uploadFileSuccess"
+            :http-request="imageHttpRequest"
             :file-list="fileList"
           >
             <i class="el-icon-upload"/>
@@ -132,6 +132,9 @@ import {addSystemTag, tagList} from '@/api/system.js'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
+import {uploadByAliOSS, uploadByService} from '@/api/upload.js'
+import ImageCompressor from 'compressorjs'
+
 
 export default {
   name: 'Index',
@@ -322,7 +325,7 @@ export default {
         }
       })
     },
-    handleDelete(row, index) {
+    handleDelete(row) {
       this.$notify({
         title: 'Success',
         message: 'Delete Successfully',
@@ -345,17 +348,68 @@ export default {
         console.log(error)
       })
     },
-    uploadFileSuccess(response, file, fileList) {
-      // console.log(response)
-      // console.log(file)
-      // console.log(fileList)
-      if (response.code == 200) {
-        this.fileUrl = response.data[0].file_url
-        // const file_name = response.data[0].file_name
-      } else {
-        console.log(response.msg)
-      }
+    imageHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
+
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+                self.fileUrl = myFileUrl
+                self.fileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+                self.fileUrl = myFileUrl
+                self.fileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
     }
+
   }
 }
 </script>

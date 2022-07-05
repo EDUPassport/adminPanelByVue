@@ -13,7 +13,7 @@
         prop="id"
         label="ID"
         width="150">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
@@ -21,7 +21,7 @@
         prop="ad_category_id"
         label="Category Name"
         width="150">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.ad_category.name_en }}
         </template>
       </el-table-column>
@@ -29,7 +29,7 @@
         prop="user_id"
         label="UserId"
         width="150">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.user_id }}
         </template>
       </el-table-column>
@@ -37,7 +37,7 @@
         prop="user_buy_identity"
         label="User Identity"
         width="150">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span v-if="scope.row.user_buy_identity === 0">Guest</span>
           <span v-if="scope.row.user_buy_identity === 1">Educator</span>
           <span v-if="scope.row.user_buy_identity === 2">Business</span>
@@ -48,7 +48,7 @@
         prop=""
         label="First & Last Name"
         width="150">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span v-if="scope.row.user_buy_identity == 0">Guest</span>
           <span
             v-if="scope.row.user_buy_identity == 1 && scope.row.educator">{{ scope.row.educator.first_name }} {{ scope.row.educator.last_name }}</span>
@@ -62,7 +62,7 @@
         prop="is_design"
         label="Design?"
         width="150">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.is_design }}
         </template>
       </el-table-column>
@@ -71,7 +71,7 @@
         prop="pay_time"
         label="Pay Time"
         width="150">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.pay_time }}
         </template>
       </el-table-column>
@@ -80,7 +80,7 @@
         label="Action"
         fixed="right"
         width="120">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-button
             @click.native.prevent="redeem(scope.row)"
             type="primary"
@@ -108,11 +108,11 @@
               drag
               :headers="uploadHeaders"
               name="file[]"
-              :action="uploadRequestUrl"
+              action=""
               multiple
               list-type="picture"
               :limit="1"
-              :on-success="uploadImageSuccess"
+              :http-request="imageHttpRequest"
               :file-list="imageFileList"
             >
               <i class="el-icon-upload"/>
@@ -144,6 +144,8 @@
 <script>
 import {myAds, setUserAds} from "@/api/ads";
 import Pagination from '@/components/Pagination'
+import {uploadByAliOSS, uploadByService} from '@/api/upload.js'
+import ImageCompressor from 'compressorjs'
 
 export default {
   name: "list",
@@ -236,13 +238,66 @@ export default {
       this.form.my_ads_id = row.id;
 
     },
-    uploadImageSuccess(response) {
-      if (response.code === 200) {
-        this.imageFileList = [{name: '', url: response.data[0].file_url}]
-        this.form.image_url = response.data[0].file_url
-      } else {
-        console.log(response.msg)
-      }
+    imageHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
+
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+                self.form.image_url = myFileUrl
+                self.imageFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+                self.form.image_url = myFileUrl
+                self.imageFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
     },
     submit() {
       console.log(this.form)

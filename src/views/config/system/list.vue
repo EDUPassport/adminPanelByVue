@@ -84,7 +84,7 @@
               <el-button v-if="row.is_delete===1" size="mini" @click="handleRecover(row)">
                 Enable
               </el-button>
-              <el-button v-if="row.is_delete===0"  size="mini" type="danger"
+              <el-button v-if="row.is_delete===0" size="mini" type="danger"
                          @click="handleDelete(row,$index)">
                 Disable
               </el-button>
@@ -118,20 +118,21 @@
             class="upload-demo"
             drag
             :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
+            action=""
             multiple
             list-type="picture"
             :limit="1"
-            :on-success="uploadFileSuccess"
+            :http-request="systemValueHttpRequest"
             :file-list="fileList"
           >
-            <i class="el-icon-upload"/>
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">
+              Drag the file here, or <em>click to upload</em>
+            </div>
           </el-upload>
         </el-form-item>
-
       </el-form>
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           Cancel
@@ -150,6 +151,9 @@ import {addSystem, getSystemInfo} from '@/api/system.js'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
+import {uploadByAliOSS, uploadByService} from '@/api/upload.js'
+import ImageCompressor from 'compressorjs'
+
 
 export default {
   name: 'Index',
@@ -198,8 +202,8 @@ export default {
         {label: 'Vendor_Upgrade_Pro', value: 13},
         {label: 'Vendor_Upgrade_Plus', value: 14},
         {label: 'Lama', value: 15},
-        {label:"Vendor_Featured_logos",value:16},
-        {label:"Me_Upgrade_Discount_Icon",value:17}
+        {label: "Vendor_Featured_logos", value: 16},
+        {label: "Me_Upgrade_Discount_Icon", value: 17}
       ],
       sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
       statusOptions: ['published', 'draft', 'deleted'],
@@ -331,7 +335,7 @@ export default {
       })
     },
     handleUpdate(row) {
-      console.log(row)
+      // console.log(row)
       this.temp = Object.assign({}, row) // copy obj
       this.temp.sys_id = row.id
 
@@ -366,7 +370,7 @@ export default {
         }
       })
     },
-    handleDelete(row, index) {
+    handleDelete(row) {
       this.$notify({
         title: 'Success',
         message: 'Delete Successfully',
@@ -393,17 +397,68 @@ export default {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
     },
-    uploadFileSuccess(response, file, fileList) {
-      // console.log(response)
-      // console.log(file)
-      // console.log(fileList)
-      if (response.code == 200) {
-        this.fileUrl = response.data[0].file_url
-        // const file_name = response.data[0].file_name
-      } else {
-        console.log(response.msg)
-      }
-    }
+    systemValueHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
+
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+                self.fileUrl = myFileUrl
+                self.fileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+                self.fileUrl = myFileUrl
+                self.fileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
+    },
+
   }
 }
 </script>

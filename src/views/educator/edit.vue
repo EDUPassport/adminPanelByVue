@@ -153,12 +153,11 @@
               class="upload-demo"
               drag
               :headers="uploadHeaders"
-              name="file[]"
-              :action="uploadRequestUrl"
+              action=""
               multiple
               list-type="picture"
               :limit="1"
-              :on-success="profilePhotoSuccess"
+              :http-request="profilePhotoHttpRequest"
               :file-list="profilePhotoFileList"
             >
               <i class="el-icon-upload" />
@@ -170,12 +169,11 @@
               class="upload-demo"
               drag
               :headers="uploadHeaders"
-              name="file[]"
-              :action="uploadRequestUrl"
+              action=""
               multiple
               list-type="picture"
               :limit="1"
-              :on-success="headerPhotoSuccess"
+              :http-request="headerPhotoHttpRequest"
               :file-list="headerPhotoFileList"
             >
               <i class="el-icon-upload" />
@@ -201,12 +199,11 @@
           class="upload-images6max"
           drag
           :headers="uploadHeaders"
-          name="file[]"
-          :action="uploadRequestUrl"
+          action=""
           list-type="picture"
           :limit="6"
           :on-remove="removeImages6max"
-          :on-success="images6maxSuccess"
+          :http-request="accountImagesHttpRequest"
           :file-list="images6maxFileList"
         >
           <i class="el-icon-upload" />
@@ -517,6 +514,9 @@
 import { addEduBasic, userInfo, userObjectList, addProfile, addUserEducation, addUserWork, subCateLists,addUserImg } from '@/api/member'
 import { getAreas } from '@/api/location'
 import nationality from '@/utils/nationality'
+import {uploadByAliOSS, uploadByService} from '@/api/upload.js'
+import ImageCompressor from 'compressorjs'
+
 
 export default {
   filters: {
@@ -1263,38 +1263,196 @@ export default {
       this.ruleForm.district = e.name
       console.log(this.ruleForm)
     },
-    profilePhotoSuccess(response) {
-      if (response.code === 200) {
-        this.profilePhotoFileList = [{ name: '', url: response.data[0].file_url }]
-        this.ruleForm.profile_photo = response.data[0].file_url
-        // const file_name = response.data[0].file_name
-      } else {
-        console.log(response.msg)
-      }
+    profilePhotoHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
+
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+
+                self.profilePhotoFileList = [{name: myFileName, url: myFileUrl}]
+                self.ruleForm.profile_photo = myFileUrl
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+                self.profilePhotoFileList = [{name: myFileName, url: myFileUrl}]
+                self.ruleForm.profile_photo = myFileUrl
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
     },
-    headerPhotoSuccess(response) {
-      if (response.code === 200) {
-        this.headerPhotoFileList = [{ name: '', url: response.data[0].file_url }]
-        this.ruleForm.header_photo = response.data[0].file_url
-        // const file_name = response.data[0].file_name
-      } else {
-        console.log(response.msg)
-      }
+    headerPhotoHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
+
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+
+                self.headerPhotoFileList = [{name: myFileName, url: myFileUrl}]
+                self.ruleForm.header_photo = myFileUrl
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+
+                self.headerPhotoFileList = [{name: myFileName, url: myFileUrl}]
+                self.ruleForm.header_photo = myFileUrl
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
+    },
+    accountImagesHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
+
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+
+                self.images6maxFileList.push({name: myFileName, url: myFileUrl})
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+
+                self.images6maxFileList.push({name: myFileName, url: myFileUrl})
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
     },
     removeImages6max(file,fileList){
       console.log(file)
       // console.log(fileList)
       this.images6maxFileList = fileList
-    },
-    images6maxSuccess(response){
-      // console.log(response);
-      if(response.code == 200){
-        let fileUrl = response.data[0].file_url;
-        this.images6maxFileList.push({ name: '', url: fileUrl })
-      }else{
-        console.log(response.msg)
-      }
-
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {

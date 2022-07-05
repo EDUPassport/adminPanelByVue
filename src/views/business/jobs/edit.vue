@@ -518,6 +518,9 @@
 </template>
 
 <script>
+
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import mapboxgl from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -752,7 +755,7 @@ export default {
       });
       map.addControl(new mapboxgl.FullscreenControl());
 
-      const geocoder = new MapboxGeocoder({
+      const geocoder = new  MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         marker: {
           color: 'orange'

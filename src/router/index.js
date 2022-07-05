@@ -162,7 +162,14 @@ export const constantRoutes = [
           title: 'Edit Membership plan'
         }
       },
-
+      {
+        path: 'menu/list',
+        component: () => import('@/views/config/menu/list'),
+        name: 'menuList',
+        meta: {
+          title: 'Menu List'
+        }
+      },
 
     ]
   },

@@ -1,90 +1,95 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-select v-model="listQuery.cate" placeholder="Category" clearable class="filter-item">
-        <el-option v-for="item in categoryList" :key="item.value" :label="item.label" :value="item.value"/>
+      <el-select v-model="listQuery.cate" placeholder="Identity" clearable class="filter-item">
+        <el-option v-for="item in identityList" :key="item.value" :label="item.label" :value="item.value"/>
       </el-select>
 
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="getList()">
         Search
       </el-button>
-      <el-button v-permission="['lei','admin']" class="filter-item" style="margin-left: 10px;" type="primary"
+      <el-button  class="filter-item" style="margin-left: 10px;" type="primary"
                  icon="el-icon-edit" @click="handleCreate">
         Add
       </el-button>
     </div>
 
-    <el-tabs value="APP" style="margin-top:15px;" type="border-card" @tab-click="tabClickJobs">
-      <el-tab-pane v-for="item in categoryList" :key="item.value" :label="item.label" :name="item.label">
-        <el-table
-          :key="tableKey"
-          v-loading="listLoading"
-          :data="list"
-          border
-          fit
-          highlight-current-row
-          style="width: 100%;"
+    <el-table
+      :key="tableKey"
+      v-loading="listLoading"
+      :data="list"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%;"
 
-          size="mini"
-          @sort-change="sortChange"
-        >
-          <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80"
-                           :class-name="getSortClass('id')">
-            <template v-slot="{row}">
-              <span>{{ row.id }}</span>
-            </template>
-          </el-table-column>
+      size="mini"
+      @sort-change="sortChange"
+    >
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80"
+                       :class-name="getSortClass('id')">
+        <template v-slot="{row}">
+          <span>{{ row.id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Platform" width="110px" align="center">
+        <template v-slot="{row}">
+          <span v-if="row.platform == 1">H5</span>
+          <span v-if="row.platform == 2">Wechat Platform</span>
+          <span v-if="row.platform == 3">Mini Program</span>
+          <span v-if="row.platform == 4">PC </span>
+          <span v-if="row.platform == 5">APP</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Identity" width="210px" align="center">
+        <template v-slot="{row}">
+          <span v-if="row.identity == 1">Educator</span>
+          <span v-if="row.identity == 2">Recruiter</span>
+          <span v-if="row.identity == 3">School</span>
+          <span v-if="row.identity == 4">Other</span>
+          <span v-if="row.identity == 5">Vendor</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Name EN" width="200px" align="center">
+        <template v-slot="{row}">
+          <span>{{ row.menu_name_en }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Name CN" width="200px" align="center">
+        <template v-slot="{row}">
+          <span>{{ row.menu_name_cn }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Link" width="200px" align="center">
+        <template v-slot="{row}">
+          <span>{{ row.link }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Icon" width="110px" align="center">
+        <template v-slot="{row}">
+          <el-image
+            style="width: 100px; height: 50px"
+            :src=" row.icon "
+            fit="contain"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
+        <template v-slot="{row,$index}">
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+            Edit
+          </el-button>
+          <el-button v-if="row.is_delete===1" size="mini" @click="handleRecover(row)">
+            Enable
+          </el-button>
+          <el-button v-if="row.is_delete===0"  size="mini" type="danger"
+                     @click="handleDelete(row,$index)">
+            Disable
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
-          <el-table-column label="Identity" width="210px" align="center">
-            <template v-slot="{row}">
-              <span v-if="row.identity == 1">Educator</span>
-              <span v-if="row.identity == 2">Recruiter</span>
-              <span v-if="row.identity == 3">School</span>
-              <span v-if="row.identity == 4">Other</span>
-              <span v-if="row.identity == 5">Vendor</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Name EN" width="200px" align="center">
-            <template v-slot="{row}">
-              <span>{{ row.menu_name_en }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Name CN" width="200px" align="center">
-            <template v-slot="{row}">
-              <span>{{ row.menu_name_cn }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Link" width="200px" align="center">
-            <template v-slot="{row}">
-              <span>{{ row.link }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Icon" width="110px" align="center">
-            <template v-slot="{row}">
-              <el-image
-                style="width: 100px; height: 50px"
-                :src=" row.icon "
-                fit="contain"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
-            <template v-slot="{row,$index}">
-              <el-button type="primary" size="mini" @click="handleUpdate(row)">
-                Edit
-              </el-button>
-              <el-button v-if="row.is_delete===1" size="mini" @click="handleRecover(row)">
-                Enable
-              </el-button>
-              <el-button v-if="row.is_delete===0"  size="mini" type="danger"
-                         @click="handleDelete(row,$index)">
-                Disable
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane>
-    </el-tabs>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit"
                 @pagination="getList"/>
@@ -92,9 +97,15 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="top" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="System Key" prop="sys_key">
+        <el-form-item label="Platform" prop="platform">
+          <el-select v-model="temp.platform" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in platformList" :key="item.value" :label="item.label" :value="item.value"/>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="Identity" prop="identity">
           <el-select v-model="temp.identity" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in sysKeyList" :key="item.value" :label="item.label" :value="item.value"/>
+            <el-option v-for="item in identityList" :key="item.value" :label="item.label" :value="item.value"/>
           </el-select>
         </el-form-item>
 
@@ -170,12 +181,19 @@ export default {
       total: 0,
       listLoading: true,
       listQuery: {
-        cate: undefined,
+        identity: undefined,
         page: 1,
         limit: 20
       },
       importanceOptions: [1, 2, 3],
-      sysKeyList: [
+      platformList: [
+        {label: 'H5', value: 'h5'},
+        {label: 'Wechat Platform', value: 'mp'},
+        {label: 'Mini Program', value: 'mini'},
+        {label: 'PC', value: 'pc'},
+        {label: 'APP', value: 'app'},
+      ],
+      identityList: [
         {label: 'Educator', value: 1},
         {label: 'Recruiter', value: 2},
         {label: 'School', value: 3},
@@ -186,10 +204,12 @@ export default {
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
-        sys_key: undefined,
-        sys_value: undefined,
-        comment: undefined,
-        sys_id: undefined
+        platform:undefined,
+        identity: undefined,
+        menu_name_cn: undefined,
+        menu_name_en: undefined,
+        link: undefined,
+        icon: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -200,8 +220,9 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        cate: [{required: true, message: 'category is required', trigger: 'change'}],
-        sys_key: [{required: true, message: 'position is required', trigger: 'change'}]
+        menu_name_cn: [{required: true, message: 'name is required', trigger: 'change'}],
+        menu_name_en: [{required: true, message: 'name is required', trigger: 'change'}],
+        link: [{required: true, message: 'link is required', trigger: 'change'}]
       },
       downloadLoading: false,
       // uploadHeaders:undefined,
@@ -223,17 +244,7 @@ export default {
     this.getList()
   },
   methods: {
-    tabClickJobs(e) {
-      console.log(e)
-      if (e.index == 0) {
-        this.listQuery.cate = 1
-        this.getList()
-      }
-      if (e.index == 1) {
-        this.listQuery.cate = 2
-        this.getList()
-      }
-    },
+
     getList() {
       this.listLoading = true
       getAdminUserMenuList(this.listQuery).then(response => {
@@ -275,10 +286,11 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        sys_key: undefined,
-        sys_value: undefined,
-        comment: undefined,
-        sys_id: undefined
+        identity: undefined,
+        menu_name_cn: undefined,
+        menu_name_en: undefined,
+        link: undefined,
+        icon: undefined
       }
     },
     handleCreate() {
@@ -295,7 +307,7 @@ export default {
         if (valid) {
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           // this.temp.author = 'vue-element-admin'
-          this.temp.sys_value = this.fileUrl
+          this.temp.icon = this.fileUrl
           addMenuForAdminUser(this.temp).then((res) => {
             console.log(res)
             // this.list.unshift(this.temp)
@@ -306,7 +318,7 @@ export default {
               type: 'success',
               duration: 2000
             })
-            window.location.reload()
+            this.getList()
           })
         }
       })
@@ -314,9 +326,9 @@ export default {
     handleUpdate(row) {
       console.log(row)
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.sys_id = row.id
+      this.temp.id = row.id
 
-      this.fileList = [{name: '', url: row.sys_value}]
+      this.fileList = [{name: '', url: row.icon}]
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -327,7 +339,7 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.sys_value = this.fileUrl
+          this.temp.icon = this.fileUrl
           const tempData = Object.assign({}, this.temp)
 
           addMenuForAdminUser(tempData).then((res) => {
@@ -347,25 +359,32 @@ export default {
         }
       })
     },
-    handleDelete(row, index) {
-      this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
-        type: 'success',
-        duration: 2000
-      })
+    handleDelete(row) {
+
       // this.list.splice(index, 1)
-      addMenuForAdminUser({is_delete: 1, sys_id: row.id}).then(res => {
+      addMenuForAdminUser({is_delete: 1, id: row.id}).then(res => {
         console.log(res)
-        this.getList()
+        if(res.code == 200){
+          this.$notify({
+            title: 'Success',
+            message: 'Delete Successfully',
+            type: 'success',
+            duration: 2000
+          })
+          this.getList()
+        }
+
       }).catch(error => {
         console.log(error)
       })
     },
     handleRecover(row) {
-      addMenuForAdminUser({is_delete: 0, sys_id: row.id}).then(res => {
+      addMenuForAdminUser({is_delete: 0, id: row.id}).then(res => {
         console.log(res)
-        this.getList()
+        if(res.code == 200){
+          this.getList()
+        }
+
       }).catch(error => {
         console.log(error)
       })
@@ -374,10 +393,7 @@ export default {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
     },
-    uploadFileSuccess(response, file, fileList) {
-      // console.log(response)
-      // console.log(file)
-      // console.log(fileList)
+    uploadFileSuccess(response) {
       if (response.code == 200) {
         this.fileUrl = response.data[0].file_url
         // const file_name = response.data[0].file_name

@@ -68,12 +68,11 @@
               class="upload-demo"
               drag
               :headers="uploadHeaders"
-              name="file[]"
-              :action="uploadRequestUrl"
+              action=""
               multiple
               list-type="picture"
               :limit="1"
-              :on-success="uploadIconSuccess"
+              :http-request="iconHttpRequest"
               :file-list="iconFileList"
             >
               <i class="el-icon-upload" />
@@ -85,12 +84,11 @@
               class="upload-demo"
               drag
               :headers="uploadHeaders"
-              name="file[]"
-              :action="uploadRequestUrl"
+              action=""
               multiple
               list-type="picture"
               :limit="1"
-              :on-success="uploadSelectIconSuccess"
+              :http-request="sIconHttpRequest"
               :file-list="selectIconFileList"
             >
               <i class="el-icon-upload" />
@@ -103,12 +101,11 @@
               class="upload-demo"
               drag
               :headers="uploadHeaders"
-              name="file[]"
-              :action="uploadRequestUrl"
+              action=""
               multiple
               list-type="picture"
               :limit="1"
-              :on-success="uploadBannerImageSuccess"
+              :http-request="bannerHttpRequest"
               :file-list="bannerImageFileList"
             >
               <i class="el-icon-upload" />
@@ -198,9 +195,12 @@
 import {adCategoryList, addCategory,setAdsCategoryDiscount} from "@/api/ads";
 import permission from '@/directive/permission/permission'
 import waves from "@/directive/waves";
+import {uploadByAliOSS, uploadByService} from '@/api/upload.js'
+import ImageCompressor from 'compressorjs'
 
 export default {
   name: "list",
+  directives: { waves, permission },
   data() {
     return {
       uploadRequestUrl: process.env.VUE_APP_UPLOAD_API,
@@ -255,7 +255,6 @@ export default {
 
     }
   },
-  directives: { waves, permission },
   computed: {
     token() {
       return this.$store.state.user.token
@@ -397,32 +396,188 @@ export default {
       });
 
     },
-    uploadIconSuccess(response) {
+    iconHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
 
-      if (response.code == 200) {
-        this.iconFileUrl = response.data[0].file_url
-        // const file_name = response.data[0].file_name
-      } else {
-        console.log(response.msg)
-      }
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+                self.iconFileUrl = myFileUrl
+                self.iconFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+                self.iconFileUrl = myFileUrl
+                self.iconFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
     },
-    uploadSelectIconSuccess(response) {
+    sIconHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
 
-      if (response.code == 200) {
-        this.selectIconFileUrl = response.data[0].file_url
-        // const file_name = response.data[0].file_name
-      } else {
-        console.log(response.msg)
-      }
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+                self.selectIconFileUrl = myFileUrl
+                self.selectIconFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+                self.selectIconFileUrl = myFileUrl
+                self.selectIconFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
     },
-    uploadBannerImageSuccess(response) {
+    bannerHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
 
-      if (response.code == 200) {
-        this.bannerImageFileUrl = response.data[0].file_url
-        // const file_name = response.data[0].file_name
-      } else {
-        console.log(response.msg)
-      }
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+                self.bannerImageFileUrl = myFileUrl
+                self.bannerImageFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+                self.bannerImageFileUrl = myFileUrl
+                self.bannerImageFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
     },
     addAds(data){
       console.log(data)

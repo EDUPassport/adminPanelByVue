@@ -115,35 +115,9 @@
         </el-form-item>
 
         <el-form-item label="Add Location Pin">
-          <div class="amap-page-container">
-            <!--使用element UI作为输入框-->
-            <el-input
-              id="tipinput"
-              v-model="mapInfo.address"
-              placeholder="请输入内容"
-            />
-            <el-amap
-              vid="amapDemo"
-              :center="mapInfo.lnglat"
-              :amap-manager="amapManager"
-              :zoom="zoom"
-              :events="events"
-              class="amap-demo"
-              style="height: 300px"
-            >
-              <el-amap-marker
-                ref="marker"
-                vid="component-marker"
-                :position="mapInfo.lnglat"
-              />
-            </el-amap>
-            <p>标记点：{{ mapInfo.address }}，经度：{{ mapInfo.lng }}，纬度：{{ mapInfo.lat }}</p>
-          </div>
+          <div id="map" style="width:90%;height:400px;"></div>
         </el-form-item>
 
-        <!--        <el-form-item label="Detail Address">-->
-        <!--          <el-input v-model="dealsTempData.location" class="filter-item" placeholder="Please select" />-->
-        <!--        </el-form-item>-->
         <el-form-item label="Deal/Discount Duration">
           <el-input
             v-model="dealsTempData.due_contract"
@@ -172,11 +146,11 @@
             drag
             :headers="uploadHeaders"
             name="file[]"
-            :action="uploadRequestUrl"
+            action=""
             multiple
             list-type="picture"
             :limit="1"
-            :on-success="uploadFileSuccess"
+            :http-request="imageHttpRequest"
             :file-list="fileList"
           >
             <i class="el-icon-upload"/>
@@ -200,36 +174,23 @@
 import {addDeals, dealsDetail} from '@/api/deals'
 import {userObjectList} from '@/api/member'
 import waves from '@/directive/waves' // waves directive
-import Pagination from '@/components/Pagination'
 import {format} from 'date-fns' // secondary package based on el-pagination
 import {getAreas} from '@/api/location'
-import {AMapManager} from 'vue-amap'
 
-const amapManager = new AMapManager()
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import mapboxgl from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
+import 'mapbox-gl/dist/mapbox-gl.css';
+import {uploadByAliOSS, uploadByService} from '@/api/upload.js'
+import ImageCompressor from 'compressorjs'
+
 export default {
   name: 'Index',
-  components: {Pagination},
+  components: {},
   directives: {waves},
   filters: {},
   data() {
     return {
-      mapInfo: {
-        // 初始值默认为天安门
-        address: '北京市东城区东华门街道天安门',
-        lng: 116.397451,
-        lat: 39.909187,
-        lnglat: [116.397451, 39.909187]
-      },
-      zoom: 12,
-      amapManager,
-      events: {
-        click: (e) => {
-          this.mapInfo.lng = e.lnglat.lng
-          this.mapInfo.lat = e.lnglat.lat
-          this.mapInfo.lnglat = [e.lnglat.lng, e.lnglat.lat]
-          this.getFormattedAddress()
-        }
-      },
       provinceList: [],
       cityList: [],
       districtList: [],
@@ -302,7 +263,7 @@ export default {
     this.getUserObjList()
   },
   mounted() {
-    this.initMapByInput()
+
   },
   methods: {
     getDealsDetail(dealId) {
@@ -314,17 +275,20 @@ export default {
         if (res.code === 200) {
           // this.dealDetailData = res.message
           const detailData = res.message
-          if(detailData.lat){
-            this.mapInfo.lat = detailData.lat
+
+          if (res.message.location) {
+            this.dealsTempData.location = res.message.location
           }
-          if(detailData.lng){
-            this.mapInfo.lng = detailData.lng
+          if (res.message.lat) {
+            this.dealsTempData.lat = res.message.lat
           }
-          if(detailData.lat && detailData.lng){
-            this.mapInfo.lnglat = [detailData.lng, detailData.lat]
+          if (res.message.lng) {
+            this.dealsTempData.lng = res.message.lng
           }
-          if(detailData.location){
-            this.mapInfo.address = detailData.location
+          if(res.message.lng && res.message.lat ){
+            this.initMap(res.message.lng,res.message.lat)
+          }else{
+            this.initMap(121.472644, 31.231706)
           }
 
           this.dealsTempData = Object.assign({}, detailData) // copy obj
@@ -354,37 +318,48 @@ export default {
         console.log(error)
       })
     },
-    getFormattedAddress() {
-      AMap.plugin('AMap.Geocoder', () => {
-        const GeocoderOptions = {
-          city: '全国'
-        }
-        const geocoder = new AMap.Geocoder(GeocoderOptions)
-        geocoder.getAddress(this.mapInfo.lnglat, (status, result) => {
-          console.log('通过经纬度拿到的地址', result)
-          if (status === 'complete' && result.info === 'OK') {
-            this.mapInfo.address = result.regeocode.formattedAddress
-          } else {
-            this.mapInfo.address = '无法获取地址'
-          }
-        })
+    initMap(lng,lat){
+      let _this = this;
+      mapboxgl.accessToken = 'pk.eyJ1Ijoic3JrbGluZ2UiLCJhIjoiY2t2NnR4anI2OWU5NDJ3bWE1dHd3c3h1aSJ9.O0JfjqiyBBkFuf4G-DQ-DQ';
+      const map = new mapboxgl.Map({
+
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [lng,lat],
+        zoom: 13
+      });
+      map.addControl(new mapboxgl.FullscreenControl());
+
+      const geocoder = new  MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        marker: {
+          color: 'orange'
+        },
+        mapboxgl: mapboxgl
+      });
+
+      map.addControl(geocoder);
+
+      const marker = new mapboxgl.Marker()
+
+      marker.setLngLat([lng,lat]).addTo(map)
+
+      geocoder.on('result', (e) => {
+        console.log(e)
+        marker.setLngLat(e.result.center).addTo(map)
+        _this.dealsTempData.location = e.result.place_name
+        _this.dealsTempData.lng = e.result.center[0]
+        _this.dealsTempData.lat = e.result.center[1]
+
       })
-    },
-    initMapByInput() {
-      AMap.plugin('AMap.Autocomplete', () => {
-        const autoOptions = {
-          city: '全国',
-          input: 'tipinput'
-        }
-        const autoComplete = new AMap.Autocomplete(autoOptions)
-        AMap.event.addListener(autoComplete, 'select', (e) => {
-          console.log('通过输入拿到的地址', e)
-          this.mapInfo.lat = e.poi.location.lat
-          this.mapInfo.lng = e.poi.location.lng
-          this.mapInfo.lnglat = [e.poi.location.lng, e.poi.location.lat]
-          this.getFormattedAddress()
-        })
+
+      geocoder.on('clear', (e) => {
+        console.log(e)
+        _this.dealsTempData.location = ''
+        _this.dealsTempData.lng = ''
+        _this.dealsTempData.lat = ''
       })
+
     },
     getAreas() {
       const params = {}
@@ -446,7 +421,7 @@ export default {
         console.log(error)
       })
     },
-    chooseDistrict(e, value) {
+    chooseDistrict(e) {
       this.dealsTempData.district = e.id
       this.dealsTempData.district_name = e.name
       console.log(this.dealsTempData)
@@ -461,21 +436,73 @@ export default {
         this.popuCityList = res.message
       })
     },
-    uploadFileSuccess(response, file, fileList) {
-      if (response.code == 200) {
-        this.dealsTempData.file = response.data[0].file_url
-        this.dealsTempData.file_name = file.name
-      } else {
-        console.log(response.msg)
-      }
+    imageHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
+
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+                self.dealsTempData.file = myFileUrl
+                self.dealsTempData.file_name = myFileName
+                self.fileList = [{name: myFileName, url: myFileUrl}]
+
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+                self.dealsTempData.file = myFileUrl
+                self.dealsTempData.file_name = myFileName
+                self.fileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
     },
     editData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.dealsTempData.lat = this.mapInfo.lat
-          this.dealsTempData.lng = this.mapInfo.lng
-          this.dealsTempData.location = this.mapInfo.address
-
           const tempData = Object.assign({}, this.dealsTempData)
           this.$confirm('Sure you want to perform the operation?', 'Tips', {
             confirmButtonText: 'Sure',

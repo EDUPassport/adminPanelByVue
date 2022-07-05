@@ -120,37 +120,9 @@
             />
           </el-select>
         </el-form-item>
-
         <el-form-item label="Add Location Pin">
-          <div class="amap-page-container">
-            <!--使用element UI作为输入框-->
-            <el-input
-              id="tipinput"
-              v-model="mapInfo.address"
-              placeholder="请输入内容"
-            />
-            <el-amap
-              vid="amapDemo"
-              :center="mapInfo.lnglat"
-              :amap-manager="amapManager"
-              :zoom="zoom"
-              :events="events"
-              class="amap-demo"
-              style="height: 300px"
-            >
-              <el-amap-marker
-                ref="marker"
-                vid="component-marker"
-                :position="mapInfo.lnglat"
-              />
-            </el-amap>
-            <p>标记点：{{ mapInfo.address }}，经度：{{ mapInfo.lng }}，纬度：{{ mapInfo.lat }}</p>
-          </div>
+          <div id="map" style="width:90%;height:400px;"></div>
         </el-form-item>
-
-        <!--        <el-form-item label="Event Detail Address">-->
-        <!--          <el-input v-model="eventsTempData.location" class="filter-item" placeholder="Please select" />-->
-        <!--        </el-form-item>-->
 
         <el-form-item label="Event Date">
           <el-date-picker
@@ -189,12 +161,11 @@
             class="upload-demo"
             drag
             :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
+            action=""
             multiple
             list-type="picture"
             :limit="1"
-            :on-success="uploadEventsFileSuccess"
+            :http-request="flyerHttpRequest"
             :file-list="eventsFileList"
           >
             <i class="el-icon-upload" />
@@ -209,12 +180,11 @@
             class="upload-demo"
             drag
             :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
+            action=""
             multiple
             list-type="picture"
             :limit="1"
-            :on-success="uploadEventsLogoSuccess"
+            :http-request="logoHttpRequest"
             :file-list="eventsLogoFileList"
           >
             <i class="el-icon-upload" />
@@ -230,12 +200,11 @@
             class="upload-demo"
             drag
             :headers="uploadHeaders"
-            name="file[]"
-            :action="uploadRequestUrl"
+            action=""
             multiple
             list-type="picture"
             :limit="1"
-            :on-success="uploadEventsHeaderPhotoSuccess"
+            :http-request="headerPhotoHttpRequest"
             :file-list="eventsHeaderPhotoFileList"
           >
             <i class="el-icon-upload" />
@@ -269,9 +238,14 @@ import waves from '@/directive/waves' // waves directive
 import { userObjectList } from '@/api/member' // secondary package based on el-pagination
 import { format } from 'date-fns'
 import { getAreas } from '@/api/location'
-import {AMapManager} from 'vue-amap'
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import mapboxgl from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
+import 'mapbox-gl/dist/mapbox-gl.css';
+import {uploadByAliOSS, uploadByService} from '@/api/upload.js'
+import ImageCompressor from 'compressorjs'
 
-const amapManager = new AMapManager()
+
 export default {
   name: 'Index',
   directives: { waves },
@@ -288,23 +262,7 @@ export default {
   },
   data() {
     return {
-      mapInfo: {
-        // 初始值默认为天安门
-        address: '北京市东城区东华门街道天安门',
-        lng: 116.397451,
-        lat: 39.909187,
-        lnglat: [116.397451, 39.909187]
-      },
-      zoom: 12,
-      amapManager,
-      events: {
-        click: (e) => {
-          this.mapInfo.lng = e.lnglat.lng
-          this.mapInfo.lat = e.lnglat.lat
-          this.mapInfo.lnglat = [e.lnglat.lng, e.lnglat.lat]
-          this.getFormattedAddress()
-        }
-      },
+
       onlineOptions: [{label: 'online', value: 1}, {label: 'offline', value: 2},{label: 'both', value: 3}],
       provinceList: [],
       cityList: [],
@@ -395,7 +353,7 @@ export default {
     this.getUserObjList()
   },
   mounted() {
-    this.initMapByInput()
+    // this.initMap(121.472644, 31.231706)
     const uid = this.$route.query.uid
     const eventId = this.$route.query.event_id
     if(uid){
@@ -414,17 +372,20 @@ export default {
       eventDetail(params).then(res=>{
         if(res.code == 200){
           let row = res.message;
-          if(row.lat){
-            this.mapInfo.lat = row.lat
+
+          if (res.message.location) {
+            this.eventsTempData.location = res.message.location
           }
-          if(row.lng){
-            this.mapInfo.lng = row.lng
+          if (res.message.lat) {
+            this.eventsTempData.lat = res.message.lat
           }
-          if(row.location){
-            this.mapInfo.address = row.location
+          if (res.message.lng) {
+            this.eventsTempData.lng = res.message.lng
           }
-          if(row.lat && row.lng){
-            this.mapInfo.lnglat = [row.lng, row.lat]
+          if(res.message.lng && res.message.lat ){
+            this.initMap(res.message.lng,res.message.lat)
+          }else{
+            this.initMap(121.472644, 31.231706)
           }
 
           this.eventsTempData = Object.assign({}, row) // copy obj
@@ -467,37 +428,48 @@ export default {
         console.log(err)
       })
     },
-    getFormattedAddress() {
-      AMap.plugin('AMap.Geocoder', () => {
-        const GeocoderOptions = {
-          city: '全国'
-        }
-        const geocoder = new AMap.Geocoder(GeocoderOptions)
-        geocoder.getAddress(this.mapInfo.lnglat, (status, result) => {
-          console.log('通过经纬度拿到的地址', result)
-          if (status === 'complete' && result.info === 'OK') {
-            this.mapInfo.address = result.regeocode.formattedAddress
-          } else {
-            this.mapInfo.address = '无法获取地址'
-          }
-        })
+    initMap(lng,lat){
+      let _this = this;
+      mapboxgl.accessToken = 'pk.eyJ1Ijoic3JrbGluZ2UiLCJhIjoiY2t2NnR4anI2OWU5NDJ3bWE1dHd3c3h1aSJ9.O0JfjqiyBBkFuf4G-DQ-DQ';
+      const map = new mapboxgl.Map({
+
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [lng,lat],
+        zoom: 13
+      });
+      map.addControl(new mapboxgl.FullscreenControl());
+
+      const geocoder = new  MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        marker: {
+          color: 'orange'
+        },
+        mapboxgl: mapboxgl
+      });
+
+      map.addControl(geocoder);
+
+      const marker = new mapboxgl.Marker()
+
+      marker.setLngLat([lng,lat]).addTo(map)
+
+      geocoder.on('result', (e) => {
+        console.log(e)
+        marker.setLngLat(e.result.center).addTo(map)
+        _this.eventsTempData.location = e.result.place_name
+        _this.eventsTempData.lng = e.result.center[0]
+        _this.eventsTempData.lat = e.result.center[1]
+
       })
-    },
-    initMapByInput() {
-      AMap.plugin('AMap.Autocomplete', () => {
-        const autoOptions = {
-          city: '全国',
-          input: 'tipinput'
-        }
-        const autoComplete = new AMap.Autocomplete(autoOptions)
-        AMap.event.addListener(autoComplete, 'select', (e) => {
-          console.log('通过输入拿到的地址', e)
-          this.mapInfo.lat = e.poi.location.lat
-          this.mapInfo.lng = e.poi.location.lng
-          this.mapInfo.lnglat = [e.poi.location.lng, e.poi.location.lat]
-          this.getFormattedAddress()
-        })
+
+      geocoder.on('clear', (e) => {
+        console.log(e)
+        _this.eventsTempData.location = ''
+        _this.eventsTempData.lng = ''
+        _this.eventsTempData.lat = ''
       })
+
     },
     getAreas() {
       const params = {}
@@ -589,9 +561,6 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.eventsTempData.lat = this.mapInfo.lat
-          this.eventsTempData.lng = this.mapInfo.lng
-          this.eventsTempData.location = this.mapInfo.address
 
           if (this.eventStartTime != undefined) {
             this.eventsTempData.start_time = this.eventStartTime
@@ -625,39 +594,199 @@ export default {
         }
       })
     },
-    uploadEventsFileSuccess(response, file, eventsFileList) {
-      console.log(response)
-      // console.log(file)
-      // console.log(fileList)
-      if (response.code == 200) {
-        this.eventsFileUrl = response.data[0].file_url
-        this.eventsTempData.file = response.data[0].file_url
-        this.eventsTempData.file_name = file.name
-        // const file_name = response.data[0].file_name
-      } else {
-        console.log(response.msg)
-      }
+    flyerHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
+
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+                self.eventsFileUrl = myFileUrl
+                self.eventsTempData.file = myFileUrl
+                self.eventsTempData.file_name = myFileName
+                self.eventsFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+                self.eventsFileUrl = myFileUrl
+                self.eventsTempData.file = myFileUrl
+                self.eventsTempData.file_name = myFileName
+                self.eventsFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
     },
-    uploadEventsLogoSuccess(response, file, fileList) {
-      console.log(response)
-      // console.log(file)
-      // console.log(fileList)
-      if (response.code == 200) {
-        this.eventsLogoFileList = [{ name: '', url: response.data[0].file_url }]
-        this.eventsTempData.third_com_logo = response.data[0].file_url
-      } else {
-        console.log(response.msg)
-      }
+    logoHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
+
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+
+                self.eventsTempData.third_com_logo = myFileUrl
+                self.eventsLogoFileList = [{name: myFileName, url: myFileUrl}]
+
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+
+                self.eventsTempData.third_com_logo = myFileUrl
+                self.eventsLogoFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
     },
-    uploadEventsHeaderPhotoSuccess(response, file, fileList) {
-      console.log(response)
-      if (response.code == 200) {
-        this.eventsHeaderPhotoFileList = [{ name: '', url: response.data[0].file_url }]
-        this.eventsTempData.third_com_bg = response.data[0].file_url
-      } else {
-        console.log(response.msg)
-      }
+    headerPhotoHttpRequest(options) {
+      let self = this;
+      this.$loading({
+        text:'uploading...'
+      })
+      // console.log(options)
+      new ImageCompressor(options.file, {
+        quality: 0.6,
+        success(file) {
+          // console.log(file)
+          const formData = new FormData();
+
+          // console.log(file)
+          let isInChina = process.env.VUE_APP_CHINA
+          if (isInChina === 'yes') {
+            formData.append('file[]', file, file.name)
+            uploadByAliOSS(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                self.$loading().close();
+                let myFileUrl = res.data[0]['file_url'];
+                let myFileName = res.data[0]['file_name']
+                self.uploadLoadingStatus = false;
+
+                self.eventsTempData.third_com_bg = myFileUrl
+                self.eventsHeaderPhotoFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+          if (isInChina === 'no') {
+            formData.append('file', file, file.name)
+            uploadByService(formData).then(res => {
+              // console.log(res)
+              if (res.code == 200) {
+                let myFileUrl = res.message.file_path;
+                let myFileName = res.message.file_name;
+                self.$loading().close();
+                self.uploadLoadingStatus = false;
+
+                self.eventsTempData.third_com_bg = myFileUrl
+                self.eventsHeaderPhotoFileList = [{name: myFileName, url: myFileUrl}]
+              }
+            }).catch(err => {
+              console.log(err)
+              self.$loading().close();
+            })
+
+          }
+
+        },
+        error(err) {
+          console.log(err.message)
+          self.$loading().close();
+        }
+
+      })
+
     }
+
 
   }
 }

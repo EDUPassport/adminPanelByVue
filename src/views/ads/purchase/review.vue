@@ -10,7 +10,7 @@
         prop="id"
         label="ID"
         width="150">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
@@ -18,14 +18,14 @@
         prop="ad_category_id"
         label="Category Name"
         width="150">
-        <template slot-scope="scope" v-if="scope.row.ad_category">
+        <template v-slot="scope" v-if="scope.row.ad_category">
           {{ scope.row.ad_category.name_en }}
         </template>
       </el-table-column>
       <el-table-column
         label="Profile"
         width="150">
-        <template slot-scope="scope" v-if="scope.row.ad_category">
+        <template v-slot="scope" v-if="scope.row.ad_category">
           {{ scope.row.ad_category.name_key }}
         </template>
       </el-table-column>
@@ -33,7 +33,7 @@
         prop="user_id"
         label="UserId"
         width="150">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.user_id }}
         </template>
       </el-table-column>
@@ -41,7 +41,7 @@
         prop="image_url"
         label="Image"
         width="150">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-image
             style="width: 100px; height: 60px"
             :src="scope.row.image_url"
@@ -52,7 +52,7 @@
         prop="status"
         label="Status"
         width="150">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-tag  type="success" v-if="scope.row.status == 1">Success</el-tag>
           <el-tag type="danger" v-if="scope.row.status == 2">Rejected</el-tag>
           <el-tag type="info" v-if="scope.row.status == 3">Pending</el-tag>
@@ -61,7 +61,7 @@
       <el-table-column
         label="Action"
         width="120">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-button
             @click.native.prevent="review(scope.row)"
             type="primary"
