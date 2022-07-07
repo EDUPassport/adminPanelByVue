@@ -5,7 +5,6 @@
         v-model="listQuery.nickname"
         placeholder="Nickname"
         style="width: 200px;"
-        class="filter-item"
         @keyup.enter.native="handleFilter"
       />
       <el-input
@@ -19,7 +18,6 @@
         placeholder="Is Seeking"
         clearable
         style="width: 110px;"
-        class="filter-item"
       >
         <el-option
           v-for="(item,index) in seekingOptions"
@@ -33,7 +31,6 @@
         placeholder="Gender"
         clearable
         style="width: 110px;"
-        class="filter-item"
       >
         <el-option
           v-for="(item,index) in sexOptions"
@@ -44,7 +41,6 @@
       </el-select>
       <el-button
         v-waves
-        class="filter-item"
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
@@ -52,6 +48,13 @@
         Search
       </el-button>
 
+      <el-button
+        v-waves
+        type="primary"
+        @click="showUserAccountModal()"
+      >
+        Create Account
+      </el-button>
 
     </div>
 
@@ -91,200 +94,368 @@
                 <template slot="title">
                   <b style="font-size:28px;color: #99a9bf;"> Educator Info</b>
                 </template>
-                <div>
-                  <span>First name & Last name:</span>{{
-                    props.row.educator.first_name
-                  }}{{ props.row.educator.last_name }}
+                <div class="xll-container">
+                  <div class="xll-item">
+                    <div class="xll-item-l">
+                      First name & Last name:
+                    </div>
+                    <div class="xll-item-r">
+                      {{props.row.educator.first_name }}{{ props.row.educator.last_name }}
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Location:</div>
+                    <div class="xll-item-r">
+                      {{ props.row.educator.country }}, {{ props.row.educator.province }},
+                      {{ props.row.educator.city }}, {{ props.row.educator.district }}, {{ props.row.educator.address }}
+                    </div>
+                  </div>
+                  <div class="xll-item" >
+                    <div class="xll-item-l">Sub Identity Name:</div>
+                    <div class="xll-item-r">{{ props.row.educator.sub_identity_name }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Bio:</div>
+                    <div class="xll-item-r">{{ props.row.educator.bio }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Hobbies:</div>
+                    <div class="xll-item-r">{{ props.row.educator.hobbies }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Nationality:</div>
+                    <div class="xll-item-r">{{ props.row.educator.nationality }}</div>
+                  </div>
+
+                  <div class="image-container" v-if="props.row.educator.profile_photo">
+                    <span>Profile photo:</span>
+                    <el-image
+                      style="width: 100px; height: 100px"
+                      :src="props.row.educator.profile_photo"
+                      :preview-src-list="[props.row.educator.profile_photo]"
+                    />
+                  </div>
+
+                  <div class="image-container" v-if="props.row.educator.header_photo">
+                    <span>Header photo:</span>
+                    <el-image
+                      style="width: 100px; height: 100px"
+                      :src="props.row.educator.header_photo"
+                      :preview-src-list="[props.row.educator.header_photo]"
+                    />
+                  </div>
+
+                  <div class="image-container" v-if="props.row.educator.video_url">
+                    <span>Video:</span>
+                    <video
+                      width="120"
+                      :src="props.row.educator.video_url"
+                      controls
+                    />
+                  </div>
+
                 </div>
-                <div>
-                  <span>Location:</span>{{ props.row.educator.country }}, {{ props.row.educator.province }},
-                  {{ props.row.educator.city }}, {{ props.row.educator.district }}, {{ props.row.educator.address }}
-                </div>
-                <div><span>Sub Identity Name:</span>{{ props.row.educator.sub_identity_name }}</div>
-                <div><span>Bio:</span>{{ props.row.educator.bio }}</div>
-                <div><span>Hobbies:</span>{{ props.row.educator.hobbies }}</div>
-                <div><span>Nationality:</span>{{ props.row.educator.nationality }}</div>
-                <div class="photo">
-                  <span>Profile photo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.educator.profile_photo"
-                    :preview-src-list="[props.row.educator.profile_photo]"
-                  />
-                </div>
-                <div class="photo">
-                  <span>Header photo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.educator.header_photo"
-                    :preview-src-list="[props.row.educator.header_photo]"
-                  />
-                </div>
-                <div class="video">
-                  <span>Video:</span>
-                  <video
-                    width="120"
-                    :src="props.row.educator.video_url"
-                    controls
-                  />
-                </div>
+
               </el-collapse-item>
               <el-collapse-item v-if="props.row.business">
                 <template slot="title">
                   <b style="font-size:28px;color: #99a9bf;"> Business Info</b>
                 </template>
-                <div>
-                  <span>First name & Last name:</span>{{
-                    props.row.business.first_name
-                  }}{{ props.row.business.last_name }}
+
+                <div class="xll-container">
+                  <div class="xll-item">
+                    <div class="xll-item-l">First name & Last name:</div>
+                    <div class="xll-item-r">
+                      {{props.row.business.first_name }}{{ props.row.business.last_name }}
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Location:</div>
+                    <div class="xll-item-r">
+                      {{ props.row.business.country }}, {{ props.row.business.province }},
+                      {{ props.row.business.city }}, {{ props.row.business.district }}, {{ props.row.business.address }}
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Sub Identity Name:</div>
+                    <div class="xll-item-r">{{ props.row.business.sub_identity_name }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Bio:</div>
+                    <div class="xll-item-r">{{ props.row.business.bio }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Business Bio:</div>
+                    <div class="xll-item-r">{{ props.row.business.business_bio }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Business name:</div>
+                    <div class="xll-item-r">{{ props.row.business.business_name }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Business phone:</div>
+                    <div class="xll-item-r">{{ props.row.business.business_phone }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Business type name:</div>
+                    <div class="xll-item-r">{{ props.row.business.business_type_name }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Contact Name:</div>
+                    <div class="xll-item-r">{{ props.row.business.contact_name }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Contact Phone:</div>
+                    <div class="xll-item-r">{{ props.row.business.contact_phone }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Curriculum:</div>
+                    <div class="xll-item-r">{{ props.row.business.curriculum }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Fields Trips:</div>
+                    <div class="xll-item-r">
+                      <span v-if="props.row.business.felds_trips==1">Yes</span>
+                      <span v-if="props.row.business.felds_trips==0">Unknown</span>
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">is_currently_hiring:</div>
+                    <div class="xll-item-r">
+                      <span v-if="props.row.business.is_currently_hiring==1">Yes</span>
+                      <span v-if="props.row.business.is_currently_hiring==0">Unknown</span>
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Is Events:</div>
+                    <div class="xll-item-r">
+                      <span v-if="props.row.business.is_events==1">Yes</span>
+                      <span v-if="props.row.business.is_events==0">Unknown</span>
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Special Needs: </div>
+                    <div class="xll-item-r">
+                      <span v-if="props.row.business.is_special_needs==1">Yes</span>
+                      <span v-if="props.row.business.is_special_needs==0">Unknown</span>
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Job Title:</div>
+                    <div class="xll-item-r">
+                      {{ props.row.business.job_title }}
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Staff student ratio:</div>
+                    <div class="xll-item-r">
+                      {{ props.row.business.staff_student_ratio }}
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Technology Available:</div>
+                    <div class="xll-item-r">
+                      {{ props.row.business.technology_available }}
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Website:</div>
+                    <div class="xll-item-r">{{ props.row.business.website }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Work Email:</div>
+                    <div class="xll-item-r">{{ props.row.business.work_email }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Year Founded:</div>
+                    <div class="xll-item-r"></div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">{{ props.row.business.year_founded }}</div>
+                    <div class="xll-item-r"></div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Hobbies:</div>
+                    <div class="xll-item-r">{{ props.row.business.hobbies }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Nationality:</div>
+                    <div class="xll-item-r">{{ props.row.business.nationality }}</div>
+                  </div>
+
+
+                  <div class="image-container" v-if="props.row.business.profile_photo">
+                    <span>Profile photo:</span>
+                    <el-image
+                      style="width: 100px; height: 100px"
+                      :src="props.row.business.profile_photo"
+                      :preview-src-list="[props.row.business.profile_photo]"
+                    />
+                  </div>
+                  <div class="image-container" v-if="props.row.business.logo">
+                    <span>logo:</span>
+                    <el-image
+                      style="width: 100px; height: 100px"
+                      :src="props.row.business.logo"
+                      :preview-src-list="[props.row.business.logo]"
+                    />
+                  </div>
+                  <div class="image-container" v-if="props.row.business.header_photo">
+                    <span>Header photo:</span>
+                    <el-image
+                      style="width: 100px; height: 100px"
+                      :src="props.row.business.header_photo"
+                      :preview-src-list="[props.row.business.header_photo]"
+                    />
+                  </div>
+                  <div class="image-container" v-if="props.row.business.video_url">
+                    <span>Video:</span>
+                    <video
+                      width="120"
+                      controls
+                      :src="props.row.business.video_url"
+                    />
+                  </div>
+
                 </div>
-                <div>
-                  <span>Location:</span>{{ props.row.business.country }}, {{ props.row.business.province }},
-                  {{ props.row.business.city }}, {{ props.row.business.district }}, {{ props.row.business.address }}
-                </div>
-                <div><span>Sub Identity Name:</span>{{ props.row.business.sub_identity_name }}</div>
-                <div><span>Bio:</span>{{ props.row.business.bio }}</div>
-                <div><span>Business Bio:</span>{{ props.row.business.business_bio }}</div>
-                <div><span>Business name:</span>{{ props.row.business.business_name }}</div>
-                <div><span>Business phone:</span>{{ props.row.business.business_phone }}</div>
-                <div><span>Business type name:</span>{{ props.row.business.business_type_name }}</div>
-                <div><span>contact name:</span>{{ props.row.business.contact_name }}</div>
-                <div><span>contact phone:</span>{{ props.row.business.contact_phone }}</div>
-                <div><span>Curriculum:</span>{{ props.row.business.curriculum }}</div>
-                <div>
-                  <span>Fields Trips:</span>
-                  <span v-if="props.row.business.felds_trips==1">Yes</span>
-                  <span v-if="props.row.business.felds_trips==0">Unknown</span>
-                </div>
-                <div>
-                  <span>is_currently_hiring:</span>
-                  <span v-if="props.row.business.is_currently_hiring==1">Yes</span>
-                  <span v-if="props.row.business.is_currently_hiring==0">Unknown</span>
-                </div>
-                <div>
-                  <span>Is Events: </span>
-                  <span v-if="props.row.business.is_events==1">Yes</span>
-                  <span v-if="props.row.business.is_events==0">Unknown</span>
-                </div>
-                <div>
-                  <span>Special Needs: </span>
-                  <span v-if="props.row.business.is_special_needs==1">Yes</span>
-                  <span v-if="props.row.business.is_special_needs==0">Unknown</span>
-                </div>
-                <div><span>Job Title: </span>{{ props.row.business.job_title }}</div>
-                <div><span>Staff student ratio:</span>{{ props.row.business.staff_student_ratio }}</div>
-                <div><span>Technology Available:</span>{{ props.row.business.technology_available }}</div>
-                <div><span>Website:</span>{{ props.row.business.website }}</div>
-                <div><span>Work Email:</span>{{ props.row.business.work_email }}</div>
-                <div><span>Year Founded:</span>{{ props.row.business.year_founded }}</div>
-                <div><span>Hobbies:</span>{{ props.row.business.hobbies }}</div>
-                <div><span>Nationality:</span>{{ props.row.business.nationality }}</div>
-                <div>
-                  <span>Profile photo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.business.profile_photo"
-                    :preview-src-list="[props.row.business.profile_photo]"
-                  />
-                </div>
-                <div>
-                  <span>logo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.business.logo"
-                    :preview-src-list="[props.row.business.logo]"
-                  />
-                </div>
-                <div>
-                  <span>Header photo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.business.header_photo"
-                    :preview-src-list="[props.row.business.header_photo]"
-                  />
-                </div>
-                <div>
-                  <span>Video:</span>
-                  <video
-                    width="120"
-                    controls
-                    :src="props.row.business.video_url"
-                  />
-                </div>
+
               </el-collapse-item>
               <el-collapse-item v-if="props.row.vendor">
                 <template slot="title">
                   <b style="font-size:28px;color: #99a9bf;"> Vendor Info</b>
                 </template>
-                <div>
-                  <span>First name & Last name:</span>{{ props.row.vendor.first_name }}{{
-                    props.row.vendor.last_name
-                  }}
-                </div>
-                <div><span>Wechat Id:</span>{{ props.row.vendor.wx_id }}</div>
-                <div>
-                  <span>Location:</span>{{ props.row.vendor.country }}{{
-                    props.row.vendor.province
-                  }}{{ props.row.vendor.city }}{{ props.row.vendor.address }}
-                </div>
-                <div><span>Business reg img:</span>{{ props.row.vendor.busin_reg_img }}</div>
-                <div><span>Business reg number:</span>{{ props.row.vendor.busin_reg_num }}</div>
-                <div><span>Vendor Bio:</span>{{ props.row.vendor.vendor_bio }}</div>
-                <div><span>Vendor name:</span>{{ props.row.vendor.vendor_name }}</div>
-                <div><span>Vendor name en:</span>{{ props.row.vendor.vendor_name_en }}</div>
-                <div><span>Vendor type name:</span>{{ props.row.vendor.vendor_type_name }}</div>
 
-                <div>
-                  <span>Is Dog Friendly:</span>
-                  <span v-if="props.row.vendor.is_dog_friendly==1">Yes</span>
-                  <span v-if="props.row.vendor.is_dog_friendly==0">Unknown</span>
-                </div>
-                <div>
-                  <span>Is Events:</span>
-                  <span v-if="props.row.vendor.is_events==1">Yes</span>
-                  <span v-if="props.row.vendor.is_events==0">Unknown</span>
-                </div>
-                <div><span>Job Title:</span>{{ props.row.vendor.job_title }}</div>
-                <div><span>Legal Company Name:</span>{{ props.row.vendor.legal_company_name }}</div>
-                <div><span>Phone:</span>{{ props.row.vendor.phone }}</div>
+                <div class="xll-container">
+                  <div class="xll-item">
+                    <div class="xll-item-l">First name & Last name:</div>
+                    <div class="xll-item-r">
+                      {{ props.row.vendor.first_name }}{{props.row.vendor.last_name }}
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Wechat Id:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.wx_id }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Location:</div>
+                    <div class="xll-item-r">
+                      {{ props.row.vendor.country }}{{props.row.vendor.province }}{{ props.row.vendor.city }}{{ props.row.vendor.address }}
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Business reg img:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.busin_reg_img }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Business reg number:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.busin_reg_num }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Vendor Bio:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.vendor_bio }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Vendor name:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.vendor_name }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Vendor name en:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.vendor_name_en }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Vendor type name:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.vendor_type_name }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Is Dog Friendly:</div>
+                    <div class="xll-item-r">
+                      <span v-if="props.row.vendor.is_dog_friendly==1">Yes</span>
+                      <span v-if="props.row.vendor.is_dog_friendly==0">Unknown</span>
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Is Events:</div>
+                    <div class="xll-item-r">
+                      <span v-if="props.row.vendor.is_events==1">Yes</span>
+                      <span v-if="props.row.vendor.is_events==0">Unknown</span>
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Job Title:</div>
+                    <div class="xll-item-r">
+                      {{ props.row.vendor.job_title }}
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Legal Company Name:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.legal_company_name }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Phone:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.phone }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Website:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.website }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Work Email:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.work_email }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Wechat Public Name:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.wechat_public_name }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Wechat Public Qrcode:</div>
+                    <div class="xll-item-r">{{ props.row.vendor.wechat_public_qrcode }}</div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l">Nationality:</div>
+                    <div class="xll-item-r">
+                      {{ props.row.vendor.nationality }}
+                    </div>
+                  </div>
+                  <div class="xll-item">
+                    <div class="xll-item-l"></div>
+                    <div class="xll-item-r"></div>
+                  </div>
 
-                <div><span>Website:</span>{{ props.row.vendor.website }}</div>
-                <div><span>Work Email:</span>{{ props.row.vendor.work_email }}</div>
-                <div><span>Wechat Public Name:</span>{{ props.row.vendor.wechat_public_name }}</div>
-                <div><span>Wechat Public Qrcode:</span>{{ props.row.vendor.wechat_public_qrcode }}</div>
-                <div><span>Nationality:</span>{{ props.row.vendor.nationality }}</div>
-                <div>
-                  <span>Profile photo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.vendor.profile_photo"
-                    :preview-src-list="[props.row.vendor.profile_photo]"
-                  />
+                  <div class="image-container" v-if="props.row.vendor.profile_photo">
+                    <span>Profile photo:</span>
+                    <el-image
+                      style="width: 100px; height: 100px"
+                      :src="props.row.vendor.profile_photo"
+                      :preview-src-list="[props.row.vendor.profile_photo]"
+                    />
+                  </div>
+                  <div class="image-container" v-if="props.row.vendor.logo">
+                    <span>logo:</span>
+                    <el-image
+                      style="width: 100px; height: 100px"
+                      :src="props.row.vendor.logo"
+                      :preview-src-list="[props.row.vendor.logo]"
+                    />
+                  </div>
+                  <div class="image-container" v-if="props.row.vendor.header_photo">
+                    <span>Header photo:</span>
+                    <el-image
+                      style="width: 100px; height: 100px"
+                      :src="props.row.vendor.header_photo"
+                      :preview-src-list="[props.row.vendor.header_photo]"
+                    />
+                  </div>
+                  <div class="image-container" v-if="props.row.vendor.video_url">
+                    <span>Video:</span>
+                    <video
+                      width="120"
+                      controls
+                      :src="props.row.vendor.video_url"
+                    />
+                  </div>
+
                 </div>
-                <div>
-                  <span>logo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.vendor.logo"
-                    :preview-src-list="[props.row.vendor.logo]"
-                  />
-                </div>
-                <div>
-                  <span>Header photo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.vendor.header_photo"
-                    :preview-src-list="[props.row.vendor.header_photo]"
-                  />
-                </div>
-                <div>
-                  <span>Video:</span>
-                  <video
-                    width="120"
-                    controls
-                    :src="props.row.vendor.video_url"
-                  />
-                </div>
+
               </el-collapse-item>
             </el-collapse>
           </el-form>
@@ -318,6 +489,7 @@
           {{ scope.row.source }}
         </template>
       </el-table-column>
+
       <el-table-column
         label="Create Time"
         width="180"
@@ -326,6 +498,16 @@
           {{ scope.row.c_time }}
         </template>
       </el-table-column>
+
+      <el-table-column
+        label="Email"
+        width="180"
+      >
+        <template v-slot="scope">
+          {{ scope.row.email }}
+        </template>
+      </el-table-column>
+
       <el-table-column
         label="Phone"
         width="110"
@@ -637,12 +819,110 @@
 
     </el-dialog>
 
+    <el-dialog
+      title="Create Account"
+      :visible.sync="userAccountDialogFormVisible"
+    >
+      <el-form
+        ref="userAccountForm"
+        :rules="userAccountRules"
+        :model="userAccountForm"
+        label-position="left"
+        label-width="160px"
+      >
+        <el-form-item
+          label="Email"
+          prop="email"
+        >
+          <el-input v-model="userAccountForm.email"/>
+        </el-form-item>
+        <el-form-item
+          label="Password"
+          prop="password"
+        >
+          <el-input v-model="userAccountForm.password"/>
+        </el-form-item>
+        <el-form-item
+          label="Confirm Password"
+          prop="c_password"
+        >
+          <el-input v-model="userAccountForm.c_password"/>
+        </el-form-item>
+        <el-form-item
+          label="Phone"
+          prop="phone"
+        >
+          <el-input v-model="userAccountForm.phone"/>
+        </el-form-item>
+<!--        <el-form-item-->
+<!--          label="Code"-->
+<!--          prop="code"-->
+<!--        >-->
+<!--          <el-input v-model="userAccountForm.code"/>-->
+<!--        </el-form-item>-->
+        <el-form-item
+          label="First Name"
+          prop="first_name"
+        >
+          <el-input v-model="userAccountForm.first_name"/>
+        </el-form-item>
+        <el-form-item
+          label="Last Name"
+          prop="last_name"
+        >
+          <el-input v-model="userAccountForm.last_name"/>
+        </el-form-item>
+        <el-form-item
+          label="Company Name"
+          prop="company_name"
+        >
+          <el-input v-model="userAccountForm.company_name"/>
+        </el-form-item>
+
+        <el-form-item
+          label="Identity"
+          prop="identity"
+        >
+          <el-select
+            v-model="userAccountForm.identity"
+            class="filter-item"
+            placeholder="Please select identity"
+          >
+            <el-option
+              v-for="item in identityOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="userAccountDialogFormVisible = false">
+          Cancel
+        </el-button>
+        <el-button
+          type="primary"
+          @click="addUserAccountByAdmin()"
+        >
+          Confirm
+        </el-button>
+      </div>
+    </el-dialog>
+
+
   </div>
 </template>
 
 <script>
 
-import {userList, editUserInfo, deleteUser, vipList, changeVipLevel, userObjectList,assignAccount,changeBindPhone,unbindAccount} from '@/api/member'
+import {userList, editUserInfo, deleteUser, vipList, changeVipLevel,
+  userObjectList,assignAccount,changeBindPhone,unbindAccount} from '@/api/member'
+import {createUserAccount} from '@/api/admin'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 
@@ -663,6 +943,7 @@ export default {
   },
   data() {
     return {
+      userAccountDialogFormVisible:false,
       uploadRequestUrl: process.env.VUE_APP_UPLOAD_API,
       tableKey: 0,
       list: null,
@@ -721,6 +1002,21 @@ export default {
       dialogUserDetailVisible: false,
       userDetailData: [],
 
+      userAccountForm:{
+        email:undefined,
+        password:undefined,
+        c_password:undefined,
+        phone:undefined,
+        code:undefined,
+        first_name:undefined,
+        last_name:undefined,
+        company_name:undefined,
+        identity:undefined
+      },
+      userAccountRules: {
+
+      },
+
       subAccountDialogVisible: false,
       subAccountForm: {
         pid: undefined,
@@ -752,6 +1048,21 @@ export default {
     this.getVipList()
   },
   methods: {
+    showUserAccountModal(){
+      this.userAccountDialogFormVisible = true;
+    },
+    addUserAccountByAdmin(){
+      let params = Object.assign({},this.userAccountForm)
+      createUserAccount(params).then(res=>{
+        // console.log(res)
+        if(res.code == 200){
+          this.userAccountDialogFormVisible = false
+          this.getList()
+        }
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
     handleUserPhone(row){
         this.changeBindPhoneDialogVisible = true;
         this.changeBindPhoneForm.user_id = row.id;
@@ -995,7 +1306,7 @@ export default {
         }
       })
     },
-    handleRecover(row, index) {
+    handleRecover(row) {
       // this.list.splice(index, 1)
       deleteUser({
         user_id: row.id,
@@ -1064,5 +1375,46 @@ export default {
   margin-right: 0;
   margin-bottom: 0;
   width: 20%;
+}
+
+.xll-container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.xll-item{
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-start;
+  background-color: #eeeeee;
+  //padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.xll-item-l{
+  background-color: #f0dacf;
+  padding: 10px;
+}
+
+.xll-item-r{
+  background-color: #00b3d2;
+  color: #FFFFFF;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.image-container{
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 </style>

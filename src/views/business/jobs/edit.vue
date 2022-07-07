@@ -1302,7 +1302,10 @@ export default {
           this.jobForm.salary_min = res.message.salary_min
           this.jobForm.salary_max = res.message.salary_max
 
-          this.jobForm.sex = res.message.sex
+          if(res.message.sex != 0 && res.message.sex){
+            this.jobForm.sex = res.message.sex
+          }
+
           this.jobForm.is_cpr = res.message.is_cpr
           this.jobForm.is_first_aide = res.message.is_first_aide
           this.jobForm.is_teaching_license = res.message.is_teaching_license
@@ -1316,9 +1319,17 @@ export default {
           this.jobForm.interview_nationlity = res.message.interview_nationlity
 
           this.jobForm.entry_date = res.message.entry_date
-          this.jobForm.payment_period = res.message.payment_period
+
+          if(res.message.payment_period && res.message.payment_period != 0 ){
+            this.jobForm.payment_period = res.message.payment_period
+          }
+
           this.jobForm.currency = res.message.currency
-          this.jobForm.teaching_times = res.message.teaching_times
+
+          if(res.message.teaching_times != 0 && res.message.teaching_times){
+            this.jobForm.teaching_times = res.message.teaching_times
+          }
+
           this.jobForm.education = res.message.education
           this.jobForm.age = res.message.age
           this.jobForm.business_name = res.message.business_name
@@ -1342,33 +1353,35 @@ export default {
           if (res.message.country ) {
             this.jobForm.country = res.message.country.id;
             this.jobForm.country_name = res.message.country.Pinyin
-          }
-          if(res.message.country.id === 99999999){
-            if (res.message.province) {
-              this.jobForm.province = res.message.province
-              this.jobForm.province_name = res.message.provinces.Pinyin
+
+            if(res.message.country.id === 99999999){
+              if (res.message.province) {
+                this.jobForm.province = res.message.province
+                this.jobForm.province_name = res.message.provinces.Pinyin
+              }
+              if (res.message.city) {
+                this.jobForm.city = res.message.city
+                this.jobForm.city_name = res.message.citys.Pinyin
+              }
+              if (res.message.district) {
+                this.jobForm.district = res.message.district
+                this.jobForm.district_name = res.message.districts.Pinyin
+              }
+            }else{
+              if (res.message.foreign_provinces ) {
+                this.jobForm.province = res.message.foreign_provinces.id;
+                this.jobForm.province_name = res.message.foreign_provinces.Pinyin
+              }
+              if (res.message.foreign_citys ) {
+                this.jobForm.city = res.message.foreign_citys.id;
+                this.jobForm.city_name = res.message.foreign_citys.Pinyin
+              }
+              if (res.message.foreign_districts ) {
+                this.jobForm.district = res.message.foreign_districts.id;
+                this.jobForm.district_name = res.message.foreign_districts.Pinyin
+              }
             }
-            if (res.message.city) {
-              this.jobForm.city = res.message.city
-              this.jobForm.city_name = res.message.citys.Pinyin
-            }
-            if (res.message.district) {
-              this.jobForm.district = res.message.district
-              this.jobForm.district_name = res.message.districts.Pinyin
-            }
-          }else{
-            if (res.message.foreign_provinces ) {
-              this.jobForm.province = res.message.foreign_provinces.id;
-              this.jobForm.province_name = res.message.foreign_provinces.Pinyin
-            }
-            if (res.message.foreign_citys ) {
-              this.jobForm.city = res.message.foreign_citys.id;
-              this.jobForm.city_name = res.message.foreign_citys.Pinyin
-            }
-            if (res.message.foreign_districts ) {
-              this.jobForm.district = res.message.foreign_districts.id;
-              this.jobForm.district_name = res.message.foreign_districts.Pinyin
-            }
+
           }
 
           const ageToTeach = res.message.age_to_teach

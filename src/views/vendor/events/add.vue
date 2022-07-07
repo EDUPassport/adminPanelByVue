@@ -353,7 +353,7 @@ export default {
     this.getUserObjList()
   },
   mounted() {
-    // this.initMap(121.472644, 31.231706)
+
     const uid = this.$route.query.uid
     const eventId = this.$route.query.event_id
     if(uid){
@@ -361,6 +361,8 @@ export default {
     }
     if(eventId){
       this.getEventDetail(eventId)
+    }else{
+      this.initMap(121.472644, 31.231706)
     }
 
   },

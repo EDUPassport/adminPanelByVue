@@ -161,3 +161,11 @@ export function setPromoCodeDiscount(data) {
     data
   })
 }
+
+export function createUserAccount(data) {
+  return request({
+    url: '/admin/addUserAccount',
+    method: 'post',
+    data
+  })
+}
