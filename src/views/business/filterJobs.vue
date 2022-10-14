@@ -15,13 +15,13 @@
         @sort-change="sortChange"
       >
         <el-table-column type="expand">
-          <template slot-scope="props">
+          <template v-slot="props">
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item label="File" style="color: #20a0ff;">
                 <span><a :href="props.row.file">{{ props.row.file }}</a></span>
               </el-form-item>
               <el-form-item label="Desc" style="word-break: break-all;">
-                <pre>{{ props.row.desc }}</pre>
+                <div v-html="props.row.desc"></div>
               </el-form-item>
               <el-form-item label="Education">
                 <span>{{ props.row.education }}</span>
@@ -40,18 +40,18 @@
               <el-form-item label="Interview Name">
                 <span>{{ props.row.interview_name }}</span>
               </el-form-item>
-              <el-form-item v-if="props.row.province>0 && props.row.provinces != null" label="Province">
-                <span> {{ props.row.provinces.Pinyin }}</span>
-                <span>{{ props.row.provinces.ShortName }}</span>
-              </el-form-item>
-              <el-form-item v-if="props.row.city>0 && props.row.citys != null" label="City">
-                <span>{{ props.row.citys.Pinyin }}</span>
-                <span>{{ props.row.citys.ShortName }}</span>
-              </el-form-item>
-              <el-form-item v-if="props.row.district>0 && props.row.districts != null" label="District">
-                <span>{{ props.row.districts.Pinyin }}</span>
-                <span>{{ props.row.districts.ShortName }}</span>
-              </el-form-item>
+<!--              <el-form-item v-if="props.row.province && props.row.provinces" label="Province">-->
+<!--                <span> {{ props.row.provinces.Pinyin }}</span>-->
+<!--                <span>{{ props.row.provinces.ShortName }}</span>-->
+<!--              </el-form-item>-->
+<!--              <el-form-item v-if="props.row.city && props.row.citys " label="City">-->
+<!--                <span>{{ props.row.citys.Pinyin }}</span>-->
+<!--                <span>{{ props.row.citys.ShortName }}</span>-->
+<!--              </el-form-item>-->
+<!--              <el-form-item v-if="props.row.district && props.row.districts" label="District">-->
+<!--                <span>{{ props.row.districts.Pinyin }}</span>-->
+<!--                <span>{{ props.row.districts.ShortName }}</span>-->
+<!--              </el-form-item>-->
               <el-form-item label="Interview Nationality">
                 <span>{{ props.row.interview_nationality }}</span>
               </el-form-item>
@@ -138,57 +138,59 @@
           width="80"
           :class-name="getSortClass('id')"
         >
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.id }}</span>
           </template>
         </el-table-column>
         <el-table-column label="User Id" prop="user_id" width="80px">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.user_id }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Job Title" width="180px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span v-if="row.employment_type == 1" class="xll-tag">FT</span>
             <span v-if="row.employment_type == 2" class="xll-tag">PT</span>
             <span v-if="row.employment_type == 3" class="xll-tag">S</span>
             <span style="margin-left: 10px;">{{ row.job_title }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Location" width="110px" align="center">
-          <template slot-scope="{row}">
-            <span v-if="row.city>0 && row.city != null">{{ row.citys.Pinyin }} {{ row.citys.ShortName }}</span>
-          </template>
-        </el-table-column>
+<!--        <el-table-column label="Location" width="110px" align="center">-->
+<!--          <template v-slot="{row}">-->
+<!--            <span v-if="row.city && row.citys">-->
+<!--              {{ row.citys.Pinyin }} {{ row.citys.ShortName }}-->
+<!--            </span>-->
+<!--          </template>-->
+<!--        </el-table-column>-->
         <el-table-column label="Detail Address" width="110px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.job_location }}</span>
           </template>
         </el-table-column>
 
         <el-table-column label="Due Date" width="110px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.apply_due_date }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Refresh Time" width="110px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.refresh_time | refreshTimeFilter }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Business Name" width="110px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.business_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Salary" width="110px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span class="xll-tag">{{ row.currency }}</span> <br> <span>{{ row.salary_min }} - {{ row.salary_max }}</span>
           </template>
         </el-table-column>
 
         <el-table-column label="Status" class-name="status-col" width="100">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <el-tag v-if="row.status === 0" :type="row.status | statusFilter">
               Pending
             </el-tag>
@@ -201,7 +203,7 @@
           </template>
         </el-table-column>
         <el-table-column label="Actions" align="center" width="500" class-name="small-padding fixed-width">
-          <template slot-scope="{row,$index}">
+          <template v-slot="{row,$index}">
             <el-button type="primary" size="mini" @click="handleApplications(row)">
               Applications
             </el-button>
@@ -226,7 +228,7 @@
           </template>
         </el-table-column>
         <el-table-column label="Create Time" width="180">
-          <template slot-scope="scope">
+          <template v-slot="scope">
             {{ scope.row.c_time }}
           </template>
         </el-table-column>

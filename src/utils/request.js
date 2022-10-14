@@ -25,9 +25,10 @@ service.interceptors.request.use(
   },
   error => {
     // do something with request error
-    console.log(error) // for debug
+    console.log(error.response) // for debug
     return Promise.reject(error)
   }
+
 )
 
 // response interceptor
@@ -49,24 +50,33 @@ service.interceptors.response.use(
   error => {
     // console.log(error.response) // for debug
     const res = error.response.data
+    console.log(res)
 
-    Message({
-      message: error.response.data.msg,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    if(res.code ){
+      Message({
+        message: res.msg,
+        type: 'error',
+        duration: 5 * 1000
+      })
 
-    // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-    if (res.code === 401) {
-      // to re-login
-      MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-        confirmButtonText: 'Re-Login',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }).then(() => {
-        store.dispatch('user/resetToken').then(() => {
-          location.reload()
+      if (res.code === 401) {
+        // to re-login
+        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
+          confirmButtonText: 'Re-Login',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          store.dispatch('user/resetToken').then(() => {
+            location.reload()
+          })
         })
+      }
+
+    }else{
+      Message({
+        message: res.message,
+        type: 'error',
+        duration: 5 * 1000
       })
     }
 

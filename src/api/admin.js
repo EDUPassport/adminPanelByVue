@@ -169,3 +169,11 @@ export function createUserAccount(data) {
     data
   })
 }
+
+export function loginToUser(data) {
+  return request({
+    url: '/admin/loginToUser',
+    method: 'post',
+    data
+  })
+}

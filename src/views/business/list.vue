@@ -237,7 +237,7 @@
           <el-button class="xll-btn" type="primary" size="mini" @click="handleReview(row)">
             Review
           </el-button>
-          <el-button class="xll-btn" type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button class="xll-btn" type="primary" size="mini" @click="handleCreateTokenToLogin(row)">
             Edit
           </el-button>
 
@@ -427,8 +427,9 @@ import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { uploadJobs } from '@/api/jobs'
 import {adCategoryList, buyAd} from "@/api/ads";
-import {approveBusiness,adminExportBusiness} from "@/api/admin"
+import {approveBusiness, adminExportBusiness, loginToUser} from "@/api/admin"
 import {tree} from "@/utils";
+import {encode} from "js-base64";
 
 export default {
   name: 'Index',
@@ -851,7 +852,29 @@ export default {
       }).catch(err=>{
         console.log(err)
       })
+    },
+    handleCreateTokenToLogin(row){
+      console.log(row)
+      let params = {
+        user_id:row.user_id
+      }
+      loginToUser(params).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+
+          let str = encode(JSON.stringify(res.message))
+
+          let routerPath = process.env.VUE_APP_PC_DOMAIN
+
+          window.open(routerPath+'?from_admin='+encodeURIComponent(str),'_blank')
+
+        }
+
+      }).catch(err=>{
+        console.log(err)
+      })
     }
+
 
 
   }

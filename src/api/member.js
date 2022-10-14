@@ -8,6 +8,7 @@ export function userList(params) {
   })
 }
 
+
 export function editUserInfo(data) {
   return request({
     url: '/admin/editUserInfo',
@@ -185,5 +186,55 @@ export function setVipDiscount(data) {
     url: '/admin/vip/discount',
     method: 'post',
     data
+  })
+}
+
+// 2.0 版本的api
+
+export function userContactList(params) {
+  return request({
+    url: '/admin/user/contact/list',
+    method: 'get',
+    params
+  })
+}
+
+export function educatorContactList(params) {
+  return request({
+    url: '/admin/educator/contact/list',
+    method: 'get',
+    params
+  })
+}
+
+export function recruiterList(params) {
+  return request({
+    url: '/admin/recruiting/list',
+    method: 'get',
+    params
+  })
+}
+
+export function schoolList(params) {
+  return request({
+    url: '/admin/school/list',
+    method: 'get',
+    params
+  })
+}
+
+export function otherList(params) {
+  return request({
+    url: '/admin/other/list',
+    method: 'get',
+    params
+  })
+}
+
+export function vendorListV2(params) {
+  return request({
+    url: '/admin/vendor/list',
+    method: 'get',
+    params
   })
 }

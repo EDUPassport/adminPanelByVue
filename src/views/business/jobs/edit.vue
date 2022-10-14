@@ -167,10 +167,7 @@
           label="Position Description"
           prop="desc"
         >
-          <el-input
-            v-model="jobForm.desc"
-            type="textarea"
-          />
+          <tinymce v-model="jobForm.desc" :height="300" />
         </el-form-item>
         <el-form-item
           label="Application Due Date"
@@ -518,7 +515,7 @@
 </template>
 
 <script>
-
+import Tinymce from '@/components/Tinymce'
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import mapboxgl from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
@@ -532,7 +529,9 @@ import {getAreas,getCountry} from '@/api/location'
 
 export default {
   name: 'Edit',
-  components: {},
+  components: {
+    Tinymce
+  },
   data() {
     return {
       countryList:[],

@@ -2,43 +2,36 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input
-        v-model="listQuery.nickname"
-        placeholder="Nickname"
+        v-model="listQuery.id"
+        placeholder="ID"
+        style="width: 200px;"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.first_name"
+        placeholder="First name"
+        style="width: 200px;"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.last_name"
+        placeholder="Last name"
         style="width: 200px;"
         @keyup.enter.native="handleFilter"
       />
       <el-input
         v-model="listQuery.phone"
-        placeholder="Phone"
+        placeholder="Phone #"
         style="width: 200px;"
         @keyup.enter.native="handleFilter"
       />
-      <el-select
-        v-model="listQuery.is_seeking"
-        placeholder="Is Seeking"
-        clearable
-        style="width: 110px;"
-      >
-        <el-option
-          v-for="(item,index) in seekingOptions"
-          :key="index"
-          :label="item.label"
-          :value="item.label"
-        />
-      </el-select>
-      <el-select
-        v-model="listQuery.sex"
-        placeholder="Gender"
-        clearable
-        style="width: 110px;"
-      >
-        <el-option
-          v-for="(item,index) in sexOptions"
-          :key="index"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
+      <el-input
+        v-model="listQuery.email"
+        placeholder="Email address"
+        style="width: 200px;"
+        @keyup.enter.native="handleFilter"
+      />
+
       <el-button
         v-waves
         type="primary"
@@ -48,13 +41,13 @@
         Search
       </el-button>
 
-      <el-button
-        v-waves
-        type="primary"
-        @click="showUserAccountModal()"
-      >
-        Create Account
-      </el-button>
+<!--      <el-button-->
+<!--        v-waves-->
+<!--        type="primary"-->
+<!--        @click="showUserAccountModal()"-->
+<!--      >-->
+<!--        Create Account-->
+<!--      </el-button>-->
 
     </div>
 
@@ -536,13 +529,6 @@
       >
         <template v-slot="scope">
           <el-tag
-            v-if="scope.row.identity ===0"
-            effect="dark"
-            color="#005956"
-          >
-            Other
-          </el-tag>
-          <el-tag
             v-if="scope.row.identity ===1"
             effect="dark"
             color="#0aa0a8"
@@ -554,10 +540,24 @@
             effect="dark"
             color="#b1c452"
           >
-            Business
+            Recruiter
           </el-tag>
           <el-tag
             v-if="scope.row.identity ===3"
+            effect="dark"
+            color="#00b3d2"
+          >
+            School
+          </el-tag>
+          <el-tag
+            v-if="scope.row.identity ===4"
+            effect="dark"
+            color="#00b3d2"
+          >
+            Other
+          </el-tag>
+          <el-tag
+            v-if="scope.row.identity ===5"
             effect="dark"
             color="#00b3d2"
           >
@@ -576,10 +576,18 @@
           <el-button
             type="primary"
             size="mini"
-            @click="handleUpdate(row)"
+            @click="handleCreateTokenToLogin(row)"
           >
             Edit
           </el-button>
+
+<!--          <el-button-->
+<!--            type="primary"-->
+<!--            size="mini"-->
+<!--            @click="handleUpdate(row)"-->
+<!--          >-->
+<!--            Edit-->
+<!--          </el-button>-->
           <el-button
             size="mini"
             type="danger"
@@ -642,23 +650,18 @@
         style="width: 400px; margin-left:50px;"
       >
         <el-form-item
-          label="username"
-          prop="username"
+          label="First name"
+          prop="first_name"
         >
-          <el-input v-model="temp.username"/>
+          <el-input v-model="temp.first_name"/>
         </el-form-item>
         <el-form-item
-          label="nickname"
-          prop="nickname"
+          label="Last name"
+          prop="last_name"
         >
-          <el-input v-model="temp.nickname"/>
+          <el-input v-model="temp.last_name"/>
         </el-form-item>
-        <el-form-item
-          label="truename"
-          prop="truename"
-        >
-          <el-input v-model="temp.truename"/>
-        </el-form-item>
+
         <el-form-item
           label="sex"
           prop="sex"
@@ -709,7 +712,7 @@
         </el-button>
         <el-button
           type="primary"
-          @click="dialogStatus==='create'?createData():updateData()"
+          @click="updateData()"
         >
           Confirm
         </el-button>
@@ -920,11 +923,14 @@
 
 <script>
 
-import {userList, editUserInfo, deleteUser, vipList, changeVipLevel,
-  userObjectList,assignAccount,changeBindPhone,unbindAccount} from '@/api/member'
-import {createUserAccount} from '@/api/admin'
+import {
+  userContactList, editUserInfo, deleteUser, vipList, changeVipLevel,
+  userObjectList, assignAccount, changeBindPhone, unbindAccount
+} from '@/api/member'
+import {createUserAccount, loginToUser} from '@/api/admin'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
+import {encode} from 'js-base64'
 
 export default {
   name: 'Index',
@@ -952,15 +958,11 @@ export default {
       listQuery: {
         page: 1,
         limit: 10,
-        nickname: undefined,
-        truename: undefined,
+        id: undefined,
+        first_name: undefined,
+        last_name: undefined,
         phone: undefined,
-        is_educator: undefined,
-        is_business: undefined,
-        is_vendor: undefined,
-        is_other: undefined,
-        is_seeking: undefined,
-        sex: undefined
+        email: undefined
       },
 
       seekingOptions: [{label: 'no', value: 0}, {label: 'Yes', value: 1}],
@@ -971,9 +973,8 @@ export default {
 
       temp: {
         user_id: undefined,
-        username: undefined,
-        nickname: undefined,
-        truename: undefined,
+        first_name: undefined,
+        last_name: undefined,
         sex: undefined,
         phone: undefined,
         email: undefined,
@@ -994,9 +995,9 @@ export default {
       },
       dialogPvVisible: false,
       rules: {
-        username: [{required: true, message: 'username is required', trigger: 'change'}],
+        username: [{required: false, message: 'username is required', trigger: 'change'}],
         birthday: [{type: 'date', required: true, message: 'birthday is required', trigger: 'change'}],
-        nickname: [{required: true, message: 'nickname is required', trigger: 'blur'}]
+        nickname: [{required: false, message: 'nickname is required', trigger: 'blur'}]
       },
       downloadLoading: false,
       dialogUserDetailVisible: false,
@@ -1014,9 +1015,14 @@ export default {
         identity:undefined
       },
       userAccountRules: {
-
+        email: [{required: true, message: 'Email is required', trigger: 'change'}],
+        first_name: [{required: true, message: 'First Name is required', trigger: 'change'}],
+        last_name: [{ required: true, message: 'Last Name is required', trigger: 'change'}],
+        company_name: [{required: true, message: 'Company Name is required', trigger: 'blur'}],
+        password: [{required: true, message: 'Password Name is required', trigger: 'blur'}],
+        c_password: [{required: true, message: 'Confirm Password Name is required', trigger: 'blur'}],
+        identity: [{required: true, message: 'Identity is required', trigger: 'blur'}]
       },
-
       subAccountDialogVisible: false,
       subAccountForm: {
         pid: undefined,
@@ -1052,15 +1058,22 @@ export default {
       this.userAccountDialogFormVisible = true;
     },
     addUserAccountByAdmin(){
-      let params = Object.assign({},this.userAccountForm)
-      createUserAccount(params).then(res=>{
-        // console.log(res)
-        if(res.code == 200){
-          this.userAccountDialogFormVisible = false
-          this.getList()
+
+      this.$refs['userAccountForm'].validate((valid) => {
+        if (valid) {
+          // console.log(this.temp)
+          let params = Object.assign({},this.userAccountForm)
+          createUserAccount(params).then(res=>{
+            // console.log(res)
+            if(res.code == 200){
+              this.userAccountDialogFormVisible = false
+              this.getList()
+            }
+          }).catch(err=>{
+            console.log(err)
+          })
+
         }
-      }).catch(err=>{
-        console.log(err)
       })
     },
     handleUserPhone(row){
@@ -1122,7 +1135,7 @@ export default {
     getList() {
       this.listLoading = true
       // console.log(this.listQuery)
-      userList(this.listQuery).then(response => {
+      userContactList(this.listQuery).then(response => {
         // console.log(response)
         this.list = response.message.data
         this.total = response.message.total
@@ -1356,6 +1369,27 @@ export default {
         }
       }
 
+    },
+    handleCreateTokenToLogin(row){
+      console.log(row)
+      let params = {
+        user_id:row.id
+      }
+      loginToUser(params).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+
+          let str = encode(JSON.stringify(res.message))
+
+          let routerPath = process.env.VUE_APP_PC_DOMAIN
+
+          window.open(routerPath+'?from_admin='+encodeURIComponent(str),'_blank')
+
+        }
+
+      }).catch(err=>{
+        console.log(err)
+      })
     }
 
   }

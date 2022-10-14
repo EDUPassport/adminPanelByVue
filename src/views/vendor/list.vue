@@ -2,32 +2,41 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input
+        v-model="listQuery.id"
+        placeholder="ID"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.user_id"
+        placeholder="User id"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.company_name"
+        placeholder="Company name"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.work_phone"
+        placeholder="Work phone"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
         v-model="listQuery.work_email"
-        placeholder="Work Email"
+        placeholder="Work email"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
-      <el-input
-        v-model="listQuery.vendor_name_en"
-        placeholder="Vendor Name"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      <el-input
-        v-model="listQuery.city"
-        placeholder="City"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      <el-input
-        v-model="listQuery.phone"
-        placeholder="Phone"
-        style="width: 200px;"
-        @keyup.enter.native="handleFilter"
-      />
+
       <el-button
         v-waves
         type="primary"
@@ -53,15 +62,12 @@
       @sort-change="sortChange"
     >
       <el-table-column type="expand">
-        <template slot-scope="props">
+        <template v-slot="props">
           <el-form
             label-position="left"
             inline
             class="demo-table-expand"
           >
-            <el-form-item label="Nickname">
-              <span>{{ props.row.nickname }}</span>
-            </el-form-item>
             <el-form-item label="Business Reg Number">
               <span>{{ props.row.busin_reg_num }}</span>
             </el-form-item>
@@ -120,13 +126,13 @@
               <span>{{ props.row.wechat_public_name }}</span>
             </el-form-item>
             <el-form-item
-              v-if="props.row.busin_reg_img !='' "
+              v-if="props.row.business_reg_img !='' "
               label="Business Reg img"
             >
               <el-image
                 style="width: 100px;height: 100px;"
-                :src="props.row.busin_reg_img"
-                :preview-src-list="[props.row.busin_reg_img]"
+                :src="props.row.business_reg_img"
+                :preview-src-list="[props.row.business_reg_img]"
               />
             </el-form-item>
             <el-form-item
@@ -140,13 +146,13 @@
               />
             </el-form-item>
             <el-form-item
-              v-if="props.row.header_photo != '' "
+              v-if="props.row.background_image != '' "
               label="Header Photo"
             >
               <el-image
                 style="width: 100px;height: 100px;"
-                :src="props.row.header_photo"
-                :preview-src-list="[props.row.header_photo]"
+                :src="props.row.background_image"
+                :preview-src-list="[props.row.background_image]"
               />
             </el-form-item>
             <el-form-item
@@ -196,7 +202,7 @@
         width="80"
         :class-name="getSortClass('id')"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
@@ -205,51 +211,51 @@
         prop="user_id"
         width="110"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.user_id }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        label="First&&Last Name"
+        label="Display Name"
         width="160"
       >
-        <template slot-scope="scope">
-          {{ scope.row.first_name }} {{ scope.row.last_name }}
+        <template v-slot="scope">
+          {{ scope.row.display_name }}
         </template>
       </el-table-column>
       <el-table-column
-        label="Company Name(EN)"
+        label="Company Name"
         width="150"
       >
-        <template slot-scope="scope">
-          {{ scope.row.vendor_name_en }}
+        <template v-slot="scope">
+          {{ scope.row.company_name }}
         </template>
       </el-table-column>
       <el-table-column
         label="Wechat Id"
         width="110"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.wx_id }}
         </template>
       </el-table-column>
       <el-table-column
-        label="Phone"
+        label="Work Phone"
         width="110"
         align="center"
       >
-        <template slot-scope="scope">
-          <span>{{ scope.row.phone }}</span>
+        <template v-slot="scope">
+          <span>{{ scope.row.work_phone }}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="Membership Level"
         width="110"
       >
-        <template slot-scope="scope">
-          <span v-if="scope.row.level == 1">Basic </span>
-          <span v-if="scope.row.level == 2">Pro </span>
-          <span v-if="scope.row.level == 3">Plus </span>
+        <template v-slot="scope">
+          <span v-if="scope.row.vip_level == 1">Basic </span>
+          <span v-if="scope.row.vip_level == 2">Pro </span>
+          <span v-if="scope.row.vip_level == 3">Plus </span>
         </template>
       </el-table-column>
       <el-table-column
@@ -258,7 +264,7 @@
         width="100"
         class-name="small-padding fixed-width"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <el-tag type="success">
             {{ row.deals_count }}
           </el-tag>
@@ -281,7 +287,7 @@
         width="100"
         class-name="small-padding fixed-width"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <el-tag type="success">
             {{ row.event_count }}
           </el-tag>
@@ -305,11 +311,11 @@
         width="280"
         class-name="small-padding fixed-width"
       >
-        <template slot-scope="{row,$index}">
+        <template v-slot="{row,$index}">
           <el-button
             type="primary"
             size="mini"
-            @click="handleUpdate(row)"
+            @click="handleCreateTokenToLogin(row)"
           >
             Edit
           </el-button>
@@ -331,7 +337,7 @@
         </template>
       </el-table-column>
       <el-table-column label="Create Time" width="180">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.c_time }}
         </template>
       </el-table-column>
@@ -455,15 +461,15 @@ import {
   deleteUser,
   vipList,
   changeVipLevel,
-  vendorList,
-  addVendorBasic
+  addVendorBasic, vendorListV2
 } from '@/api/member'
 import waves from '@/directive/waves' // waves directive
 import {parseTime, tree} from '@/utils'
 import Pagination from '@/components/Pagination'
 import {addEvent} from '@/api/events'
 import {adCategoryList, buyAd} from "@/api/ads";
-import { adminExportVendor} from "@/api/admin";
+import {adminExportVendor, loginToUser} from "@/api/admin";
+import {encode} from "js-base64";
 
 export default {
   name: 'Index',
@@ -689,7 +695,7 @@ export default {
     getList() {
       this.listLoading = true
       // console.log(this.listQuery)
-      vendorList(this.listQuery).then(response => {
+      vendorListV2(this.listQuery).then(response => {
         // console.log(response)
         this.list = response.message.data
         this.total = response.message.total
@@ -791,7 +797,7 @@ export default {
         }
       })
     },
-    handleDelete(row, index) {
+    handleDelete(row) {
       // this.list.splice(index, 1)
       deleteUser({
         user_id: row.id,
@@ -818,7 +824,7 @@ export default {
         console.log(error)
       })
     },
-    handleMemberLevel(row, index) {
+    handleMemberLevel(row) {
       // this.tempUpgrade = Object.assign({}, row) // copy obj
       this.tempUpgrade.user_id = row.user_id
       console.log(row)
@@ -863,7 +869,7 @@ export default {
         }
       })
     },
-    handleRecover(row, index) {
+    handleRecover(row) {
       // this.list.splice(index, 1)
       deleteUser({
         user_id: row.id,
@@ -935,8 +941,28 @@ export default {
       }).catch(err=>{
         console.log(err)
       })
-    }
+    },
+    handleCreateTokenToLogin(row){
+      console.log(row)
+      let params = {
+        user_id:row.user_id
+      }
+      loginToUser(params).then(res=>{
+        console.log(res)
+        if(res.code == 200){
 
+          let str = encode(JSON.stringify(res.message))
+
+          let routerPath = process.env.VUE_APP_PC_DOMAIN
+
+          window.open(routerPath+'?from_admin='+encodeURIComponent(str),'_blank')
+
+        }
+
+      }).catch(err=>{
+        console.log(err)
+      })
+    }
 
 
   }

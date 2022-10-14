@@ -2,59 +2,41 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input
-        v-model="listQuery.first_name"
-        placeholder="First Name"
+        v-model="listQuery.id"
+        placeholder="ID"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
       <el-input
-        v-model="listQuery.last_name"
-        placeholder="Last Name"
+        v-model="listQuery.user_id"
+        placeholder="User id"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
       <el-input
-        v-model="listQuery.nickname"
-        placeholder="Nickname"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      <el-input
-        v-model="listQuery.country"
-        placeholder="Country"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      <el-input
-        v-model="listQuery.province"
-        placeholder="Province"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      <el-input
-        v-model="listQuery.city"
-        placeholder="City"
+        v-model="listQuery.name"
+        placeholder="name"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
       <el-input
         v-model="listQuery.phone"
-        placeholder="Phone"
+        placeholder="Phone #"
         style="width: 200px;"
+        class="filter-item"
         @keyup.enter.native="handleFilter"
       />
       <el-input
         v-model="listQuery.email"
-        placeholder="Email"
+        placeholder="Email address"
         style="width: 200px;"
+        class="filter-item"
         @keyup.enter.native="handleFilter"
       />
+
       <el-button
         v-waves
         class="filter-item"
@@ -77,42 +59,40 @@
       @sort-change="sortChange"
     >
       <el-table-column type="expand">
-        <template slot-scope="props">
+        <template v-slot="props">
           <el-form
             label-position="left"
             inline
             class="demo-table-expand"
           >
             <el-form-item
-              v-if="props.row.country != ''"
-              label="Country"
+              v-if="props.row.address != ''"
+              label="Address"
             >
-              {{ props.row.country }}
+              {{ props.row.address }}
             </el-form-item>
             <el-form-item
-              v-if="props.row.province != ''"
-              label="Province"
+              v-if="props.row.hobbies"
+              label="Hobbies"
             >
-              {{ props.row.province }}
+              {{ props.row.hobbies }}
             </el-form-item>
             <el-form-item
-              v-if="props.row.city != ''"
-              label="City"
+              v-if="props.row.bio"
+              label="Introduction"
             >
-              {{ props.row.city }}
+              {{ props.row.bio }}
             </el-form-item>
             <el-form-item
-              v-if="props.row.district != ''"
-              label="District"
+              v-if="props.row.resume_pdf"
+              label="Resume PDF"
             >
-              {{ props.row.district }}
+              <el-link :href="props.row.resume_pdf" target="_blank">
+                View PDF
+              </el-link>
+
             </el-form-item>
-            <el-form-item
-              v-if="props.row.nickname != ''"
-              label="Nickname"
-            >
-              {{ props.row.nickname }}
-            </el-form-item>
+
             <el-form-item
               v-if="props.row.profile_photo != '' "
               label="Profile Photo"
@@ -124,17 +104,17 @@
               />
             </el-form-item>
             <el-form-item
-              v-if="props.row.header_photo != '' "
-              label="Header Photo"
+              v-if="props.row.background_image"
+              label="Background image"
             >
               <el-image
                 style="width: 100px;height: 100px;"
-                :src="props.row.header_photo"
-                :preview-src-list="[props.row.header_photo]"
+                :src="props.row.background_image"
+                :preview-src-list="[props.row.background_image]"
               />
             </el-form-item>
             <el-form-item
-              v-if="props.row.video_url != '' "
+              v-if="props.row.video_url "
               label="Video"
             >
               <video
@@ -154,7 +134,7 @@
         width="80"
         :class-name="getSortClass('id')"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
@@ -163,73 +143,90 @@
         prop="user_id"
         width="80"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.user_id }}</span>
         </template>
       </el-table-column>
+
       <el-table-column
-        label="First&Last Name"
+        label="Name"
         width="140"
       >
-        <template slot-scope="scope">
-          {{ scope.row.first_name }} {{ scope.row.last_name }}
+        <template v-slot="scope">
+          {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column
-        label="Wechat Id"
-        width="140"
-      >
-        <template slot-scope="scope">
-          {{ scope.row.wx_id }}
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Email"
-        width="110"
-      >
-        <template slot-scope="scope">
-          {{ scope.row.email }}
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Level"
-        width="110"
-      >
-        <template slot-scope="scope">
-          <span v-if="scope.row.level==1">Basic</span>
-          <span v-if="scope.row.level==2">Pro</span>
-          <span v-if="scope.row.level==3">Plus</span>
-        </template>
-      </el-table-column>
+
       <el-table-column
         label="Phone"
         width="110"
         align="center"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span>{{ scope.row.phone }}</span>
         </template>
       </el-table-column>
+
+      <el-table-column
+        label="Email"
+        width="110"
+      >
+        <template v-slot="scope">
+          {{ scope.row.email }}
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        label="Job Title"
+        width="110"
+      >
+        <template v-slot="scope">
+          {{ scope.row.job_title }}
+        </template>
+      </el-table-column>
+
       <el-table-column
         label="Nationality"
         width="110"
         align="center"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.nationality }}
         </template>
       </el-table-column>
+
+
+      <el-table-column
+        label="Wechat Id"
+        width="140"
+      >
+        <template v-slot="scope">
+          {{ scope.row.wx_id }}
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        label="Level"
+        width="110"
+      >
+        <template v-slot="scope">
+          <el-tag v-if="scope.row.vip_level==1" type="success">Basic</el-tag>
+          <el-tag v-if="scope.row.vip_level==2" type="warning">Pro</el-tag>
+          <el-tag v-if="scope.row.vip_level==3" type="danger">Plus</el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column
         label="Actions"
         align="center"
         width="280"
         class-name="small-padding fixed-width"
       >
-        <template slot-scope="{row,$index}">
+        <template v-slot="{row,$index}">
           <el-button
             type="primary"
             size="mini"
-            @click="handleUpdate(row)"
+            @click="handleCreateTokenToLogin(row)"
           >
             Edit
           </el-button>
@@ -251,7 +248,7 @@
         </template>
       </el-table-column>
       <el-table-column label="Create Time" width="180">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.c_time }}
         </template>
       </el-table-column>
@@ -461,13 +458,22 @@
 
 <script>
 
-import {editUserInfo, deleteUser, vipList, changeVipLevel, userObjectList, educatorList} from '@/api/member'
+import {
+  editUserInfo,
+  deleteUser,
+  vipList,
+  changeVipLevel,
+  userObjectList,
+  educatorContactList
+} from '@/api/member'
 import waves from '@/directive/waves' // waves directive
 import {parseTime, tree} from '@/utils'
 import Pagination from '@/components/Pagination'
 import {addDeals} from '@/api/deals' // secondary package based on el-pagination
 import {addEvent} from '@/api/events'
 import {adCategoryList, buyAd} from "@/api/ads";
+import {loginToUser} from "@/api/admin";
+import {encode} from "js-base64";
 
 export default {
   name: 'Index',
@@ -745,7 +751,7 @@ export default {
         }
       })
     },
-    uploadFileSuccess(response, file, fileList) {
+    uploadFileSuccess(response) {
       console.log(response)
       // console.log(file)
       // console.log(fileList)
@@ -757,7 +763,7 @@ export default {
         console.log(response.msg)
       }
     },
-    uploadEventsFileSuccess(response, file, eventsFileList) {
+    uploadEventsFileSuccess(response) {
       console.log(response)
       // console.log(file)
       // console.log(fileList)
@@ -772,7 +778,7 @@ export default {
     getList() {
       this.listLoading = true
       // console.log(this.listQuery)
-      educatorList(this.listQuery).then(response => {
+      educatorContactList(this.listQuery).then(response => {
         // console.log(response)
         this.list = response.message.data
         this.total = response.message.total
@@ -893,7 +899,7 @@ export default {
         }
       })
     },
-    handleDelete(row, index) {
+    handleDelete(row) {
       // this.list.splice(index, 1)
       deleteUser({
         user_id: row.id,
@@ -920,7 +926,7 @@ export default {
         console.log(error)
       })
     },
-    handleMemberLevel(row, index) {
+    handleMemberLevel(row) {
       // this.tempUpgrade = Object.assign({}, row) // copy obj
       this.tempUpgrade.user_id = row.user_id
       console.log(row)
@@ -966,7 +972,7 @@ export default {
         }
       })
     },
-    handleRecover(row, index) {
+    handleRecover(row) {
       // this.list.splice(index, 1)
       deleteUser({
         user_id: row.id,
@@ -1040,7 +1046,29 @@ export default {
         }
       }
 
+    },
+    handleCreateTokenToLogin(row){
+      console.log(row)
+      let params = {
+        user_id:row.id
+      }
+      loginToUser(params).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+
+          let str = encode(JSON.stringify(res.message))
+
+          let routerPath = process.env.VUE_APP_PC_DOMAIN
+
+          window.open(routerPath+'?from_admin='+encodeURIComponent(str),'_blank')
+
+        }
+
+      }).catch(err=>{
+        console.log(err)
+      })
     }
+
   }
 }
 </script>

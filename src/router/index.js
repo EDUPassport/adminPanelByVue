@@ -320,10 +320,35 @@ export const constantRoutes = [
     children: [
       {
         path: 'list',
+        hidden: true,
         component: () => import('@/views/business/list'),
         name: 'All Businesses',
         meta: {
           title: 'All Businesses'
+        }
+      },
+      {
+        path: 'recruiter',
+        component: () => import('@/views/business/recruiter'),
+        name: 'recruiterList',
+        meta: {
+          title: 'All Recruiter'
+        }
+      },
+      {
+        path: 'school',
+        component: () => import('@/views/business/school'),
+        name: 'schoolList',
+        meta: {
+          title: 'All School'
+        }
+      },
+      {
+        path: 'other',
+        component: () => import('@/views/business/other'),
+        name: 'otherList',
+        meta: {
+          title: 'All Other'
         }
       },
       {

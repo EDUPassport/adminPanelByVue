@@ -32,15 +32,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Platform" width="110px" align="center">
-        <template v-slot="{row}">
-          <span v-if="row.platform == 1">H5</span>
-          <span v-if="row.platform == 2">Wechat Platform</span>
-          <span v-if="row.platform == 3">Mini Program</span>
-          <span v-if="row.platform == 4">PC </span>
-          <span v-if="row.platform == 5">APP</span>
-        </template>
-      </el-table-column>
+
       <el-table-column label="Identity" width="210px" align="center">
         <template v-slot="{row}">
           <span v-if="row.identity == 1">Educator</span>
@@ -63,6 +55,11 @@
       <el-table-column label="Link" width="200px" align="center">
         <template v-slot="{row}">
           <span>{{ row.link }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="H5 Link" width="200px" align="center">
+        <template v-slot="{row}">
+          <span>{{ row.link_h5 }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Icon" width="110px" align="center">
@@ -97,11 +94,11 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="top" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="Platform" prop="platform">
-          <el-select v-model="temp.platform" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in platformList" :key="item.value" :label="item.label" :value="item.value"/>
-          </el-select>
-        </el-form-item>
+<!--        <el-form-item label="Platform" prop="platform">-->
+<!--          <el-select v-model="temp.platform" class="filter-item" placeholder="Please select">-->
+<!--            <el-option v-for="item in platformList" :key="item.value" :label="item.label" :value="item.value"/>-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
 
         <el-form-item label="Identity" prop="identity">
           <el-select v-model="temp.identity" class="filter-item" placeholder="Please select">
@@ -119,6 +116,10 @@
 
         <el-form-item label="Link" prop="link">
           <el-input v-model="temp.link" type="text"/>
+        </el-form-item>
+
+        <el-form-item label="H5 Link" prop="link_h5">
+          <el-input v-model="temp.link_h5" type="text"/>
         </el-form-item>
 
         <el-form-item label="Icon">
@@ -209,6 +210,7 @@ export default {
         menu_name_cn: undefined,
         menu_name_en: undefined,
         link: undefined,
+        link_h5:undefined,
         icon: undefined
       },
       dialogFormVisible: false,
@@ -290,6 +292,7 @@ export default {
         menu_name_cn: undefined,
         menu_name_en: undefined,
         link: undefined,
+        link_h5: undefined,
         icon: undefined
       }
     },
@@ -403,4 +406,5 @@ export default {
     }
   }
 }
+
 </script>

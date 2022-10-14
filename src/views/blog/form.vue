@@ -60,7 +60,7 @@
 </template>
 
 <script>
-  import Tinymce from '@/components/Tinymce'
+  // import Tinymce from '@/components/Tinymce'
   import { addBlog ,blogCategoryList,blogDetail} from '@/api/blog'
   import waves from '@/directive/waves' // waves directive
 
@@ -68,7 +68,7 @@
   import {tree} from "@/utils";
   export default {
     name: 'detail',
-    components: { Tinymce },
+    components: { },
     directives: { waves, permission },
     filters: {
       statusFilter(status) {
