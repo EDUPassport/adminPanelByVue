@@ -1,169 +1,243 @@
 <template>
-  <div class="app-container">
+  <div class="bg">
+    <div class="profile-container">
 
-    <div class="deals-container">
-      <el-form
-        ref="dataForm"
-        :model="dealsTempData"
-        label-position="top"
-        label-width="240px"
-      >
-        <el-form-item label="Deal Ranking Time">
-          <el-date-picker
-            v-model="dealsTempData.deal_ranking_time"
-            type="datetime"
-            placeholder="Please pick a date"
-            @change="dealRankingDueDateChange"
-          />
-        </el-form-item>
-        <el-form-item label="Deal or Discount">
-          <el-select
-            v-model="dealsTempData.type"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in dealsType"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Deal/Discount Name">
-          <el-input
-            v-model="dealsTempData.title"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Deal/Discount Desc">
-          <el-input
-            v-model="dealsTempData.desc"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Multiple Locations or 1">
-          <el-select
-            v-model="dealsTempData.is_all"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in dealsTwo"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
+      <div class="profile-r-container">
 
-        <el-form-item label="Online">
-          <el-select
-            v-model="dealsTempData.is_online"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in onlineOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Location">
-          <el-select
-            v-model="dealsTempData.province_name"
-            placeholder="Province"
-            @change="chooseProvince($event,1)"
-          >
-            <el-option
-              v-for="item in provinceList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-          <el-select
-            v-model="dealsTempData.city_name"
-            placeholder="City"
-            @change="chooseCity($event,1)"
-          >
-            <el-option
-              v-for="item in cityList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-          <el-select
-            v-model="dealsTempData.district_name"
-            placeholder="District"
-            @change="chooseDistrict($event,1)"
-          >
-            <el-option
-              v-for="item in districtList"
-              :key="item.id"
-              :label="item.Pinyin"
-              :value="{id:item.id,name:item.Pinyin}"
-            />
-          </el-select>
-        </el-form-item>
+        <div class="new-deal-t">
+          <div class="new-deal-t-l">Deal</div>
+          <div class="new-deal-t-r">
 
-        <el-form-item label="Add Location Pin">
-          <div id="map" style="width:90%;height:400px;"></div>
-        </el-form-item>
+            <!--              <el-button class="new-deal-btn" plain round>-->
+            <!--                SAVE AS DRAFT-->
+            <!--              </el-button>-->
+            <el-button class="new-deal-btn" type="primary" round
+                       :loading="submitLoadingValue"
+                       @click="submitForm('basicForm')">
+              SUBMIT
+            </el-button>
+          </div>
+        </div>
 
-        <el-form-item label="Deal/Discount Duration">
-          <el-input
-            v-model="dealsTempData.due_contract"
-            type="number"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Dog Friendly">
-          <el-select
-            v-model="dealsTempData.allowed_dog"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in allowedDogOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
+        <el-scrollbar class="profile-r-bg-container">
 
-        <el-form-item label="Url">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            action=""
-            multiple
-            list-type="picture"
-            :limit="1"
-            :http-request="imageHttpRequest"
-            :file-list="fileList"
-          >
-            <i class="el-icon-upload"/>
-            <div class="el-upload__text">
-              Drag the file here, or <em>click to upload</em>
+          <div class="basic-form">
+            <div class="basic-form-label">
+              Deal information
             </div>
-            <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
-          </el-upload>
-        </el-form-item>
-      </el-form>
+            <el-form
+              ref="basicForm"
+              :model="basicForm"
+              :rules="basicRules"
+              label-width="120px"
+              label-position="top"
+              class="deals-form"
+            >
+              <el-row :gutter="50">
+                <el-col :span="6">
+                  <el-form-item label="Deal Name" prop="title">
+                    <el-input v-model="basicForm.title" placeholder="eg. 10% off your first class."></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="18">
+                  <el-form-item label="Deal Description" prop="desc">
+                    <el-input v-model="basicForm.desc" type="textarea"
+                              :rows="4"
+                              placeholder="Provide a paragraph or two about the deal and how to redeem it.">
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
 
-      <div>
-        <el-button type="primary" @click="editData()">Confirm</el-button>
+              <el-row :gutter="50">
+
+                <el-col :span="6">
+                  <el-form-item label="Tags" >
+                    <div class="tags-tips">
+                      Tags will help find your deal easier
+                    </div>
+
+                    <div class="object-tags-add">
+                      <div class="object-tags-item-add">
+                        <el-input type="text"
+                                  v-model="ownTagsValue"
+                                  placeholder='Click "add" after each entry '>
+                        </el-input>
+                        <div class="object-tags-item-btn-container">
+                          <el-button class="object-tags-item-btn"
+                                     type="primary"
+                                     link
+                                     :disabled="!ownTagsValue"
+                                     @click="addOwnTag">
+                            ADD
+                          </el-button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="object-tags-container">
+
+                      <div class="object-tags">
+                        <div class="object-tags-item"
+                             :class=" selectTagsList.indexOf(item.id) == -1 ? '' : 'tags-active' "
+                             v-for="(item,index) in tagsData" :key="index"
+                             @click="selectTagA(item)">
+                          {{ item.name_en }}
+                        </div>
+                      </div>
+                      <div class="object-tags">
+                        <div class="object-tags-item"
+                             :class=" selectOwnTagsList.indexOf(item) == -1 ? '' : 'tags-active' "
+                             v-for="(item,index) in ownTagsList" :key="index"
+                             @click="selectTagB(item)">
+                          {{ item }}
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </el-form-item>
+
+                </el-col>
+
+                <el-col :span="18">
+
+                  <el-form-item  label="Deal Location">
+
+                    <div class="deals-location-bg">
+                      <div class="deals-tabs-container">
+                        <div class="deals-tabs-l"
+                             :class="dealLocationType === 1 ? 'tags-active' : '' "
+                             @click="changeDealLocationType(1)">
+                          ONLINE
+                        </div>
+                        <div class="deals-tabs-m"
+                             :class="dealLocationType === 2 ? 'tags-active' : '' "
+                             @click="changeDealLocationType(2)">
+                          OFFLINE
+                        </div>
+                        <div class="deals-tabs-r"
+                             :class="dealLocationType === 3 ? 'tags-active' : '' "
+                             @click="changeDealLocationType(3)">
+                          BOTH
+                        </div>
+                      </div>
+
+                      <template v-if="dealLocationType === 1">
+
+                        <div class="deals-location-container">
+                          <div class="deals-tips">
+                            This deal is only available online
+                          </div>
+                        </div>
+
+                      </template>
+                      <template v-if="dealLocationType === 2">
+
+                        <div class="deals-location-container">
+                          <div class="deals-location-select-container">
+
+                            <el-select v-model="countryObj"
+                                       @change="countryChange"
+                                       value-key="id"
+                                       filterable
+                                       placeholder="Select Country">
+                              <el-option v-for="(item,i) in countryOptions" :key="i" :label="item.name"
+                                         :value="item"></el-option>
+                            </el-select>
+
+                            <template v-if="provinceOptions.length>0">
+                              <el-select v-model="provinceObj"
+                                         value-key="id"
+                                         filterable
+                                         @change="provinceChange"
+                                         placeholder="Select Province">
+                                <el-option v-for="(item,i) in provinceOptions" :key="i" :label="item.name"
+                                           :value="item"></el-option>
+                              </el-select>
+                            </template>
+                            <template v-if="cityOptions.length>0">
+                              <el-select v-model="cityObj"
+                                         value-key="id"
+                                         filterable
+                                         @change="cityChange"
+                                         placeholder="Select City">
+                                <el-option v-for="(item,i) in cityOptions" :key="i" :label="item.name"
+                                           :value="item"></el-option>
+                              </el-select>
+                            </template>
+
+                          </div>
+
+                          <div class="map-container"
+                               v-loading="mapLoading">
+                            <div id="mapContainer" class="basemap"></div>
+                          </div>
+
+                        </div>
+                      </template>
+
+                      <template v-if="dealLocationType === 3">
+
+                        <div class="deals-location-container">
+                          <div class="deals-tips">
+                            This deal is available online and at the location below
+                          </div>
+                          <div class="deals-location-select-container">
+                            <el-select v-model="countryObj"
+                                       @change="countryChange"
+                                       value-key="id"
+                                       filterable
+                                       placeholder="Select Country">
+                              <el-option v-for="(item,i) in countryOptions" :key="i" :label="item.name"
+                                         :value="item"></el-option>
+                            </el-select>
+
+                            <template v-if="provinceOptions.length>0">
+                              <el-select v-model="provinceObj"
+                                         value-key="id"
+                                         filterable
+                                         @change="provinceChange"
+                                         placeholder="Select Province">
+                                <el-option v-for="(item,i) in provinceOptions" :key="i" :label="item.name"
+                                           :value="item"></el-option>
+                              </el-select>
+                            </template>
+                            <template v-if="cityOptions.length>0">
+                              <el-select v-model="cityObj"
+                                         value-key="id"
+                                         filterable
+                                         @change="cityChange"
+                                         placeholder="Select City">
+                                <el-option v-for="(item,i) in cityOptions" :key="i" :label="item.name"
+                                           :value="item"></el-option>
+                              </el-select>
+                            </template>
+                          </div>
+                          <div class="map-container"
+                               v-loading="map1Loading">
+                            <div id="mapContainer1" class="basemap"></div>
+                          </div>
+
+                        </div>
+                      </template>
+
+                    </div>
+
+
+
+                  </el-form-item>
+
+                </el-col>
+              </el-row>
+
+
+            </el-form>
+
+          </div>
+
+        </el-scrollbar>
+
       </div>
 
     </div>
@@ -171,371 +245,658 @@
 </template>
 
 <script>
-import {addDeals, dealsDetail} from '@/api/deals'
-import {userObjectList} from '@/api/member'
-import waves from '@/directive/waves' // waves directive
-import {format} from 'date-fns' // secondary package based on el-pagination
-import {getAreas} from '@/api/location'
 
+import {TAG_LIST, ADD_DEALS, GET_COUNTRY_LIST, DEAL_DETAIL} from '@/api/api';
+import mapboxgl from "mapbox-gl";
+import 'mapbox-gl/dist/mapbox-gl.css'
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import mapboxgl from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
-import 'mapbox-gl/dist/mapbox-gl.css';
-import {uploadByAliOSS, uploadByService} from '@/api/upload.js'
-import ImageCompressor from 'compressorjs'
 
 export default {
-  name: 'Index',
-  components: {},
-  directives: {waves},
-  filters: {},
+  name: "addDeals",
+  components: {
+
+  },
   data() {
     return {
-      provinceList: [],
-      cityList: [],
-      districtList: [],
-      uploadRequestUrl: process.env.VUE_APP_UPLOAD_API,
-      dealsType: [{label: 'Deal', value: 1}, {label: 'Discount', value: 2}],
-      dealsTwo: [{label: 'All Locations', value: 1}, {label: 'Limited', value: 0}],
-      dealsThree: [{label: '1 year', value: 1}, {label: '2 year', value: 2}],
-      dealsFour: [{label: 'Shanghai', value: 1}, {label: 'Other', value: 0}],
-      allowedDogOptions: [{label: 'Yes', value: 1}, {label: 'No', value: 0}],
-      userListData: [],
-      popuCityList: [],
-      onlineOptions: [{label: 'online', value: 1}, {label: 'offline', value: 2},{label: 'both', value: 3}],
-      dealsTempData: {
-        user_id: 1,
-        type: undefined,
-        is_all: undefined,
-        file: undefined,
-        due_contract: undefined,
-        pay_money: undefined,
-        title: undefined,
-        desc: undefined,
-        deal_id: undefined,
-        province: undefined,
-        province_name: undefined,
-        city: undefined,
-        city_name: undefined,
-        district: undefined,
-        district_name: undefined,
-        location: undefined,
-        identity: undefined,
-        file_name: undefined,
-        allowed_dog: undefined,
-        deal_ranking_time: undefined,
-        lng: undefined,
-        lat: undefined,
-        is_online:undefined
+      submitLoadingValue:false,
+      mapLoading:false,
+      map1Loading:false,
+      accessToken: process.env.VUE_APP_MAP_BOX_ACCESS_TOKEN,
+      mapStyle: process.env.VUE_APP_MAP_BOX_STYLE,
+      dealLocationTypeValue:"1",
+      userInfo: {},
+      basicUserInfo: {},
+      tagsData:[],
+      addTagsStatus: false,
+      ownTagsValue: '',
+      ownTagsList: [],
+      selectTagsList: [],
+      selectOwnTagsList:[],
+      selectTagsArr: [],
+      tagsCnData:[],
+      tagsEnData:[],
+
+      countryObj:{},
+      provinceObj:{},
+      cityObj:{},
+      countryName:'',
+      countryNameCn:'',
+      provinceName:'',
+      provinceNameCn:'',
+      cityName:'',
+      cityNameCn:'',
+
+      countryOptions:[],
+      provinceOptions: [],
+      cityOptions: [],
+
+      basicForm: {
+        user_id: this.$route.query.uid,
+        identity:5,
+        company_id:this.$route.query.cid,
+        title: '',
+        desc: '',
+        tag:'',
+        is_online: 0,
+        location:'',
+        country_id:'',
+        state_id:'',
+        town_id:'',
+        lng:'',
+        lat:'',
+        tags_cn:'',
+        tags_en:''
+      },
+      basicRules: {
+        title: [
+          {
+            required: true,
+            message: 'Please input',
+            trigger: 'blur',
+          }
+        ],
+        desc: [
+          {
+            required: true,
+            message: 'Please input',
+            trigger: 'blur',
+          },
+        ]
 
       },
-      fileUrl: undefined,
-      fileList: undefined,
-      rules: {
-        type: [{required: true, message: 'status is required', trigger: 'change'}]
-      },
-      downloadLoading: false,
-      fileName: undefined
+
+      dealLocationType: 1,
+
 
     }
-  },
-  computed: {
-    token() {
-      return this.$store.state.user.token
-    },
-    uploadHeaders() {
-      return {
-        token: this.$store.state.user.token
-      }
-    }
-  },
-  created() {
-    const uid = this.$route.query.uid
-    const dealId = this.$route.query.deal_id
-    if (uid) {
-      this.dealsTempData.user_id = uid;
-    }
-    if(dealId){
-      this.getDealsDetail(dealId)
-    }
-    this.getAreas()
-    // this.getUserList()
-    this.getUserObjList()
   },
   mounted() {
+    this.getTagsList()
+    this.getAllCountry()
+    let dealId = this.$route.query.deal_id;
+    if(dealId){
+      this.basicForm.deal_id = dealId
+      this.getDealDetail(dealId)
+    }
 
   },
   methods: {
-    getDealsDetail(dealId) {
-      const params = {
-        deal_id: dealId
+    getDealDetail(id){
+      let self =this
+
+      let params = {
+        deal_id:id
       }
-      dealsDetail(params).then(res => {
+
+      DEAL_DETAIL(params).then(res=>{
         console.log(res)
-        if (res.code === 200) {
-          // this.dealDetailData = res.message
-          const detailData = res.message
+        if(res.code == 200){
+          let resMessage = res.message;
+          this.basicForm.title = resMessage.title
+          this.basicForm.desc = resMessage.desc
+          this.basicForm.tags_cn = resMessage.tags_cn
+          this.basicForm.tags_en = resMessage.tags_en
+          this.basicForm.is_online = resMessage.is_online
+          this.dealLocationType = resMessage.is_online
+          this.basicForm.location = resMessage.location
 
-          if (res.message.location) {
-            this.dealsTempData.location = res.message.location
-          }
-          if (res.message.lat) {
-            this.dealsTempData.lat = res.message.lat
-          }
-          if (res.message.lng) {
-            this.dealsTempData.lng = res.message.lng
-          }
-          if(res.message.lng && res.message.lat ){
-            this.initMap(res.message.lng,res.message.lat)
-          }else{
-            this.initMap(121.472644, 31.231706)
+          if(resMessage.is_online == 2){
+            this.mapLoading=true
+            setTimeout(function () {
+              self.initMap()
+              self.mapLoading=false
+            },1000)
           }
 
-          this.dealsTempData = Object.assign({}, detailData) // copy obj
-          this.dealsTempData.deal_id = detailData.id
-          if (detailData.deal_ranking_time === '0000-00-00 00:00:00') {
-            this.dealsTempData.deal_ranking_time = undefined
+          if(resMessage.is_online == 3){
+            this.map1Loading=true
+            setTimeout(function () {
+              self.initMap1()
+              self.map1Loading=false
+            },1000)
+
           }
-          if (detailData.province > 0 && detailData.provinces != null) {
-            this.dealsTempData.province_name = detailData.provinces.Pinyin
-          }
-          if (detailData.city > 0 && detailData.citys != null) {
-            this.dealsTempData.city_name = detailData.citys.Pinyin
-          }
-          if (detailData.district > 0 && detailData.districts != null) {
-            this.dealsTempData.district_name = detailData.districts.Pinyin
-          }
-          const file = res.message.file
-          if (file !== '') {
-            this.fileList = [{name: '', url: file}]
-          } else {
-            this.fileList = undefined
-          }
-        } else {
-          this.$message.error(res.msg)
+
+          // tags 返回的数据和tagslist里面的数据的id不一致
+          // let tags = resMessage.tags;
+          // let tagsData = []
+          // tags.forEach(item=>{
+          //   tagsData.push(item.id)
+          // })
+          // this.selectTagsList = tagsData
+
         }
-      }).catch(error => {
-        console.log(error)
+      }).catch(err=>{
+        console.log(err)
       })
     },
-    initMap(lng,lat){
-      let _this = this;
-      mapboxgl.accessToken = 'pk.eyJ1Ijoic3JrbGluZ2UiLCJhIjoiY2t2NnR4anI2OWU5NDJ3bWE1dHd3c3h1aSJ9.O0JfjqiyBBkFuf4G-DQ-DQ';
+    changeDealLocationType(value){
+      this.dealLocationType = value
+      let self =this
+
+      if(value == 2){
+        this.mapLoading=true
+        setTimeout(function () {
+          self.initMap()
+          self.mapLoading=false
+        },1000)
+      }
+
+      if(value == 3){
+        this.map1Loading=true
+        setTimeout(function () {
+          self.initMap1()
+          self.map1Loading=false
+        },1000)
+
+      }
+    },
+    initMap() {
+      mapboxgl.accessToken = this.accessToken;
+
       const map = new mapboxgl.Map({
-
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [lng,lat],
-        zoom: 13
+        container: "mapContainer",
+        center: [121.472644, 31.231706],
+        style: this.mapStyle,
+        zoom: 12
       });
-      map.addControl(new mapboxgl.FullscreenControl());
+      const nav = new mapboxgl.NavigationControl();
+      map.addControl(nav, "top-right");
 
-      const geocoder = new  MapboxGeocoder({
-        accessToken: mapboxgl.accessToken,
-        marker: {
-          color: 'orange'
+      const geolocate = new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
         },
-        mapboxgl: mapboxgl
+        trackUserLocation: true
       });
 
-      map.addControl(geocoder);
+      map.addControl(geolocate, "top-right")
 
+      const geocoder = new MapboxGeocoder({
+        "accessToken": this.accessToken,
+        "mapboxgl": mapboxgl
+      })
+
+      map.addControl(geocoder, 'top-left')
       const marker = new mapboxgl.Marker()
 
-      marker.setLngLat([lng,lat]).addTo(map)
+      // {
+      //   draggable:true
+      // }
 
+      // .setLngLat([121.47, 31.23])
+      // .addTo(map);
+
+      // marker.on('dragend',(e)=>{
+      //   console.log(e)
+      // })
       geocoder.on('result', (e) => {
         console.log(e)
         marker.setLngLat(e.result.center).addTo(map)
-        _this.dealsTempData.location = e.result.place_name
-        _this.dealsTempData.lng = e.result.center[0]
-        _this.dealsTempData.lat = e.result.center[1]
+        this.basicForm.location = e.result.place_name
+        this.basicForm.lng = e.result.center[0]
+        this.basicForm.lat = e.result.center[1]
 
       })
 
       geocoder.on('clear', (e) => {
         console.log(e)
-        _this.dealsTempData.location = ''
-        _this.dealsTempData.lng = ''
-        _this.dealsTempData.lat = ''
+        this.basicForm.location =''
+        this.basicForm.lng = ''
+        this.basicForm.lat = ''
       })
 
     },
-    getAreas() {
-      const params = {}
-      getAreas(params).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          this.provinceList = res.message
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(error => {
-        console.log(error)
-      })
-    },
-    chooseProvince(e, value) {
-      console.log(e)
-      if (value === 1) {
-        this.dealsTempData.province = e.id
-        this.dealsTempData.province_name = e.name
-        this.dealsTempData.city = undefined
-        this.dealsTempData.city_name = undefined
-        this.dealsTempData.district = undefined
-        this.dealsTempData.district_name = undefined
-      }
+    initMap1() {
+      mapboxgl.accessToken = this.accessToken;
 
-      const params = {
-        pid: e.id
-      }
-      getAreas(params).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          this.cityList = res.message
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(error => {
-        console.log(error)
-      })
-    },
-    chooseCity(e, value) {
-      if (value === 1) {
-        this.dealsTempData.city = e.id
-        this.dealsTempData.city_name = e.name
-        this.dealsTempData.district = undefined
-        this.dealsTempData.district_name = undefined
-      }
+      const map = new mapboxgl.Map({
+        container: "mapContainer1",
+        center: [121.472644, 31.231706],
+        style: this.mapStyle,
+        zoom: 12
+      });
+      const nav = new mapboxgl.NavigationControl();
+      map.addControl(nav, "top-right");
 
-      const params = {
-        pid: e.id
-      }
-      getAreas(params).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          this.districtList = res.message
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(error => {
-        console.log(error)
-      })
-    },
-    chooseDistrict(e) {
-      this.dealsTempData.district = e.id
-      this.dealsTempData.district_name = e.name
-      console.log(this.dealsTempData)
-      this.$forceUpdate()
-    },
-    dealRankingDueDateChange(e) {
-      console.log(format(e, 'yyyy-MM-dd HH:mm:ss'))
-      this.dealsTempData.deal_ranking_time = format(e, 'yyyy-MM-dd HH:mm:ss')
-    },
-    getUserObjList() {
-      userObjectList({pid: 71}).then(res => {
-        this.popuCityList = res.message
-      })
-    },
-    imageHttpRequest(options) {
-      let self = this;
-      this.$loading({
-        text:'uploading...'
-      })
-      // console.log(options)
-      new ImageCompressor(options.file, {
-        quality: 0.6,
-        success(file) {
-          // console.log(file)
-          const formData = new FormData();
-
-          // console.log(file)
-          let isInChina = process.env.VUE_APP_CHINA
-          if (isInChina === 'yes') {
-            formData.append('file[]', file, file.name)
-            uploadByAliOSS(formData).then(res => {
-              // console.log(res)
-              if (res.code == 200) {
-                self.$loading().close();
-                let myFileUrl = res.data[0]['file_url'];
-                let myFileName = res.data[0]['file_name']
-                self.uploadLoadingStatus = false;
-                self.dealsTempData.file = myFileUrl
-                self.dealsTempData.file_name = myFileName
-                self.fileList = [{name: myFileName, url: myFileUrl}]
-
-              }
-            }).catch(err => {
-              console.log(err)
-              self.$loading().close();
-            })
-
-          }
-
-          if (isInChina === 'no') {
-            formData.append('file', file, file.name)
-            uploadByService(formData).then(res => {
-              // console.log(res)
-              if (res.code == 200) {
-                let myFileUrl = res.message.file_path;
-                let myFileName = res.message.file_name;
-                self.$loading().close();
-                self.uploadLoadingStatus = false;
-                self.dealsTempData.file = myFileUrl
-                self.dealsTempData.file_name = myFileName
-                self.fileList = [{name: myFileName, url: myFileUrl}]
-              }
-            }).catch(err => {
-              console.log(err)
-              self.$loading().close();
-            })
-
-          }
-
+      const geolocate = new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
         },
-        error(err) {
-          console.log(err.message)
-          self.$loading().close();
-        }
+        trackUserLocation: true
+      });
 
+      map.addControl(geolocate, "top-right")
+
+      const geocoder = new MapboxGeocoder({
+        "accessToken": this.accessToken,
+        "mapboxgl": mapboxgl
+      })
+
+      map.addControl(geocoder, 'top-left')
+      const marker = new mapboxgl.Marker()
+      // {
+      //   draggable:true
+      // }
+      // marker.on('dragend',(e)=>{
+      //   console.log(e)
+      // })
+      geocoder.on('result', (e) => {
+        console.log(e)
+        marker.setLngLat(e.result.center).addTo(map)
+        this.basicForm.location = e.result.place_name
+        this.basicForm.lng = e.result.center[0]
+        this.basicForm.lat = e.result.center[1]
+
+      })
+      geocoder.on('clear', (e) => {
+        console.log(e)
+        this.basicForm.location =''
+        this.basicForm.lng = ''
+        this.basicForm.lat = ''
       })
 
     },
-    editData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.dealsTempData)
-          this.$confirm('Sure you want to perform the operation?', 'Tips', {
-            confirmButtonText: 'Sure',
-            cancelButtonText: 'Cancel',
-            type: 'warning',
-            center: true
-          }).then(() => {
-            addDeals(tempData).then(() => {
-              this.$message({
-                type: 'success',
-                message: 'Successfully!'
-              });
-            })
+    getAllCountry(){
+      let params = {
+      }
+      GET_COUNTRY_LIST(params).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+          this.countryOptions = res.message;
+        }
+      }).catch(err=>{
+        this.$message.error(err.msg)
+      })
+    },
+    getAllProvinces(countryId){
+      let params = {
+        country_id:countryId
+      }
+      GET_COUNTRY_LIST(params).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+          this.provinceOptions = res.message;
+        }
+      }).catch(err=>{
+        this.$message.error(err.msg)
+      })
+    },
+    getAllCitys(countryId,stateId){
+      let params = {
+        country_id:countryId,
+        state_id:stateId
+      }
+      GET_COUNTRY_LIST(params).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+          this.cityOptions = res.message;
+        }
+      }).catch(err=>{
+        this.$message.error(err.msg)
+      })
+    },
+    countryChange(e){
+      console.log(e)
+      this.basicForm.state_id=undefined
+      this.basicForm.town_id = undefined
 
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: 'Canceled Successfully'
-            });
-          });
+      this.provinceOptions = []
+      this.cityOptions = []
 
+      this.basicForm.country_id = e.id
+      this.countryName = e.name
+      this.countryNameCn = e.name
+      this.getAllProvinces(e.id)
 
+    },
+    provinceChange(e) {
+      console.log(e)
+      this.basicForm.town_id = undefined
+      this.cityOptions = []
+
+      this.basicForm.state = e.id
+      this.provinceName = e.name
+      this.provinceNameCn = e.name
+
+      this.getAllCitys(this.basicForm.country_id,e.id)
+    },
+    cityChange(e) {
+      console.log(e)
+      this.basicForm.town_id = e.id
+      this.cityName = e.name
+      this.cityNameCn = e.name
+    },
+    getTagsList(){
+      let data = {
+        page:1,
+        limit:1000
+      }
+      TAG_LIST(data).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+          this.tagsData = res.message.data;
+        }
+      }).catch(err=>{
+        console.log(err)
+        if(err.msg){
+          this.$message.error(err.msg)
+        }
+        if(err.message){
+          this.$message.error(err.message)
         }
       })
-    }
+    },
+    addOwnTag() {
+      this.addTagsStatus = false;
 
+      let ownIndex = this.ownTagsList.indexOf(this.ownTagsValue);
+      if(ownIndex == -1){
+        this.ownTagsList.push(this.ownTagsValue);
+        this.selectOwnTagsList.push(this.ownTagsValue)
+      }
+
+      this.ownTagsValue = '';
+
+    },
+    selectTagA(item){
+      let index = this.selectTagsList.indexOf(item.id);
+
+      if (index == -1) {
+        this.selectTagsList.push(item.id)
+        this.tagsCnData.push(item.name_cn);
+        this.tagsEnData.push(item.name_en);
+
+      } else {
+        this.selectTagsList.splice(index, 1);
+        this.tagsCnData.splice(index,1);
+        this.tagsEnData.splice(index,1);
+      }
+
+    },
+    selectTagB(item){
+      let index = this.selectOwnTagsList.indexOf(item);
+
+      if (index == -1) {
+        this.selectOwnTagsList.push(item)
+        this.tagsCnData.push(item);
+        this.tagsEnData.push(item);
+
+      } else {
+        this.selectOwnTagsList.splice(index, 1);
+        this.tagsCnData.splice(index,1);
+        this.tagsEnData.splice(index,1);
+      }
+
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.basicForm.tag = this.selectTagsList;
+          this.basicForm.tags_cn = this.tagsCnData.join(',');
+          this.basicForm.tags_en = this.tagsEnData.join(',');
+          this.basicForm.is_online = this.dealLocationType
+          this.$loading({
+            text:'Loading...'
+          })
+          let params = Object.assign({}, this.basicForm);
+          ADD_DEALS(params).then(res => {
+            console.log(res)
+            if(res.code == 200){
+              this.$router.push('/vendor/deals/list')
+              this.$loading().close()
+            }
+          }).catch(err=>{
+            console.log(err)
+            if(err.msg){
+              this.$message.error(err.msg)
+            }
+            if(err.message){
+              this.$message.error(err.message)
+            }
+          })
+
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+    },
+    discard(){
+      this.$router.go(-1)
+    }
   }
 }
 </script>
 
-<style>
-.app-container {
-  width: 96%;
-  margin: 0 auto;
+<style scoped>
+
+.bg {
+
+
 }
+
+.profile-container {
+
+}
+
+.profile-l-container {
+
+}
+
+.profile-r-container {
+  width: 100%;
+}
+
+.profile-r-bg-container{
+
+}
+
+.new-deal-t {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 50px;
+}
+
+.new-deal-t-l {
+  color: #262626;
+
+}
+
+.new-deal-t-r {
+
+}
+
+.new-deal-btn {
+
+}
+
+
+.basic-form{
+  background-color: #f5f6f7;
+
+  padding: 50px;
+  box-shadow: 0 3px 0 #00000012;
+  border-radius: 38px;
+  margin: 0 50px;
+}
+
+.basic-form-label{
+  color: #262626;
+}
+
+.deals-form{
+  margin-top: 25px;
+}
+
+.object-tags-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.object-tags {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+
+}
+
+.object-tags-item {
+  background-color: #F0F2F5;
+  border: 1px solid #262626;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.object-tags-add {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.object-tags-item-add {
+  width: 100%;
+  position: relative;
+}
+
+.object-tags-item-btn-container {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+
+}
+
+.object-tags-item-btn {
+  color: #262626;
+}
+
+
+.tags-active {
+  background-color: #6650B3;
+  color: #FFFFFF !important;
+}
+
+.deals-location-bg{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.deals-tabs-container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.deals-tabs-l{
+
+
+  color: #262626;
+  border: 2px solid #262626;
+  height: 44px;
+  line-height: 44px;
+  padding: 0 20px;
+  border-top-left-radius: 44px;
+  border-bottom-left-radius: 44px;
+  cursor: pointer;
+}
+.deals-tabs-m{
+
+
+  color: #262626;
+  border-top: 2px solid #262626 ;
+  border-bottom: 2px solid #262626 ;
+  height: 44px;
+  line-height: 44px;
+  padding: 0 20px;
+  cursor: pointer;
+}
+
+.deals-tabs-r{
+
+
+  color: #262626;
+  border: 2px solid #262626;
+  height: 44px;
+  line-height: 44px;
+  padding: 0 20px;
+  border-top-right-radius: 44px;
+  border-bottom-right-radius: 44px;
+  cursor: pointer;
+}
+.deals-location-container{
+  margin-top: 25px;
+}
+
+.deals-location-select-container{
+  text-align: left;
+}
+
+.map-container{
+  margin-top: 25px;
+  min-width: 700px;
+  width: 100%;
+  height: 300px;
+  text-align: center;
+}
+
+.basemap{
+  width: 100%;
+  height: 100%;
+
+}
+
+.tags-tips{
+  text-align: left;
+  color: #808080;
+}
+.deals-tips{
+  text-align: left;
+  color: #808080;
+}
+
+@media screen and (min-width: 1200px){
+
+}
+
+@media screen and (max-width: 768px){
+
+}
+
+
 </style>

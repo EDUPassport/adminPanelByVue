@@ -670,14 +670,14 @@ export default {
       this.getList()
     },
     handleCreateJobs(row) {
-      this.$router.push({ path: '/business/jobs/addJobs', query: { uid: row.user_id, business_id: row.id, business_name: row.business_name }})
+      this.$router.push({ path: '/business/jobs/addJobs', query: { uid: row.user_id, cid: row.id, identity:4 }})
     },
     handleLookJobs(row){
       console.log(row)
       this.$router.push({ path: '/business/filterJobs', query: { uid: row.user_id}})
     },
     handleCreateEvents(row){
-      this.$router.push({ path: '/business/events/addEvents', query: { uid: row.user_id }})
+      this.$router.push({ path: '/business/events/addEvents', query: { uid: row.user_id, cid:row.id, identity: 4 }})
     },
     handleMultiCreateJobs(row) {
       this.tempMultiPosts.user_id = row.user_id

@@ -111,7 +111,9 @@
           <el-input v-model="temp.relative_link" />
         </el-form-item>
         <el-form-item label="Description">
-          <el-input v-model="temp.title"  type="textarea"/>
+<!--          <el-input v-model="temp.title"  type="textarea"/>-->
+          <tinymce v-model="temp.title" :height="300" />
+
         </el-form-item>
         <el-form-item label="Sort">
           <el-input v-model="temp.sort" type="number" />
@@ -176,10 +178,11 @@ import { format } from 'date-fns'
 import {adCategoryList} from "@/api/ads";
 import {uploadByAliOSS, uploadByService} from '@/api/upload.js'
 import ImageCompressor from 'compressorjs'
+import Tinymce from '@/components/Tinymce'
 
 export default {
   name: 'Index',
-  components: { Pagination },
+  components: { Pagination, Tinymce },
   directives: { waves, permission },
   filters: {
     statusFilter(status) {

@@ -204,6 +204,7 @@ export const constantRoutes = [
         path: 'purchase/list',
         component: () => import('@/views/ads/purchase/list'),
         name: 'Purchased Ads',
+        hidden: true,
         meta: {
           title: 'Purchased Ads'
         }
@@ -212,6 +213,7 @@ export const constantRoutes = [
         path: 'purchase/review',
         component: () => import('@/views/ads/purchase/review'),
         name: 'Redeemed Ad Review',
+        hidden: true,
         meta: {
           title: 'Redeemed Ad Review'
         }
@@ -253,6 +255,14 @@ export const constantRoutes = [
         name: 'Multiple Select Fields',
         meta: {
           title: 'Multiple Select Fields'
+        }
+      },
+      {
+        path: 'subIdentity',
+        component: () => import('@/views/category/subIdentity'),
+        name: 'User Category',
+        meta: {
+          title: 'User Category'
         }
       }
     ]

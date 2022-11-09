@@ -472,7 +472,7 @@ export default {
     },
     handleEdit(row) {
 
-      this.$router.push({ path: '/vendor/deals/editDeals', query: { deal_id: row.id }})
+      this.$router.push({ path: '/vendor/deals/editDeals', query: { deal_id: row.id,cid:row.company_id,uid:row.user_id }})
     },
     handleFeatured(row){
       this.featuredTemp.deal_id = row.id;

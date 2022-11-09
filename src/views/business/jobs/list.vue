@@ -207,7 +207,7 @@
           </el-table-column>
           <el-table-column label="Business Name" width="210px" align="center">
             <template v-slot="{row}">
-              <span>{{ row.business_name }}</span>
+              <span>{{ row.company_name }}</span>
             </template>
           </el-table-column>
           <el-table-column label="Salary" width="110px" align="center">
@@ -233,7 +233,7 @@
                            fixed="right"
                            class-name="small-padding fixed-width">
             <template v-slot="{row,$index}">
-              <el-button size="mini" type="success" @click="handleUpdate(row)">
+              <el-button size="mini" type="success" @click="handleCreateTokenToLogin(row)">
                 Edit
               </el-button>
               <el-button size="mini" type="primary" @click="showMoreAction(row,$index)">
@@ -373,9 +373,7 @@
         <el-button type="primary" size="mini" @click="handleReview(nowRow)">
           Review
         </el-button>
-        <el-button size="mini" type="success" @click="handleUpdate(nowRow)">
-          Edit
-        </el-button>
+
         <el-button v-if="nowRow.is_delete===1" size="mini" @click="handleRecover(nowRow)">
           Recover
         </el-button>
@@ -397,6 +395,8 @@ import {setJobSort, jobList, approveJobs, delJobs, setJobFeature, refreshJobs} f
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { format , formatDistanceToNow,add , isAfter} from 'date-fns'
+import {loginToUser} from "@/api/admin";
+import {encode} from "js-base64";
 
 export default {
   name: 'ComplexTable',
@@ -713,7 +713,35 @@ export default {
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
+    },
+    handleCreateTokenToLogin(row){
+      console.log(row)
+      //business/jobs/addJobs?uid=1628&cid=204&identity=2
+      this.$router.push({path:'/business/jobs/addJobs',
+        query:{uid:row.user_id,cid:row.company_id,identity:row.identity,job_id:row.id}})
+    },
+    handleCreateTokenToLogin1(row){
+      console.log(row)
+      let params = {
+        user_id:row.user_id
+      }
+      loginToUser(params).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+
+          let str = encode(JSON.stringify(res.message))
+
+          let routerPath = process.env.VUE_APP_PC_DOMAIN
+
+          window.open(routerPath+'?from_admin='+encodeURIComponent(str),'_blank')
+
+        }
+
+      }).catch(err=>{
+        console.log(err)
+      })
     }
+
 
   }
 }

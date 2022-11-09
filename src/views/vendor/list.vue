@@ -639,10 +639,10 @@ export default {
       })
     },
     handleAddDeals(row) {
-      this.$router.push({ path: '/vendor/deals/addDeals', query: { uid: row.user_id }})
+      this.$router.push({ path: '/vendor/deals/addDeals', query: { uid: row.user_id,cid:row.id,identity: 5 }})
     },
     handleAddEvents(row) {
-      this.$router.push({ path: '/vendor/events/addEvents', query: { uid: row.user_id }})
+      this.$router.push({ path: '/vendor/events/addEvents', query: { uid: row.user_id,cid:row.id, identity:5 }})
     },
     createEvents() {
       // console.log(this.eventsTempData)
