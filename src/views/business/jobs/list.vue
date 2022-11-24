@@ -160,7 +160,7 @@
           </el-table-column>
           <el-table-column label="User Id" prop="user_id" width="80px">
             <template v-slot="{row}">
-              <span>{{ row.user_id }}</span>
+              <span style="cursor: pointer;" @click="turnProfileList(row)">{{ row.user_id }}</span>
             </template>
           </el-table-column>
           <el-table-column label="Viewed"  width="80px">
@@ -252,7 +252,7 @@
           :total="total"
           :page.sync="listQuery.page"
           :limit.sync="listQuery.limit"
-          @pagination="getList"
+          @pagination="paginationEvent"
         />
 
       </el-tab-pane>
@@ -435,7 +435,7 @@ export default {
       tableKey: 0,
       list: null,
       total: 0,
-      listLoading: true,
+      listLoading: false,
       listQuery: {
         page: 1,
         limit: 50,
@@ -489,9 +489,42 @@ export default {
     }
   },
   created() {
+    let page = this.$route.query.page;
+    let limit = this.$route.query.limit;
+
+    if(page){
+      this.listQuery.page = Number(page)
+    }
+    if(limit){
+      this.listQuery.limit = Number(limit)
+    }
+
     this.getList()
   },
   methods: {
+    turnProfileList(row){
+
+      if(row.identity == 1){
+        this.$router.push({path:'/educator/list',query:{uid:row.user_id}})
+      }
+
+      if(row.identity == 2){
+        this.$router.push({path:'/business/recruiter',query:{uid:row.user_id,cid:row.company_id}})
+      }
+
+      if(row.identity == 3){
+        this.$router.push({path:'/business/school',query:{uid:row.user_id,cid:row.company_id}})
+      }
+
+      if(row.identity == 4){
+        this.$router.push({path:'/business/other',query:{uid:row.user_id,cid:row.company_id}})
+      }
+
+      if(row.identity == 5){
+        this.$router.push({path:'/vendor/vendor',query:{uid:row.user_id, cid:row.company_id}})
+      }
+
+    },
     showMoreAction(row,index){
       this.nowRow = row
       this.moreActionDialog = true
@@ -516,18 +549,21 @@ export default {
         this.getList()
       }
     },
+    paginationEvent(e){
+      this.$router.push({path:'/business/jobs/list',query:{page:e.page, limit:e.limit}})
+      this.getList()
+    },
     getList() {
       this.listLoading = true
-      // console.log(this.listQuery)
-      jobList(this.listQuery).then(response => {
-        // console.log(response)
-        this.list = response.message.data
-        this.total = response.message.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
+      jobList(this.listQuery).then(res => {
+        if(res.code == 200){
+          this.list = res.message.data
+          this.total = res.message.total
           this.listLoading = false
-        }, 300)
+        }
+      }).catch(err=>{
+        console.log(err)
+        this.listLoading = false
       })
     },
     handleFilter() {

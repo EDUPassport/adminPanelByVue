@@ -270,7 +270,7 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getList"
+      @pagination="paginationEvent"
     />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormUpgrade">
@@ -423,19 +423,15 @@ export default {
       tableKey: 0,
       list: null,
       total: 0,
-      listLoading: true,
+      listLoading: false,
       listQuery: {
         page: 1,
         limit: 50,
-        nickname: undefined,
-        truename: undefined,
-        phone: undefined,
-        is_educator: undefined,
-        is_business: undefined,
-        is_vendor: undefined,
-        is_other: undefined,
-        is_seeking: undefined,
-        sex: undefined
+        id: undefined,
+        user_id: undefined,
+        company_name: undefined,
+        work_phone: undefined,
+        work_email: undefined
       },
       identityOptions: [{ label: 'Educator', value: 1 }, { label: 'Business', value: 2 }, { label: 'Vendor', value: 3 }],
       levelOptions: [],
@@ -505,6 +501,26 @@ export default {
     }
   },
   created() {
+
+    let page = this.$route.query.page;
+    let limit = this.$route.query.limit;
+    let cid = this.$route.query.cid;
+    let uid = this.$route.query.uid;
+
+    if(page){
+      this.listQuery.page = Number(page)
+    }
+    if(limit){
+      this.listQuery.limit = Number(limit)
+    }
+    if(cid){
+      this.listQuery.id = Number(cid)
+    }
+
+    if(uid){
+      this.listQuery.user_id = Number(uid)
+    }
+
     this.getList()
     this.getVipList()
     this.getAdsCategoryList()
@@ -630,17 +646,22 @@ export default {
       this.tableData = results
       this.tableHeader = header
     },
+    paginationEvent(e){
+      this.$router.push({path:'/business/recruiter',query:{page:e.page, limit:e.limit}})
+      this.getList()
+    },
     getList() {
       this.listLoading = true
-      recruiterList(this.listQuery).then(response => {
-        // console.log(response)
-        this.list = response.message.data
-        this.total = response.message.total
-        console.log(this.list)
-        // Just to simulate the time of the request
-        setTimeout(() => {
+      recruiterList(this.listQuery).then(res => {
+        if(res.code == 200){
+          this.list = res.message.data
+          this.total = res.message.total
           this.listLoading = false
-        }, 1.5 * 1000)
+        }
+
+      }).catch(err=>{
+        console.log(err)
+        this.listLoading = false
       })
     },
     changeIdentity(e) {

@@ -68,6 +68,12 @@
             inline
             class="demo-table-expand"
           >
+            <el-form-item label="Wechat Id">
+              <span>{{ props.row.wx_id }}</span>
+            </el-form-item>
+            <el-form-item label="Work Phone">
+              <span>{{ props.row.work_phone }}</span>
+            </el-form-item>
             <el-form-item label="Business Reg Number">
               <span>{{ props.row.busin_reg_num }}</span>
             </el-form-item>
@@ -225,32 +231,16 @@
       </el-table-column>
       <el-table-column
         label="Company Name"
-        width="150"
+        width="250"
       >
         <template v-slot="scope">
           {{ scope.row.company_name }}
         </template>
       </el-table-column>
-      <el-table-column
-        label="Wechat Id"
-        width="110"
-      >
-        <template v-slot="scope">
-          {{ scope.row.wx_id }}
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Work Phone"
-        width="110"
-        align="center"
-      >
-        <template v-slot="scope">
-          <span>{{ scope.row.work_phone }}</span>
-        </template>
-      </el-table-column>
+
       <el-table-column
         label="Membership Level"
-        width="110"
+        width="150"
       >
         <template v-slot="scope">
           <span v-if="scope.row.vip_level == 1">Basic </span>
@@ -348,7 +338,7 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getList"
+      @pagination="paginationEvent"
     />
 
     <el-dialog
@@ -492,19 +482,15 @@ export default {
       tableKey: 0,
       list: null,
       total: 0,
-      listLoading: true,
+      listLoading: false,
       listQuery: {
         page: 1,
         limit: 50,
-        nickname: undefined,
-        truename: undefined,
-        phone: undefined,
-        is_educator: undefined,
-        is_business: undefined,
-        is_vendor: undefined,
-        is_other: undefined,
-        is_seeking: undefined,
-        sex: undefined
+        id: undefined,
+        user_id: undefined,
+        company_name: undefined,
+        work_phone: undefined,
+        work_email: undefined
       },
       percentOptions: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
       seekingOptions: [{label: 'no', value: 0}, {label: 'Yes', value: 1}],
@@ -586,6 +572,27 @@ export default {
     }
   },
   created() {
+
+    let page = this.$route.query.page;
+    let limit = this.$route.query.limit;
+    let cid = this.$route.query.cid;
+    let uid = this.$route.query.uid;
+
+    if(page){
+      this.listQuery.page = Number(page)
+    }
+    if(limit){
+      this.listQuery.limit = Number(limit)
+    }
+
+    if(cid){
+      this.listQuery.id = Number(cid)
+    }
+
+    if(uid){
+      this.listQuery.user_id = Number(uid)
+    }
+
     this.getList()
     this.getVipList()
     this.getAdsCategoryList()
@@ -692,18 +699,22 @@ export default {
         }
       })
     },
+    paginationEvent(e){
+      this.$router.push({path:'/vendor/vendor',query:{page:e.page, limit:e.limit}})
+      this.getList()
+    },
     getList() {
       this.listLoading = true
       // console.log(this.listQuery)
-      vendorListV2(this.listQuery).then(response => {
-        // console.log(response)
-        this.list = response.message.data
-        this.total = response.message.total
-        console.log(this.list)
-        // Just to simulate the time of the request
-        setTimeout(() => {
+      vendorListV2(this.listQuery).then(res => {
+        if(res.code == 200){
+          this.list = res.message.data
+          this.total = res.message.total
           this.listLoading = false
-        }, 1.5 * 1000)
+        }
+      }).catch(err=>{
+        console.log(err)
+        this.listLoading = false
       })
     },
     changeIdentity(e) {

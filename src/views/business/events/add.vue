@@ -166,8 +166,10 @@
                       </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                      <el-form-item label="Event Date" required prop="date">
+
+                      <el-form-item label="Event Date" prop="date">
                         <div class="event-date-container">
+
                           <div class="event-date">
                             <el-date-picker
                               v-model="basicForm.date"
@@ -175,7 +177,7 @@
                               type="date"
                               :disabledDate="eventDisabledDate"
                               placeholder="Day"
-                              value-format="yyyy-MM-DD"
+                              value-format="yyyy-MM-dd"
                             ></el-date-picker>
                           </div>
                           <div class="event-time">
@@ -185,9 +187,12 @@
                                 v-model="startTime"
                                 :max-time="endTime"
                                 placeholder="Start time"
-                                start="00:00"
-                                step="00:01"
-                                end="23:59"
+                                :picker-options="{
+                                  start: '00:00',
+                                  step: '00:01',
+                                  end: '23:59'
+                                }"
+
                               />
                             </div>
                             <div class="event-time-item">
@@ -196,14 +201,28 @@
                                 v-model="endTime"
                                 :min-time="startTime"
                                 placeholder="End time"
-                                start="00:00"
-                                step="00:01"
-                                end="23:59"
+                                :picker-options="{
+                                  start: '00:00',
+                                  step: '00:01',
+                                  end: '23:59'
+                                }"
+
                               />
 
                             </div>
 
                           </div>
+                        </div>
+
+                        <div>
+                          <div>Current</div>
+                          <div>
+                            Start Time: {{basicForm.start_time}}
+                          </div>
+                          <div>
+                            End Time: {{ basicForm.end_time}}
+                          </div>
+
                         </div>
 
                       </el-form-item>
@@ -383,19 +402,19 @@ export default {
       return date.getTime() < mDate.getTime();
     }
 
-    const checkEventDate = (rule, value, callback) => {
-      console.log(value)
-      if (!value) {
-        return callback(new Error('Please select date'))
-      }
-      if (!this.startTime) {
-        return callback(new Error('Please select start time'))
-      }
-      if (!this.endTime) {
-        return callback(new Error('Please select end time'))
-      }
-      callback()
-    }
+    // const checkEventDate = (rule, value, callback) => {
+    //   console.log(value)
+    //   if (!value) {
+    //     return callback(new Error('Please select date'))
+    //   }
+    //   if (!this.startTime) {
+    //     return callback(new Error('Please select start time'))
+    //   }
+    //   if (!this.endTime) {
+    //     return callback(new Error('Please select end time'))
+    //   }
+    //   callback()
+    // }
 
     return {
       eventDisabledDate,
@@ -494,13 +513,7 @@ export default {
             trigger: 'blur',
           },
         ],
-        date: [
-          {
-            required: true,
-            validator: checkEventDate,
-            trigger: 'blur',
-          },
-        ],
+
         file: [
           {
             required: true,
@@ -551,19 +564,20 @@ export default {
       this.companyLogoPhotoUrl = editStr.third_company_logo;
 
     }
+    this.getAllCountry()
+    this.getUserObjectList()
+    this.getEventCategories()
+    this.getEventsTags()
 
     let eventId = this.$route.query.event_id
 
     if(eventId){
       this.getEventDetail(eventId)
     }else{
-      this.initMap()
+      // this.initMap()
     }
 
-    this.getAllCountry()
-    this.getUserObjectList()
-    this.getEventCategories()
-    this.getEventsTags()
+
 
   },
   methods: {

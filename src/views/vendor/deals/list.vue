@@ -71,17 +71,15 @@
         width="80"
       >
         <template v-slot="{row}">
-          <span>{{ row.user_id }}</span>
+          <span  style="cursor: pointer;" @click="turnProfileList(row)">{{ row.user_id }}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="Company Name"
         width="150"
       >
-        <template
-          v-slot="{row}"
-        >
-          <span  v-if="row.user_info"> {{ row.user_info.vendor_name_en }}</span>
+        <template v-slot="{row}">
+          <span> {{ row.company_name }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -239,7 +237,7 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getList"
+      @pagination="paginationEvent"
     />
 
     <el-dialog
@@ -358,7 +356,7 @@ export default {
       tableKey: 0,
       list: null,
       total: 0,
-      listLoading: true,
+      listLoading: false,
       listQuery: {
         page: 1,
         limit: 50,
@@ -412,27 +410,62 @@ export default {
     }
   },
   created() {
+
+    let page = this.$route.query.page;
+    let limit = this.$route.query.limit;
+
+    if(page){
+      this.listQuery.page = Number(page)
+    }
+    if(limit){
+      this.listQuery.limit = Number(limit)
+    }
+
     this.getList()
 
   },
-  mounted() {
-
-  },
   methods: {
+    turnProfileList(row){
 
+      if(row.identity == 1){
+        this.$router.push({path:'/educator/list',query:{uid:row.user_id}})
+      }
+
+      if(row.identity == 2){
+        this.$router.push({path:'/business/recruiter',query:{uid:row.user_id,cid:row.company_id}})
+      }
+
+      if(row.identity == 3){
+        this.$router.push({path:'/business/school',query:{uid:row.user_id,cid:row.company_id}})
+      }
+
+      if(row.identity == 4){
+        this.$router.push({path:'/business/other',query:{uid:row.user_id,cid:row.company_id}})
+      }
+
+      if(row.identity == 5){
+        this.$router.push({path:'/vendor/vendor',query:{uid:row.user_id, cid:row.company_id}})
+      }
+
+    },
+    paginationEvent(e){
+      this.$router.push({path:'/vendor/deals/list',query:{page:e.page, limit:e.limit}})
+      this.getList()
+    },
     getList() {
       this.listLoading = true
-      // console.log(this.listQuery)
-      dealsList(this.listQuery).then(response => {
-        console.log(response)
-        this.list = response.message.data
-        this.total = response.message.total
 
-        // Just to simulate the time of the request
-        setTimeout(() => {
+      dealsList(this.listQuery).then(res => {
+        if(res.code == 200){
+          this.list = res.message.data
+          this.total = res.message.total
           this.listLoading = false
-        }, 1.5 * 1000)
+        }
+      }).catch(err=>{
+        console.log(err)
+        this.listLoading = false
       })
+
     },
     handleFilter() {
       this.listQuery.page = 1

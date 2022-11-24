@@ -109,3 +109,20 @@ export function EVENT_DETAIL(params){
     params
   })
 }
+
+export function USER_ALL_IDENTITY(params){
+  return request({
+    url: '/admin/user/all/identity',
+    method: 'get',
+    params
+  })
+}
+
+//复制School信息到Recruiting
+export function SchoolCopyRecruiter(data) {
+  return request({
+    url: '/home/school/copy/recruiting',
+    method: 'post',
+    data
+  })
+}

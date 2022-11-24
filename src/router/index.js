@@ -585,7 +585,7 @@ export const constantRoutes = [
     path: '/lama',
     component: Layout,
     redirect: '/lama/list',
-    alwaysShow: true, // will always show the root menu
+    hidden: true,
     name: 'Lama List',
     meta: {
       title: 'Lama',

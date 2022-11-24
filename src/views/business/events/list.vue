@@ -226,7 +226,7 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getList"
+      @pagination="paginationEvent"
     />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
@@ -299,7 +299,7 @@ export default {
       tableKey: 0,
       list: null,
       total: 0,
-      listLoading: true,
+      listLoading: false,
       listQuery: {
         identity:2,
         page: 1,
@@ -383,6 +383,17 @@ export default {
     }
   },
   created() {
+
+    let page = this.$route.query.page;
+    let limit = this.$route.query.limit;
+
+    if(page){
+      this.listQuery.page = Number(page)
+    }
+    if(limit){
+      this.listQuery.limit = Number(limit)
+    }
+
     this.getList()
     this.getAreas()
     this.getUserObjList()
@@ -467,18 +478,22 @@ export default {
         this.popuCityList = res.message
       })
     },
+    paginationEvent(e){
+      this.$router.push({path:'/business/events/list',query:{page:e.page, limit:e.limit}})
+      this.getList()
+    },
     getList() {
       this.listLoading = true
       // console.log(this.listQuery)
-      eventsList(this.listQuery).then(response => {
-        console.log(response)
-        this.list = response.message.data
-        this.total = response.message.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
+      eventsList(this.listQuery).then(res => {
+        if(res.code == 200){
+          this.list = res.message.data
+          this.total = res.message.total
           this.listLoading = false
-        }, 1.5 * 1000)
+        }
+      }).catch(err=>{
+        console.log(err)
+        this.listLoading = false
       })
     },
     handleFilter() {
@@ -575,7 +590,7 @@ export default {
         }
       })
     },
-    uploadEventsFileSuccess(response, file, eventsFileList) {
+    uploadEventsFileSuccess(response, file) {
       console.log(response)
       // console.log(file)
       // console.log(fileList)
@@ -588,7 +603,7 @@ export default {
         console.log(response.msg)
       }
     },
-    uploadEventsLogoSuccess(response, file, fileList) {
+    uploadEventsLogoSuccess(response) {
       console.log(response)
       // console.log(file)
       // console.log(fileList)
@@ -599,7 +614,7 @@ export default {
         console.log(response.msg)
       }
     },
-    uploadEventsHeaderPhotoSuccess(response, file, fileList) {
+    uploadEventsHeaderPhotoSuccess(response) {
       console.log(response)
       // console.log(file)
       // console.log(fileList)

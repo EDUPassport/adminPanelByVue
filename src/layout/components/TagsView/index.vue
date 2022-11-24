@@ -42,9 +42,11 @@ export default {
   },
   computed: {
     visitedViews() {
+      // console.log('visited views')
       return this.$store.state.tagsView.visitedViews
     },
     routes() {
+      // console.log('routes')
       return this.$store.state.permission.routes
     }
   },
@@ -62,6 +64,7 @@ export default {
     }
   },
   mounted() {
+    console.log('tags mounted')
     this.initTags()
     this.addTags()
   },

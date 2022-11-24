@@ -259,7 +259,7 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getList"
+      @pagination="paginationEvent"
     />
 
     <el-dialog
@@ -539,19 +539,15 @@ export default {
       tableKey: 0,
       list: null,
       total: 0,
-      listLoading: true,
+      listLoading: false,
       listQuery: {
         page: 1,
         limit: 50,
-        nickname: undefined,
-        truename: undefined,
+        id:undefined,
+        user_id:undefined,
+        name: undefined,
         phone: undefined,
-        is_educator: undefined,
-        is_business: undefined,
-        is_vendor: undefined,
-        is_other: undefined,
-        is_seeking: undefined,
-        sex: undefined
+        email: undefined
       },
       percentOptions: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
       seekingOptions: [{label: 'no', value: 0}, {label: 'Yes', value: 1}],
@@ -631,6 +627,22 @@ export default {
     }
   },
   created() {
+
+    let page = this.$route.query.page;
+    let limit = this.$route.query.limit;
+    let uid = this.$route.query.uid;
+
+    if(page){
+      this.listQuery.page = Number(page)
+    }
+    if(limit){
+      this.listQuery.limit = Number(limit)
+    }
+
+    if(uid){
+      this.listQuery.user_id = uid;
+    }
+
     this.getList()
     this.getVipList()
     this.getUserObjList()
@@ -775,23 +787,25 @@ export default {
         console.log(response.msg)
       }
     },
+    paginationEvent(e) {
+      this.$router.push({path:'/educator/list',query:{page:e.page, limit:e.limit}})
+      this.getList()
+    },
     getList() {
       this.listLoading = true
-      // console.log(this.listQuery)
-      educatorContactList(this.listQuery).then(response => {
-        // console.log(response)
-        this.list = response.message.data
-        this.total = response.message.total
-        console.log(this.list)
-        // Just to simulate the time of the request
-        setTimeout(() => {
+      educatorContactList(this.listQuery).then(res => {
+        if(res.code == 200){
+          this.list = res.message.data
+          this.total = res.message.total
           this.listLoading = false
-        }, 1.5 * 1000)
+        }
+      }).catch(err=>{
+        console.log(err)
+        this.listLoading = false
       })
     },
     changeIdentity(e) {
-      // console.log(e)
-      // this.levelOptions = []
+
       if (e == 1) {
         this.tempUpgrade.levelId = undefined
         this.levelOptions = this.vipList.filter(item => item.identity == 1)
@@ -1050,7 +1064,7 @@ export default {
     handleCreateTokenToLogin(row){
       console.log(row)
       let params = {
-        user_id:row.id
+        user_id:row.user_id
       }
       loginToUser(params).then(res=>{
         console.log(res)
