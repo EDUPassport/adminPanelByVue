@@ -744,22 +744,35 @@ export default {
 
       USER_ALL_IDENTITY(params).then(res=>{
         if(res.code == 200){
+
           let userContact = res.message.user_contact;
           if(userContact.educarot_contact){
             this.allIdentityDataForEducator = userContact.educarot_contact
+          }else{
+            this.allIdentityDataForEducator = []
           }
+
           if(userContact.recruiting_company){
             this.allIdentityDataForRecruiter = userContact.recruiting_company
+          }else{
+            this.allIdentityDataForRecruiter = []
           }
 
           if(userContact.school_company){
             this.allIdentityDataForSchool = userContact.school_company
+          }else{
+            this.allIdentityDataForSchool = []
           }
+
           if(userContact.other_company){
             this.allIdentityDataForOther = userContact.other_company
+          }else{
+            this.allIdentityDataForOther = []
           }
           if(userContact.vendor_company){
             this.allIdentityDataForVendor = userContact.vendor_company
+          }else{
+            this.allIdentityDataForVendor = []
           }
 
           this.allIdentityVisible = true;

@@ -119,9 +119,9 @@ export function USER_ALL_IDENTITY(params){
 }
 
 //复制School信息到Recruiting
-export function SchoolCopyRecruiter(data) {
+export function SCHOOL_COPY_AS_RECRUITER(data) {
   return request({
-    url: '/home/school/copy/recruiting',
+    url: '/admin/school/copy/recruiting',
     method: 'post',
     data
   })

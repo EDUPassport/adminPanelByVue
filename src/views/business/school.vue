@@ -235,7 +235,14 @@
           >
             Purchase Ads
           </el-button>
-
+          <el-button
+            class="xll-btn"
+            size="mini"
+            type="primary"
+            @click="handleCopyAsRecruiter(row)"
+          >
+            Copy as a recruiter
+          </el-button>
           <el-button
             class="xll-btn"
             v-if="row.is_delete == 0"
@@ -400,6 +407,7 @@ import {adCategoryList, buyAd} from "@/api/ads";
 import {approveBusiness, adminExportBusiness, loginToUser} from "@/api/admin"
 import {tree} from "@/utils";
 import {encode} from "js-base64";
+import {SCHOOL_COPY_AS_RECRUITER} from "@/api/api";
 
 export default {
   name: 'school',
@@ -571,6 +579,23 @@ export default {
       this.purchaseAdsForm.nickname = row.first_name + ' ' + row.last_name;
       this.purchaseAdsForm.user_id = row.user_id;
       this.purchaseAdsDialogFormVisible = true;
+    },
+    handleCopyAsRecruiter(row){
+      console.log(row)
+      let params = {
+        school_id: row.id,
+        user_id: row.user_id,
+        identity: 3
+      }
+      SCHOOL_COPY_AS_RECRUITER(params).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+          this.$message.success('Copy Success')
+        }
+      }).catch(err=>{
+        console.log(err)
+      })
+
     },
     pidChange(e) {
       // console.log(e)

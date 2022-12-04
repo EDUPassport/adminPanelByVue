@@ -1127,7 +1127,7 @@ export default {
 }
 
 .basic-form {
-  height: calc(100vh - 340px);
+
 }
 
 .event-date-container {

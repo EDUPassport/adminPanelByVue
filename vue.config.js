@@ -35,7 +35,8 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true
-    }
+    },
+    host:'0.0.0.0'
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -103,7 +104,7 @@ module.exports = {
                 },
                 elementUI: {
                   name: 'chunk-elementUI', // split elementUI into a single package
-                  priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+                  priority: 20, // the weight needs to be larger than libs and app it will be packaged into libs or app
                   test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
                 },
                 commons: {
