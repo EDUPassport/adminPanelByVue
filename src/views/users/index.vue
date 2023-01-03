@@ -51,7 +51,7 @@
       size="mini"
       highlight-current-row
       style="width: 100%;"
-      height="500px"
+
     >
       <el-table-column type="expand">
         <template v-slot="props">

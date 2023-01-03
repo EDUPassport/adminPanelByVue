@@ -8,6 +8,9 @@
       <el-button v-waves  type="primary" class="filter-item" icon="el-icon-search" @click="getList()">
         Search
       </el-button>
+      <el-button v-waves  type="primary" class="filter-item"  @click="handleBulkRefresh()">
+        Bulk Refresh
+      </el-button>
     </div>
 
     <el-tabs value="All" style="margin-top:15px;" type="border-card" @tab-click="tabClickJobs">
@@ -386,12 +389,30 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="Bulk Refresh" :visible.sync="bulkRefreshVisible">
+      <el-date-picker
+        v-model="bulkRefreshTimeValue"
+        type="datetimerange"
+        :picker-options="pickerOptions"
+        value-format="yyyy-MM-dd HH:mm:ss"
+        range-separator="to"
+        start-placeholder="Start time"
+        end-placeholder="End time"
+        align="right">
+      </el-date-picker>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" round @click="confirmBulkRefresh()">Confirm</el-button>
+      </div>
+    </el-dialog>
+
+
   </div>
 </template>
 
 <script>
 
-import {setJobSort, jobList, approveJobs, delJobs, setJobFeature, refreshJobs} from '@/api/jobs'
+import {setJobSort, jobList, approveJobs, delJobs, setJobFeature, refreshJobs, bulkRefreshJobs} from '@/api/jobs'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { format , formatDistanceToNow,add , isAfter} from 'date-fns'
@@ -483,8 +504,36 @@ export default {
       },
       sortRules:{
         sort: [{ required: true, message: 'this is required', trigger: 'change' }],
-      }
-
+      },
+      bulkRefreshVisible:false,
+      pickerOptions: {
+        shortcuts: [{
+          text: 'last week',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: 'last month',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: 'last three months',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
+      },
+      bulkRefreshTimeValue:''
 
     }
   },
@@ -502,6 +551,33 @@ export default {
     this.getList()
   },
   methods: {
+    handleBulkRefresh(){
+      this.bulkRefreshVisible = true;
+    },
+    confirmBulkRefresh(){
+      console.log(this.bulkRefreshTimeValue)
+      let timeArr = this.bulkRefreshTimeValue;
+      let params = {
+        start_date:timeArr[0],
+        end_date:timeArr[1],
+        status:1
+      }
+      bulkRefreshJobs(params).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+          this.$notify({
+            title: 'Success',
+            message: 'Refresh Successfully',
+            type: 'success',
+            duration: 2000
+          })
+          this.getList()
+          this.bulkRefreshVisible = false
+        }
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
     turnProfileList(row){
 
       if(row.identity == 1){

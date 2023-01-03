@@ -83,6 +83,15 @@ export function refreshJobs(data) {
     data
   })
 }
+
+export function bulkRefreshJobs(params) {
+  return request({
+    url: '/admin/refresh/job',
+    method: 'get',
+    params
+  })
+}
+
 export function uploadExcel(data) {
   return request({
     url: '/admin/upload',
