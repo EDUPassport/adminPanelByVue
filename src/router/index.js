@@ -313,7 +313,42 @@ export const constantRoutes = [
         name: 'edit Educator',
         meta: { title: 'Edit Educator', noCache: true, activeMenu: '/educator' },
         hidden: true
-      }
+      },
+      {
+        path: 'events/list',
+        component: () => import('@/views/events/list'),
+        name: 'educatorEventsList',
+        meta: {
+          title: 'Events List'
+        }
+      },
+      {
+        path: 'events/detail',
+        component: () => import('@/views/events/detail'),
+        hidden: true,
+        name: 'educatorEventDetail',
+        meta: {
+          title: 'Event Detail', noCache: true, activeMenu: '/educator/events/list'
+        }
+      },
+      {
+        path: 'events/editEvents',
+        component: () => import('@/views/events/add'),
+        hidden: true,
+        name: 'educatorEditEvents',
+        meta: {
+          title: 'Edit Events', noCache: true, activeMenu: '/educator/events/list'
+        }
+      },
+      {
+        path: 'events/addEvents',
+        component: () => import('@/views/events/add'),
+        hidden: true,
+        name: 'educatorAddEvents',
+        meta: {
+          title: 'Add Events', noCache: true, activeMenu: '/educator/events/list'
+        }
+      },
 
     ]
   },
@@ -424,15 +459,15 @@ export const constantRoutes = [
       },
       {
         path: 'events/list',
-        component: () => import('@/views/business/events/list'),
-        name: 'businessEvents',
+        component: () => import('@/views/events/list'),
+        name: 'businessEventsList',
         meta: {
           title: 'Events List'
         }
       },
       {
         path: 'events/detail',
-        component: () => import('@/views/business/events/detail'),
+        component: () => import('@/views/events/detail'),
         hidden: true,
         name: 'businessEventDetail',
         meta: {
@@ -441,7 +476,7 @@ export const constantRoutes = [
       },
       {
         path: 'events/editEvents',
-        component: () => import('@/views/business/events/add'),
+        component: () => import('@/views/events/add'),
         hidden: true,
         name: 'businessEditEvents',
         meta: {
@@ -450,7 +485,7 @@ export const constantRoutes = [
       },
       {
         path: 'events/addEvents',
-        component: () => import('@/views/business/events/add'),
+        component: () => import('@/views/events/add'),
         hidden: true,
         name: 'businessAddEvents',
         meta: {
@@ -514,35 +549,35 @@ export const constantRoutes = [
       },
       {
         path: 'events/list',
-        component: () => import('@/views/vendor/events/list'),
-        name: 'listEvents',
+        component: () => import('@/views/events/list'),
+        name: 'vendorEventsList',
         meta: {
           title: 'Events List'
         }
       },
       {
         path: 'events/detail',
-        component: () => import('@/views/vendor/events/detail'),
+        component: () => import('@/views/events/detail'),
         hidden: true,
-        name: 'eventDetail',
+        name: 'vendorEventDetail',
         meta: {
           title: 'Event Detail', noCache: true, activeMenu: '/vendor/events/list'
         }
       },
       {
         path: 'events/editEvents',
-        component: () => import('@/views/vendor/events/add'),
+        component: () => import('@/views/events/add'),
         hidden: true,
-        name: 'EditEvents',
+        name: 'vendorEditEvents',
         meta: {
           title: 'Edit Events', noCache: true, activeMenu: '/vendor/events/list'
         }
       },
       {
         path: 'events/addEvents',
-        component: () => import('@/views/vendor/events/add'),
+        component: () => import('@/views/events/add'),
         hidden: true,
-        name: 'AddEvents',
+        name: 'vendorAddEvents',
         meta: {
           title: 'Add Events', noCache: true, activeMenu: '/vendor/events/list'
         }

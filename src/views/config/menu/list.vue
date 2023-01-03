@@ -71,6 +71,15 @@
           />
         </template>
       </el-table-column>
+      <el-table-column label="Selected Icon" width="110px" align="center">
+        <template v-slot="{row}">
+          <el-image
+            style="width: 100px; height: 50px"
+            :src=" row.icon_hover "
+            fit="contain"
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
         <template v-slot="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -139,6 +148,25 @@
             <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
           </el-upload>
         </el-form-item>
+
+        <el-form-item label="Selected Icon">
+          <el-upload
+            class="upload-demo"
+            drag
+            :headers="uploadHeaders"
+            name="file[]"
+            :action="uploadRequestUrl"
+            multiple
+            list-type="picture"
+            :limit="1"
+            :on-success="uploadFileForHoverSuccess"
+            :file-list="fileListForHover"
+          >
+            <i class="el-icon-upload"/>
+            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
+          </el-upload>
+        </el-form-item>
+
 
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -211,7 +239,8 @@ export default {
         menu_name_en: undefined,
         link: undefined,
         link_h5:undefined,
-        icon: undefined
+        icon: undefined,
+        icon_hover: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -229,7 +258,10 @@ export default {
       downloadLoading: false,
       // uploadHeaders:undefined,
       fileUrl: undefined,
-      fileList: undefined
+      fileList: undefined,
+      fileUrlForHover:undefined,
+      fileListForHover: undefined
+
     }
   },
   computed: {
@@ -293,12 +325,14 @@ export default {
         menu_name_en: undefined,
         link: undefined,
         link_h5: undefined,
-        icon: undefined
+        icon: undefined,
+        icon_hover:undefined
       }
     },
     handleCreate() {
       this.resetTemp()
       this.fileList = undefined
+      this.fileListForHover = undefined
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -311,6 +345,8 @@ export default {
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           // this.temp.author = 'vue-element-admin'
           this.temp.icon = this.fileUrl
+          this.temp.icon_hover = this.fileUrlForHover
+
           addMenuForAdminUser(this.temp).then((res) => {
             console.log(res)
             // this.list.unshift(this.temp)
@@ -332,6 +368,7 @@ export default {
       this.temp.id = row.id
 
       this.fileList = [{name: '', url: row.icon}]
+      this.fileListForHover = [{name: '', url: row.icon_hover}]
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -343,6 +380,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.temp.icon = this.fileUrl
+          this.temp.icon_hover = this.fileUrlForHover
           const tempData = Object.assign({}, this.temp)
 
           addMenuForAdminUser(tempData).then((res) => {
@@ -357,6 +395,7 @@ export default {
               })
               this.getList()
               this.fileUrl = ''
+              this.fileUrlForHover = ''
             }
           })
         }
@@ -403,7 +442,16 @@ export default {
       } else {
         console.log(response.msg)
       }
+    },
+    uploadFileForHoverSuccess(response) {
+      if (response.code == 200) {
+        this.fileUrlForHover = response.data[0].file_url
+        // const file_name = response.data[0].file_name
+      } else {
+        console.log(response.msg)
+      }
     }
+
   }
 }
 

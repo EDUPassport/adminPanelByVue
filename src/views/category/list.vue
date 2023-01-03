@@ -139,20 +139,36 @@ export default {
       this.dialogFormUpdate = true
     },
     handleDelete(row) {
-      this.updateObj = Object.assign({}, row)
-      this.updateObj.object_id = row.id
-      this.updateObj.is_delete = 1
-      updateObject(this.updateObj).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          this.getCategory(this.id)
-          this.dialogFormUpdate = false
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        console.log(err)
+
+      this.$confirm('Delete ?', 'Notice', {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+        center: true
+      }).then(() => {
+
+        this.updateObj = Object.assign({}, row)
+        this.updateObj.object_id = row.id
+        this.updateObj.is_delete = 1
+        updateObject(this.updateObj).then(res => {
+          console.log(res)
+          if (res.code === 200) {
+            this.getCategory(this.id)
+            this.dialogFormUpdate = false
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(err => {
+          console.log(err)
+        })
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: 'Undeleted'
+        })
       })
+
     },
     updateCategory() {
       updateObject(this.updateObj).then(res => {
