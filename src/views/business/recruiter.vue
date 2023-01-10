@@ -456,7 +456,9 @@ export default {
       dialogFormMultiPosts: false,
       tempMultiPosts: {
         job_file: undefined,
-        user_id: undefined
+        user_id: undefined,
+        identity:2,
+        company_id: undefined
       },
       multiPostsFile: undefined,
       tableData: [],
@@ -600,6 +602,8 @@ export default {
       const form = new FormData()
       form.append('job_file', this.multiPostsFile)
       form.append('user_id', data.user_id)
+      form.append('identity', data.identity)
+      form.append('company_id', data.company_id)
 
       uploadJobs(form).then(res => {
         console.log(res)
@@ -703,6 +707,7 @@ export default {
     },
     handleMultiCreateJobs(row) {
       this.tempMultiPosts.user_id = row.user_id
+      this.tempMultiPosts.company_id = row.id;
       this.dialogFormMultiPosts = true
     },
     handleUpdate(row) {
