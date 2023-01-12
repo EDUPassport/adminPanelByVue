@@ -142,6 +142,35 @@
       </el-table-column>
 
       <el-table-column
+        label="Start Time"
+        width="160px"
+        align="center"
+      >
+        <template v-slot="{row}">
+          <span>{{ row.start_time }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="End Time"
+        width="160px"
+        align="center"
+      >
+        <template v-slot="{row}">
+          <span>{{ row.end_time }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        label="Create Time"
+        width="160px"
+        align="center"
+      >
+        <template v-slot="{row}">
+          <span>{{ row.c_time }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column
         label="Status"
         class-name="status-col"
         width="100"

@@ -11,8 +11,8 @@
         <el-input v-model="temp.level_en" type="text"/>
       </el-form-item>
       <el-form-item label="Description" prop="desc">
-        <!--          <el-input v-model="temp.desc" type="textarea"/>-->
-        <tinymce v-model="temp.desc" width="100%" :height="300"/>
+        <el-input v-model="temp.desc" type="textarea" :rows="6"/>
+<!--        <tinymce v-model="temp.desc" width="100%" :height="300"/>-->
       </el-form-item>
       <el-form-item label="Level" prop="level">
         <el-input v-model="temp.level" type="text"/>
@@ -73,13 +73,13 @@
 </template>
 
 <script>
-import Tinymce from '@/components/Tinymce'
+// import Tinymce from '@/components/Tinymce'
 import {addVipLevel} from "@/api/admin";
 import {decode} from 'js-base64'
 
 export default {
-  name: "edit",
-  components: {Tinymce},
+  name: "vipListEdit",
+  components: {},
   data() {
     return {
       dialogStatus: '',

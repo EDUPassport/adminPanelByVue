@@ -192,11 +192,22 @@
       <el-table-column
         label="Featured"
         align="center"
-        width="230"
+        width="100"
         class-name="small-padding fixed-width"
       >
         <template v-slot="{row}">
          {{row.is_featured}}
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        label="Create Time"
+        align="center"
+        width="160"
+        class-name="small-padding fixed-width"
+      >
+        <template v-slot="{row}">
+          {{row.c_time}}
         </template>
       </el-table-column>
 
