@@ -9,13 +9,19 @@
         Search
       </el-button>
       <el-button v-waves  type="primary" class="filter-item"  @click="handleBulkRefresh()">
-        Bulk Refresh
+        Multiple Refresh By time range
+      </el-button>
+      <el-button v-waves  type="primary" class="filter-item"
+                 :disabled="multipleSelection.length <= 0"
+                 @click="handleBulkRefreshByIds()">
+        Multiple Refresh Jobs
       </el-button>
     </div>
 
     <el-tabs value="All" style="margin-top:15px;" type="border-card" @tab-click="tabClickJobs">
       <el-tab-pane v-for="item in adsTypeOptions2" :key="item.value" :label="item.label" :name="item.label">
         <el-table
+          ref="multipleTable"
           :key="tableKey"
           v-loading="listLoading"
           :data="list"
@@ -24,7 +30,11 @@
           highlight-current-row
           style="width: 100%;"
           @sort-change="sortChange"
+          @selection-change="handleSelectionChange"
         >
+          <el-table-column type="selection" width="55">
+
+          </el-table-column>
           <el-table-column type="expand">
             <template v-slot="props">
               <el-form label-position="left" inline class="demo-table-expand">
@@ -389,7 +399,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="Bulk Refresh" :visible.sync="bulkRefreshVisible">
+    <el-dialog title="Multiple Refresh" :visible.sync="bulkRefreshVisible">
       <el-date-picker
         v-model="bulkRefreshTimeValue"
         type="datetimerange"
@@ -418,6 +428,7 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 import { format , formatDistanceToNow,add , isAfter} from 'date-fns'
 import {loginToUser} from "@/api/admin";
 import {encode} from "js-base64";
+import {ADMIN_REFRESH_JOBS} from "@/api/api";
 
 export default {
   name: 'ComplexTable',
@@ -533,7 +544,8 @@ export default {
           }
         }]
       },
-      bulkRefreshTimeValue:''
+      bulkRefreshTimeValue:'',
+      multipleSelection: []
 
     }
   },
@@ -652,6 +664,35 @@ export default {
         type: 'success'
       })
       row.status = status
+    },
+    handleSelectionChange(val){
+      console.log(val)
+      this.multipleSelection = val;
+    },
+    handleBulkRefreshByIds(){
+      let multiData = this.multipleSelection
+      let multiParams = []
+      multiData.forEach(item=>{
+        multiParams.push(item.id)
+      })
+
+      let params = {
+        job_ids:multiParams.join(',')
+      }
+      ADMIN_REFRESH_JOBS(params).then(res=>{
+        if(res.code == 200){
+          this.$notify({
+            title: 'Success',
+            message: 'Refresh Successfully',
+            type: 'success',
+            duration: 2000
+          })
+          this.getList()
+
+        }
+      }).catch(err=>{
+        console.log(err)
+      })
     },
     sortChange(data) {
       const { prop, order } = data

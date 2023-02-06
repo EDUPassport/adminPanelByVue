@@ -126,3 +126,12 @@ export function SCHOOL_COPY_AS_RECRUITER(data) {
     data
   })
 }
+
+export function ADMIN_REFRESH_JOBS(params) {
+  return request({
+    url: '/admin/refresh/jobs',
+    method: 'get',
+    params
+  })
+}
+
