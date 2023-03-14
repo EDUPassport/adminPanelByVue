@@ -445,7 +445,12 @@ export default {
     },
     refreshTimeFilter(a){
       // console.log(a)
-      return  formatDistanceToNow(new Date(a), { addSuffix: false }) + ' ago'
+      if(a && a !== '0000-00-00 00:00:00'){
+        return  formatDistanceToNow(new Date(a), { addSuffix: false }) + ' ago'
+      }{
+        return a;
+      }
+
     },
     refreshIsActive(a){
       const aaa = add(new Date(a),{days:15})
