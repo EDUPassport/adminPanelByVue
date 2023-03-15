@@ -134,6 +134,7 @@ export default {
       font-size: 18px;
       color: #5a5e66;
       vertical-align: text-bottom;
+      border-radius: 40px;
 
       &.hover-effect {
         cursor: pointer;

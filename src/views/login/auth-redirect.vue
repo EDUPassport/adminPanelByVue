@@ -12,4 +12,5 @@ export default {
     return h() // avoid warning message
   }
 }
+
 </script>

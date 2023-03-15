@@ -1,9 +1,13 @@
 <template>
   <div class="upload-container">
-    <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">
+    <el-button :style="{background:color,borderColor:color}"
+               icon="el-icon-upload"
+               size="mini"
+               type="primary"
+               @click="dialogVisible=true">
       upload
     </el-button>
-    <el-dialog :visible.sync="dialogVisible">
+    <el-dialog :visible.sync="dialogVisible" :modal="false">
       <el-upload
         :multiple="true"
         :file-list="fileList"
@@ -12,7 +16,9 @@
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
         class="editor-slide-upload"
-        action="https://httpbin.org/post"
+        :headers="uploadHeaders"
+        name="file[]"
+        :action="actionUrl"
         list-type="picture-card"
       >
         <el-button size="small" type="primary">
@@ -42,9 +48,17 @@ export default {
   },
   data() {
     return {
+      actionUrl:process.env.VUE_APP_UPLOAD_API,
       dialogVisible: false,
       listObj: {},
       fileList: []
+    }
+  },
+  computed: {
+    uploadHeaders() {
+      return {
+        token: this.$store.state.user.token
+      }
     }
   },
   methods: {
@@ -63,11 +77,13 @@ export default {
       this.dialogVisible = false
     },
     handleSuccess(response, file) {
+      console.log(response)
+      console.log(file)
       const uid = file.uid
       const objKeyArr = Object.keys(this.listObj)
       for (let i = 0, len = objKeyArr.length; i < len; i++) {
         if (this.listObj[objKeyArr[i]].uid === uid) {
-          this.listObj[objKeyArr[i]].url = response.files.file
+          this.listObj[objKeyArr[i]].url = response.data[0].file_url
           this.listObj[objKeyArr[i]].hasSuccess = true
           return
         }
@@ -84,6 +100,7 @@ export default {
       }
     },
     beforeUpload(file) {
+      console.log(file)
       const _self = this
       const _URL = window.URL || window.webkitURL
       const fileName = file.uid

@@ -2,330 +2,116 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input
-        v-model="listQuery.nickname"
-        placeholder="Nickname"
+        v-model="listQuery.id"
+        placeholder="ID"
         style="width: 200px;"
-        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.first_name"
+        placeholder="First name"
+        style="width: 200px;"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.last_name"
+        placeholder="Last name"
+        style="width: 200px;"
         @keyup.enter.native="handleFilter"
       />
       <el-input
         v-model="listQuery.phone"
-        placeholder="Phone"
+        placeholder="Phone #"
         style="width: 200px;"
         @keyup.enter.native="handleFilter"
       />
-      <el-select
-        v-model="listQuery.is_seeking"
-        placeholder="Is Seeking"
-        clearable
-        style="width: 110px;"
-        class="filter-item"
-      >
-        <el-option
-          v-for="(item,index) in seekingOptions"
-          :key="index"
-          :label="item.label"
-          :value="item.label"
-        />
-      </el-select>
-      <el-select
-        v-model="listQuery.sex"
-        placeholder="Gender"
-        clearable
-        style="width: 110px;"
-        class="filter-item"
-      >
-        <el-option
-          v-for="(item,index) in sexOptions"
-          :key="index"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
+      <el-input
+        v-model="listQuery.email"
+        placeholder="Email address"
+        style="width: 200px;"
+        @keyup.enter.native="handleFilter"
+      />
+
       <el-button
         v-waves
-        class="filter-item"
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
       >
         Search
       </el-button>
+
     </div>
 
     <el-table
-      :key="tableKey"
       v-loading="listLoading"
       :data="list"
       border
       fit
+      size="mini"
       highlight-current-row
       style="width: 100%;"
-      @sort-change="sortChange"
+
     >
       <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-form
-            label-position="left"
-            inline
-            class="demo-table-expand"
-          >
-            <el-form-item label="Country">
-              <span>{{ props.row.country }}</span>
-            </el-form-item>
-            <el-form-item label="Province">
-              <span>{{ props.row.province }}</span>
-            </el-form-item>
-            <el-form-item label="City">
-              <span>{{ props.row.city }}</span>
-            </el-form-item>
-            <el-form-item label="Language">
-              <span>{{ props.row.language }}</span>
-            </el-form-item>
-            <el-form-item label="Birthday">
-              <span>{{ props.row.birthday }}</span>
-            </el-form-item>
-            <el-collapse accordion>
-              <el-collapse-item v-if="props.row.educator">
-                <template slot="title">
-                  <b style="font-size:28px;color: #99a9bf;"> Educator Info</b>
-                </template>
-                <div>
-                  <span>First name & Last name:</span>{{
-                    props.row.educator.first_name
-                  }}{{ props.row.educator.last_name }}
-                </div>
-                <div>
-                  <span>Location:</span>{{ props.row.educator.country }}, {{ props.row.educator.province }},
-                  {{ props.row.educator.city }}, {{ props.row.educator.district }}, {{ props.row.educator.address }}
-                </div>
-                <div><span>Sub Identity Name:</span>{{ props.row.educator.sub_identity_name }}</div>
-                <div><span>Bio:</span>{{ props.row.educator.bio }}</div>
-                <div><span>Hobbies:</span>{{ props.row.educator.hobbies }}</div>
-                <div><span>Nationality:</span>{{ props.row.educator.nationality }}</div>
-                <div class="photo">
-                  <span>Profile photo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.educator.profile_photo"
-                    :preview-src-list="[props.row.educator.profile_photo]"
-                  />
-                </div>
-                <div class="photo">
-                  <span>Header photo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.educator.header_photo"
-                    :preview-src-list="[props.row.educator.header_photo]"
-                  />
-                </div>
-                <div class="video">
-                  <span>Video:</span>
-                  <video
-                    width="120"
-                    :src="props.row.educator.video_url"
-                    controls
-                  />
-                </div>
-              </el-collapse-item>
-              <el-collapse-item v-if="props.row.business">
-                <template slot="title">
-                  <b style="font-size:28px;color: #99a9bf;"> Business Info</b>
-                </template>
-                <div>
-                  <span>First name & Last name:</span>{{
-                    props.row.business.first_name
-                  }}{{ props.row.business.last_name }}
-                </div>
-                <div>
-                  <span>Location:</span>{{ props.row.business.country }}, {{ props.row.business.province }},
-                  {{ props.row.business.city }}, {{ props.row.business.district }}, {{ props.row.business.address }}
-                </div>
-                <div><span>Sub Identity Name:</span>{{ props.row.business.sub_identity_name }}</div>
-                <div><span>Bio:</span>{{ props.row.business.bio }}</div>
-                <div><span>Business Bio:</span>{{ props.row.business.business_bio }}</div>
-                <div><span>Business name:</span>{{ props.row.business.business_name }}</div>
-                <div><span>Business phone:</span>{{ props.row.business.business_phone }}</div>
-                <div><span>Business type name:</span>{{ props.row.business.business_type_name }}</div>
-                <div><span>contact name:</span>{{ props.row.business.contact_name }}</div>
-                <div><span>contact phone:</span>{{ props.row.business.contact_phone }}</div>
-                <div><span>Curriculum:</span>{{ props.row.business.curriculum }}</div>
-                <div>
-                  <span>Fields Trips:</span>
-                  <span v-if="props.row.business.felds_trips==1">Yes</span>
-                  <span v-if="props.row.business.felds_trips==0">Unknown</span>
-                </div>
-                <div>
-                  <span>is_currently_hiring:</span>
-                  <span v-if="props.row.business.is_currently_hiring==1">Yes</span>
-                  <span v-if="props.row.business.is_currently_hiring==0">Unknown</span>
-                </div>
-                <div>
-                  <span>Is Events: </span>
-                  <span v-if="props.row.business.is_events==1">Yes</span>
-                  <span v-if="props.row.business.is_events==0">Unknown</span>
-                </div>
-                <div>
-                  <span>Special Needs: </span>
-                  <span v-if="props.row.business.is_special_needs==1">Yes</span>
-                  <span v-if="props.row.business.is_special_needs==0">Unknown</span>
-                </div>
-                <div><span>Job Title: </span>{{ props.row.business.job_title }}</div>
-                <div><span>Staff student ratio:</span>{{ props.row.business.staff_student_ratio }}</div>
-                <div><span>Technology Available:</span>{{ props.row.business.technology_available }}</div>
-                <div><span>Website:</span>{{ props.row.business.website }}</div>
-                <div><span>Work Email:</span>{{ props.row.business.work_email }}</div>
-                <div><span>Year Founded:</span>{{ props.row.business.year_founded }}</div>
-                <div><span>Hobbies:</span>{{ props.row.business.hobbies }}</div>
-                <div><span>Nationality:</span>{{ props.row.business.nationality }}</div>
-                <div>
-                  <span>Profile photo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.business.profile_photo"
-                    :preview-src-list="[props.row.business.profile_photo]"
-                  />
-                </div>
-                <div>
-                  <span>logo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.business.logo"
-                    :preview-src-list="[props.row.business.logo]"
-                  />
-                </div>
-                <div>
-                  <span>Header photo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.business.header_photo"
-                    :preview-src-list="[props.row.business.header_photo]"
-                  />
-                </div>
-                <div>
-                  <span>Video:</span>
-                  <video
-                    width="120"
-                    controls
-                    :src="props.row.business.video_url"
-                  />
-                </div>
-              </el-collapse-item>
-              <el-collapse-item v-if="props.row.vendor">
-                <template slot="title">
-                  <b style="font-size:28px;color: #99a9bf;"> Vendor Info</b>
-                </template>
-                <div>
-                  <span>First name & Last name:</span>{{ props.row.vendor.first_name }}{{
-                    props.row.vendor.last_name
-                  }}
-                </div>
-                <div><span>Wechat Id:</span>{{ props.row.vendor.wx_id }}</div>
-                <div>
-                  <span>Location:</span>{{ props.row.vendor.country }}{{
-                    props.row.vendor.province
-                  }}{{ props.row.vendor.city }}{{ props.row.vendor.address }}
-                </div>
-                <div><span>Business reg img:</span>{{ props.row.vendor.busin_reg_img }}</div>
-                <div><span>Business reg number:</span>{{ props.row.vendor.busin_reg_num }}</div>
-                <div><span>Vendor Bio:</span>{{ props.row.vendor.vendor_bio }}</div>
-                <div><span>Vendor name:</span>{{ props.row.vendor.vendor_name }}</div>
-                <div><span>Vendor name en:</span>{{ props.row.vendor.vendor_name_en }}</div>
-                <div><span>Vendor type name:</span>{{ props.row.vendor.vendor_type_name }}</div>
-
-                <div>
-                  <span>Is Dog Friendly:</span>
-                  <span v-if="props.row.vendor.is_dog_friendly==1">Yes</span>
-                  <span v-if="props.row.vendor.is_dog_friendly==0">Unknown</span>
-                </div>
-                <div>
-                  <span>Is Events:</span>
-                  <span v-if="props.row.vendor.is_events==1">Yes</span>
-                  <span v-if="props.row.vendor.is_events==0">Unknown</span>
-                </div>
-                <div><span>Job Title:</span>{{ props.row.vendor.job_title }}</div>
-                <div><span>Legal Company Name:</span>{{ props.row.vendor.legal_company_name }}</div>
-                <div><span>Phone:</span>{{ props.row.vendor.phone }}</div>
-
-                <div><span>Website:</span>{{ props.row.vendor.website }}</div>
-                <div><span>Work Email:</span>{{ props.row.vendor.work_email }}</div>
-                <div><span>Wechat Public Name:</span>{{ props.row.vendor.wechat_public_name }}</div>
-                <div><span>Wechat Public Qrcode:</span>{{ props.row.vendor.wechat_public_qrcode }}</div>
-                <div><span>Nationality:</span>{{ props.row.vendor.nationality }}</div>
-                <div>
-                  <span>Profile photo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.vendor.profile_photo"
-                    :preview-src-list="[props.row.vendor.profile_photo]"
-                  />
-                </div>
-                <div>
-                  <span>logo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.vendor.logo"
-                    :preview-src-list="[props.row.vendor.logo]"
-                  />
-                </div>
-                <div>
-                  <span>Header photo:</span>
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="props.row.vendor.header_photo"
-                    :preview-src-list="[props.row.vendor.header_photo]"
-                  />
-                </div>
-                <div>
-                  <span>Video:</span>
-                  <video
-                    width="120"
-                    controls
-                    :src="props.row.vendor.video_url"
-                  />
-                </div>
-              </el-collapse-item>
-            </el-collapse>
-          </el-form>
+        <template v-slot="props">
+          {{props.row.identity_string}}
         </template>
       </el-table-column>
       <el-table-column
         label="User Id"
         prop="id"
-        sortable="custom"
         align="center"
         width="80"
-        :class-name="getSortClass('id')"
       >
-        <template slot-scope="{row}">
+        <template v-slot="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        label="Name"
-        width="110"
+        label="Parent Id"
+        prop="pid"
+        align="center"
+        width="120"
       >
-        <template slot-scope="scope">
-          {{ scope.row.nickname }}
+        <template v-slot="{row}">
+          <span>{{ row.pid }}</span>
         </template>
       </el-table-column>
+      <el-table-column
+        label="Source"
+        width="180"
+      >
+        <template v-slot="scope">
+          {{ scope.row.source }}
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        label="Create Time"
+        width="180"
+      >
+        <template v-slot="scope">
+          {{ scope.row.c_time }}
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        label="Email"
+        width="180"
+      >
+        <template v-slot="scope">
+          {{ scope.row.email }}
+        </template>
+      </el-table-column>
+
       <el-table-column
         label="Phone"
         width="110"
         align="center"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span>{{ scope.row.phone }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Is Seeking"
-        width="110"
-        align="center"
-      >
-        <template slot-scope="scope">
-          <span v-if="scope.row.is_seeking===0">Unknown</span>
-          <span v-if="scope.row.is_seeking===1">Yes</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -333,7 +119,7 @@
         width="110"
         align="center"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span v-if="scope.row.sex === 1">Male</span>
           <span v-if="scope.row.sex === 2">Female</span>
           <span v-if="scope.row.sex === 0">Unc</span>
@@ -345,52 +131,29 @@
         width="110"
         align="center"
       >
-        <template slot-scope="scope">
-          <el-tag
-            v-if="scope.row.identity ===0"
-            effect="dark"
-            color="#005956"
-          >
-            Other
-          </el-tag>
-          <el-tag
-            v-if="scope.row.identity ===1"
-            effect="dark"
-            color="#0aa0a8"
-          >
-            Educator
-          </el-tag>
-          <el-tag
-            v-if="scope.row.identity ===2"
-            effect="dark"
-            color="#b1c452"
-          >
-            Business
-          </el-tag>
-          <el-tag
-            v-if="scope.row.identity ===3"
-            effect="dark"
-            color="#00b3d2"
-          >
-            Vendor
-          </el-tag>
+        <template v-slot="scope">
+          <el-button type="primary" @click="showAllIdentity(scope.row)">
+            Show
+          </el-button>
         </template>
+
       </el-table-column>
 
       <el-table-column
         label="Actions"
         align="center"
-        width="280"
+        width="680"
         class-name="small-padding fixed-width"
       >
-        <template slot-scope="{row,$index}">
+        <template v-slot="{row,$index}">
           <el-button
             type="primary"
             size="mini"
-            @click="handleUpdate(row)"
+            @click="handleCreateTokenToLogin(row)"
           >
             Edit
           </el-button>
+
           <el-button
             size="mini"
             type="danger"
@@ -405,6 +168,29 @@
           >
             Upgrade
           </el-button>
+          <el-button
+            v-if="row.pid==0"
+            size="mini"
+            type="primary"
+            @click="handleSubAccount(row)"
+          >
+            Sub Account
+          </el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handleUserPhone(row)"
+          >
+            Update User Phone
+          </el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handleUnBindAccount(row)"
+          >
+            Unbind Account
+          </el-button>
+
         </template>
       </el-table-column>
     </el-table>
@@ -414,312 +200,8 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getList"
+      @pagination="paginationEvent"
     />
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormDealsVisible"
-    >
-      <el-form
-        ref="dataForm"
-        :model="dealsTempData"
-        label-position="left"
-        label-width="110px"
-        style="width: 400px; margin-left:50px;"
-      >
-        <el-form-item label="Type">
-          <el-select
-            v-model="dealsTempData.type"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in dealsType"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="IS All">
-          <el-select
-            v-model="dealsTempData.is_all"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in dealsTwo"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Due Contract">
-          <el-select
-            v-model="dealsTempData.due_contract"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in dealsThree"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Pay Money">
-          <el-input
-            v-model="dealsTempData.pay_money"
-            type="number"
-            class="filter-item"
-            placeholder="Please select"
-          />
-        </el-form-item>
-        <el-form-item label="For Unregister">
-          <el-select
-            v-model="dealsTempData.is_unregister"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              label="YES"
-              :value="1"
-            />
-            <el-option
-              label="NO"
-              :value="0"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Popular City">
-          <el-select
-            v-model="dealsTempData.city"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in popuCityList"
-              :key="item.id"
-              :label="item.object_en"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Location">
-          <el-input
-            v-model="dealsTempData.location"
-            class="filter-item"
-            placeholder="Please select"
-          />
-        </el-form-item>
-        <el-form-item label="Desc">
-          <el-input
-            v-model="dealsTempData.desc"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Url">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            action="http://api.test.esl-passport.cn/api/admin/upload"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="uploadFileSuccess"
-            :file-list="fileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">
-              Drag the file here, or <em>click to upload</em>
-            </div>
-            <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
-          </el-upload>
-        </el-form-item>
-      </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="dialogFormDealsVisible = false">
-          Cancel
-        </el-button>
-        <el-button
-          type="primary"
-          @click="createDeals"
-        >
-          Confirm
-        </el-button>
-      </div>
-    </el-dialog>
-
-    <!--    events-->
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormEventsVisible"
-    >
-      <el-form
-        ref="dataForm"
-        :model="eventsTempData"
-        label-position="left"
-        label-width="110px"
-        style="width: 400px; margin-left:50px;"
-      >
-        <el-form-item label="Name">
-          <el-input
-            v-model="eventsTempData.name"
-            class="filter-item"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Desc">
-          <el-input
-            v-model="eventsTempData.desc"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="IS All">
-          <el-select
-            v-model="eventsTempData.is_all"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in eventsOne"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Type Desc">
-          <el-input
-            v-model="eventsTempData.type_desc"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item label="Pay Money">
-          <el-input
-            v-model="eventsTempData.pay_money"
-            type="number"
-            class="filter-item"
-            placeholder="Please select"
-          />
-        </el-form-item>
-        <el-form-item label="For Unregister">
-          <el-select
-            v-model="eventsTempData.is_unregister"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              label="YES"
-              :value="1"
-            />
-            <el-option
-              label="NO"
-              :value="0"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Popular City">
-          <el-select
-            v-model="eventsTempData.city"
-            class="filter-item"
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="item in popuCityList"
-              :key="item.id"
-              :label="item.object_en"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Location">
-          <el-input
-            v-model="eventsTempData.location"
-            class="filter-item"
-            placeholder="Please select"
-          />
-        </el-form-item>
-
-        <el-form-item label="Date">
-          <!--          <el-input v-model="temp.birthday" />-->
-          <el-date-picker
-            v-model="eventsTempData.date"
-            type="date"
-            placeholder="Please picker a date"
-          />
-        </el-form-item>
-        <el-form-item label="Start Time & End Time">
-          <el-time-select
-            v-model="eventsTempData.start_time"
-            placeholder="Start Time"
-            :picker-options="{
-              start: '00:00',
-              step: '00:01',
-              end: '24:00'
-            }"
-          />
-          <el-time-select
-            v-model="eventsTempData.end_time"
-            placeholder="End Time"
-            :picker-options="{
-              start: '00:00',
-              step: '00:01',
-              end: '24:00',
-              minTime: eventsTempData.start_time
-            }"
-          />
-        </el-form-item>
-
-        <el-form-item label="Url">
-          <el-upload
-            class="upload-demo"
-            drag
-            :headers="uploadHeaders"
-            name="file[]"
-            action="http://api.test.esl-passport.cn/api/admin/upload"
-            multiple
-            list-type="picture"
-            :limit="1"
-            :on-success="uploadEventsFileSuccess"
-            :file-list="eventsFileList"
-          >
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">
-              Drag the file here, or <em>click to upload</em>
-            </div>
-            <!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
-          </el-upload>
-        </el-form-item>
-      </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="dialogFormEventsVisible = false">
-          Cancel
-        </el-button>
-        <el-button
-          type="primary"
-          @click="createEvents"
-        >
-          Confirm
-        </el-button>
-      </div>
-    </el-dialog>
 
     <el-dialog
       :title="textMap[dialogStatus]"
@@ -734,23 +216,18 @@
         style="width: 400px; margin-left:50px;"
       >
         <el-form-item
-          label="username"
-          prop="username"
+          label="First name"
+          prop="first_name"
         >
-          <el-input v-model="temp.username" />
+          <el-input v-model="temp.first_name"/>
         </el-form-item>
         <el-form-item
-          label="nickname"
-          prop="nickname"
+          label="Last name"
+          prop="last_name"
         >
-          <el-input v-model="temp.nickname" />
+          <el-input v-model="temp.last_name"/>
         </el-form-item>
-        <el-form-item
-          label="truename"
-          prop="truename"
-        >
-          <el-input v-model="temp.truename" />
-        </el-form-item>
+
         <el-form-item
           label="sex"
           prop="sex"
@@ -772,19 +249,18 @@
           label="phone"
           prop="phone"
         >
-          <el-input v-model="temp.phone" />
+          <el-input v-model="temp.phone"/>
         </el-form-item>
         <el-form-item
           label="email"
           prop="email"
         >
-          <el-input v-model="temp.email" />
+          <el-input v-model="temp.email"/>
         </el-form-item>
         <el-form-item
           label="birthday"
           prop="birthday"
         >
-          <!--          <el-input v-model="temp.birthday" />-->
           <el-date-picker
             v-model="temp.birthday"
             type="date"
@@ -801,7 +277,7 @@
         </el-button>
         <el-button
           type="primary"
-          @click="dialogStatus==='create'?createData():updateData()"
+          @click="updateData()"
         >
           Confirm
         </el-button>
@@ -812,7 +288,6 @@
       :title="textMap[dialogStatus]"
       :visible.sync="dialogFormUpgrade"
     >
-      <!--      :rules="rules"-->
       <el-form
         ref="dataForm"
         :model="tempUpgrade"
@@ -844,6 +319,7 @@
         >
           <el-select
             v-model="tempUpgrade.levelId"
+            @change="selectLevelChange"
             class="filter-item"
             placeholder="Choose Level"
           >
@@ -855,38 +331,254 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item v-if="showMonthNumStatus" label="Duration" prop="month_num">
+          <el-input v-model="tempUpgrade.month_num" type="text"
+                    :show-word-limit="true" placeholder="Duration">
+            <template #append>
+              (months)
+            </template>
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormUpgrade = false">Cancel</el-button>
+        <el-button type="primary" @click="upgradeLevel()">Confirm</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="Sub Account" :visible.sync="subAccountDialogVisible">
+
+      <el-form ref="dataForm" :model="subAccountForm" label-position="left" label-width="90px"
+               style="width: 400px; margin-left:50px;">
+
+        <el-form-item label="Phone" prop="phone">
+          <el-input type="number" v-model="subAccountForm.phone" ></el-input>
+        </el-form-item>
+        <el-form-item label="Username" prop="username">
+          <el-input type="text" v-model="subAccountForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="Password" prop="password">
+          <el-input type="text" v-model="subAccountForm.password"></el-input>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="subAccountDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="addSubAccount()">Confirm</el-button>
+      </div>
+
+    </el-dialog>
+
+    <el-dialog title="Change Bind Phone" :visible.sync="changeBindPhoneDialogVisible">
+      <!--      :rules="rules"-->
+      <el-form ref="dataForm" :model="changeBindPhoneForm" label-position="left" label-width="90px"
+               style="width: 400px; margin-left:50px;">
+
+        <el-form-item label="Phone" prop="phone">
+          <el-input type="number" v-model="changeBindPhoneForm.phone" ></el-input>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="changeBindPhoneDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="updateBindPhone()">Confirm</el-button>
+      </div>
+
+    </el-dialog>
+
+    <el-dialog
+      title="Create Account"
+      :visible.sync="userAccountDialogFormVisible"
+    >
+      <el-form
+        ref="userAccountForm"
+        :rules="userAccountRules"
+        :model="userAccountForm"
+        label-position="left"
+        label-width="160px"
+      >
+        <el-form-item
+          label="Email"
+          prop="email"
+        >
+          <el-input v-model="userAccountForm.email"/>
+        </el-form-item>
+        <el-form-item
+          label="Password"
+          prop="password"
+        >
+          <el-input v-model="userAccountForm.password"/>
+        </el-form-item>
+        <el-form-item
+          label="Confirm Password"
+          prop="c_password"
+        >
+          <el-input v-model="userAccountForm.c_password"/>
+        </el-form-item>
+        <el-form-item
+          label="Phone"
+          prop="phone"
+        >
+          <el-input v-model="userAccountForm.phone"/>
+        </el-form-item>
+
+        <el-form-item
+          label="First Name"
+          prop="first_name"
+        >
+          <el-input v-model="userAccountForm.first_name"/>
+        </el-form-item>
+        <el-form-item
+          label="Last Name"
+          prop="last_name"
+        >
+          <el-input v-model="userAccountForm.last_name"/>
+        </el-form-item>
+        <el-form-item
+          label="Company Name"
+          prop="company_name"
+        >
+          <el-input v-model="userAccountForm.company_name"/>
+        </el-form-item>
+
+        <el-form-item
+          label="Identity"
+          prop="identity"
+        >
+          <el-select
+            v-model="userAccountForm.identity"
+            class="filter-item"
+            placeholder="Please select identity"
+          >
+            <el-option
+              v-for="item in identityOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
       </el-form>
       <div
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="dialogFormUpgrade = false">
+        <el-button @click="userAccountDialogFormVisible = false">
           Cancel
         </el-button>
         <el-button
           type="primary"
-          @click="upgradeLevel()"
+          @click="addUserAccountByAdmin()"
         >
           Confirm
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog
+      title="All Identity"
+      :visible.sync="allIdentityVisible"
+    >
+      <div class="all-identity-container">
+         <div class="all-identity-items-bg">
+           <div class="all-identity-items-label">Educator</div>
+           <div class="all-identity-items">
+             <div class="all-identity-item" v-for="(item,i) in allIdentityDataForEducator" :key="i"
+                  @click="turnProfileList(item,1)"
+             >
+               <div class="all-identity-item-text">User id: <span>{{item.user_id}}</span></div>
+               <div class="all-identity-item-text">Name: <span>{{item.name}}</span></div>
+             </div>
+           </div>
+         </div>
+        <div class="all-identity-items-bg">
+          <div class="all-identity-items-label">Recruiter</div>
+          <div class="all-identity-items">
+            <div class="all-identity-item" v-for="(item,i) in allIdentityDataForRecruiter" :key="i"
+                 @click="turnProfileList(item,2)"
+            >
+              <div class="all-identity-item-text">User id: {{item.user_id}}</div>
+              <div class="all-identity-item-text">Display name: <span>{{item.display_name}}</span></div>
+              <div class="all-identity-item-text">Company name: <span>{{item.company_name}}</span> </div>
+            </div>
+          </div>
+        </div>
+        <div class="all-identity-items-bg">
+          <div class="all-identity-items-label">School</div>
+          <div class="all-identity-items">
+            <div class="all-identity-item" v-for="(item,i) in allIdentityDataForSchool" :key="i"
+                 @click="turnProfileList(item,3)"
+            >
+              <div class="all-identity-item-text">User id: {{item.user_id}}</div>
+              <div class="all-identity-item-text">Display name: <span>{{item.display_name}}</span></div>
+              <div class="all-identity-item-text">Company name: <span>{{item.company_name}}</span> </div>
+            </div>
+          </div>
+        </div>
+        <div class="all-identity-items-bg">
+          <div class="all-identity-items-label">Other</div>
+          <div class="all-identity-items">
+            <div class="all-identity-item" v-for="(item,i) in allIdentityDataForOther" :key="i"
+                 @click="turnProfileList(item,4)"
+            >
+              <div class="all-identity-item-text">User id: {{item.user_id}}</div>
+              <div class="all-identity-item-text">Display name: <span>{{item.display_name}}</span></div>
+              <div class="all-identity-item-text">Company name: <span>{{item.company_name}}</span> </div>
+            </div>
+          </div>
+        </div>
+        <div class="all-identity-items-bg">
+          <div class="all-identity-items-label">Vendor</div>
+          <div class="all-identity-items">
+            <div class="all-identity-item" v-for="(item,i) in allIdentityDataForVendor" :key="i"
+                 @click="turnProfileList(item,5)"
+            >
+              <div class="all-identity-item-text">User id: {{item.user_id}}</div>
+              <div class="all-identity-item-text">Display name: <span>{{item.display_name}}</span></div>
+              <div class="all-identity-item-text">Company name: <span>{{item.company_name}}</span> </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="userAccountDialogFormVisible = false">
+          Cancel
+        </el-button>
+        <el-button
+          type="primary"
+          @click="addUserAccountByAdmin()"
+        >
+          Confirm
+        </el-button>
+      </div>
+    </el-dialog>
+
+
+
   </div>
 </template>
 
 <script>
 
-import { userList, editUserInfo, deleteUser, vipList, changeVipLevel, userObjectList } from '@/api/member'
+import {
+  userContactList, editUserInfo, deleteUser, vipList, changeVipLevel,
+  userObjectList, assignAccount, changeBindPhone, unbindAccount
+} from '@/api/member'
+import {createUserAccount, loginToUser} from '@/api/admin'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination'
-import { addDeals } from '@/api/deals' // secondary package based on el-pagination
-import { addEvent } from '@/api/events'
+import {encode} from 'js-base64'
+import {USER_ALL_IDENTITY} from "@/api/api";
 
 export default {
   name: 'Index',
-  components: { Pagination },
-  directives: { waves },
+  components: {Pagination},
+  directives: {waves},
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -900,83 +592,39 @@ export default {
   },
   data() {
     return {
-      dealsType: [{ label: 'Deal', value: 1 }, { label: 'Discount', value: 2 }],
-      dealsTwo: [{ label: 'All Locations', value: 1 }, { label: 'Limited', value: 0 }],
-      dealsThree: [{ label: '1 year', value: 1 }, { label: '2 year', value: 2 }],
-      dealsFour: [{ label: 'Shanghai', value: 1 }, { label: 'Other', value: 0 }],
-      eventsOne: [{ label: 'Social', value: 1 }, { label: 'Professional', value: 2 }],
-      userListData: [],
-      popuCityList: [],
-      dialogFormDealsVisible: false,
+      allIdentityVisible:false,
+      allIdentityDataForEducator:[],
+      allIdentityDataForRecruiter:[],
+      allIdentityDataForSchool:[],
+      allIdentityDataForOther:[],
+      allIdentityDataForVendor:[],
 
-      dealsTempData: {
-        user_id: 1,
-        is_unregister: undefined,
-        type: undefined,
-        is_all: undefined,
-        file: undefined,
-        due_contract: undefined,
-        pay_money: undefined,
-        desc: undefined,
-        deal_id: undefined,
-        city: undefined,
-        location: undefined,
-        identity: undefined
-      },
-      fileUrl: undefined,
-      fileList: undefined,
-      eventsFileUrl: undefined,
-      eventsFileList: undefined,
-      dialogFormEventsVisible: false,
-      eventsTempData: {
-        user_id: 1,
-        name: undefined,
-        desc: undefined,
-        is_all: undefined,
-        type_desc: undefined,
-        pay_money: undefined,
-        date: undefined,
-        start_time: undefined,
-        end_time: undefined,
-        file: undefined,
-        location: undefined,
-        city: undefined,
-        is_unregister: 0
-      },
+      userAccountDialogFormVisible:false,
+      uploadRequestUrl: process.env.VUE_APP_UPLOAD_API,
 
-      tableKey: 0,
       list: null,
       total: 0,
-      listLoading: true,
+      listLoading: false,
       listQuery: {
         page: 1,
         limit: 10,
-        nickname: undefined,
-        truename: undefined,
+        id: undefined,
+        first_name: undefined,
+        last_name: undefined,
         phone: undefined,
-        is_educator: undefined,
-        is_business: undefined,
-        is_vendor: undefined,
-        is_other: undefined,
-        is_seeking: undefined,
-        sex: undefined
+        email: undefined
       },
-      percentOptions: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      seekingOptions: [{ label: 'no', value: 0 }, { label: 'Yes', value: 1 }],
-      sexOptions: [{ label: 'unco', value: 0 }, { label: 'Male', value: 1 }, { label: 'Female', value: 2 }],
-      identityOptions: [{ label: 'Educator', value: 1 }, { label: 'Business', value: 2 }, { label: 'Vendor', value: 3 }],
+
+      seekingOptions: [{label: 'no', value: 0}, {label: 'Yes', value: 1}],
+      sexOptions: [{label: 'unco', value: 0}, {label: 'Male', value: 1}, {label: 'Female', value: 2}],
+      identityOptions: [{label: 'Educator', value: 1}, {label: 'Business', value: 2}, {label: 'Vendor', value: 3}],
       levelOptions: [],
       vipList: [],
 
-      importanceOptions: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
       temp: {
         user_id: undefined,
-        username: undefined,
-        nickname: undefined,
-        truename: undefined,
+        first_name: undefined,
+        last_name: undefined,
         sex: undefined,
         phone: undefined,
         email: undefined,
@@ -984,7 +632,8 @@ export default {
       },
       tempUpgrade: {
         identity: undefined,
-        levelId: undefined
+        levelId: undefined,
+        month_num:undefined
       },
       dialogFormVisible: false,
       dialogFormUpgrade: false,
@@ -995,15 +644,49 @@ export default {
         upgrade: 'Upgrade'
       },
       dialogPvVisible: false,
-      pvData: [],
       rules: {
-        username: [{ required: true, message: 'username is required', trigger: 'change' }],
-        birthday: [{ type: 'date', required: true, message: 'birthday is required', trigger: 'change' }],
-        nickname: [{ required: true, message: 'nickname is required', trigger: 'blur' }]
+        username: [{required: false, message: 'username is required', trigger: 'change'}],
+        birthday: [{type: 'date', required: true, message: 'birthday is required', trigger: 'change'}],
+        nickname: [{required: false, message: 'nickname is required', trigger: 'blur'}]
       },
       downloadLoading: false,
       dialogUserDetailVisible: false,
-      userDetailData: []
+      userDetailData: [],
+
+      userAccountForm:{
+        email:undefined,
+        password:undefined,
+        c_password:undefined,
+        phone:undefined,
+        code:undefined,
+        first_name:undefined,
+        last_name:undefined,
+        company_name:undefined,
+        identity:undefined
+      },
+      userAccountRules: {
+        email: [{required: true, message: 'Email is required', trigger: 'change'}],
+        first_name: [{required: true, message: 'First Name is required', trigger: 'change'}],
+        last_name: [{ required: true, message: 'Last Name is required', trigger: 'change'}],
+        company_name: [{required: true, message: 'Company Name is required', trigger: 'blur'}],
+        password: [{required: true, message: 'Password Name is required', trigger: 'blur'}],
+        c_password: [{required: true, message: 'Confirm Password Name is required', trigger: 'blur'}],
+        identity: [{required: true, message: 'Identity is required', trigger: 'blur'}]
+      },
+      subAccountDialogVisible: false,
+      subAccountForm: {
+        pid: undefined,
+        phone: undefined,
+        username: undefined,
+        password: undefined
+      },
+      changeBindPhoneDialogVisible:false,
+      changeBindPhoneForm:{
+        user_id:undefined,
+        phone:undefined
+      },
+      showMonthNumStatus:true,
+
 
     }
   },
@@ -1018,114 +701,183 @@ export default {
     }
   },
   created() {
+
+    let page = this.$route.query.page;
+    let limit = this.$route.query.limit;
+
+    if(page){
+      this.listQuery.page = Number(page)
+    }
+    if(limit){
+      this.listQuery.limit = Number(limit)
+    }
+
     this.getList()
     this.getVipList()
-    this.getUserObjList()
+
   },
   methods: {
+    turnProfileList(item,type){
+      if(type == 1){
+        this.$router.push({path:'/educator/list',query:{uid:item.user_id}})
+      }
+
+      if(type == 2){
+        this.$router.push({path:'/business/recruiter',query:{uid:item.user_id,cid:item.id}})
+      }
+
+      if(type == 3){
+        this.$router.push({path:'/business/school',query:{uid:item.user_id,cid:item.id}})
+      }
+      if(type == 4){
+        this.$router.push({path:'/business/other',query:{uid:item.user_id,cid:item.id}})
+      }
+      if(type == 5){
+        this.$router.push({path:'/vendor/vendor',query:{uid:item.user_id, cid:item.id}})
+      }
+
+    },
+    showAllIdentity(row){
+      let params = {
+        user_id: row.id
+      }
+
+      USER_ALL_IDENTITY(params).then(res=>{
+        if(res.code == 200){
+
+          let userContact = res.message.user_contact;
+          if(userContact.educarot_contact){
+            this.allIdentityDataForEducator = userContact.educarot_contact
+          }else{
+            this.allIdentityDataForEducator = []
+          }
+
+          if(userContact.recruiting_company){
+            this.allIdentityDataForRecruiter = userContact.recruiting_company
+          }else{
+            this.allIdentityDataForRecruiter = []
+          }
+
+          if(userContact.school_company){
+            this.allIdentityDataForSchool = userContact.school_company
+          }else{
+            this.allIdentityDataForSchool = []
+          }
+
+          if(userContact.other_company){
+            this.allIdentityDataForOther = userContact.other_company
+          }else{
+            this.allIdentityDataForOther = []
+          }
+          if(userContact.vendor_company){
+            this.allIdentityDataForVendor = userContact.vendor_company
+          }else{
+            this.allIdentityDataForVendor = []
+          }
+
+          this.allIdentityVisible = true;
+        }
+      }).catch(err=>{
+        console.log(err)
+      })
+
+    },
+    showUserAccountModal(){
+      this.userAccountDialogFormVisible = true;
+    },
+    addUserAccountByAdmin(){
+
+      this.$refs['userAccountForm'].validate((valid) => {
+        if (valid) {
+          // console.log(this.temp)
+          let params = Object.assign({},this.userAccountForm)
+          createUserAccount(params).then(res=>{
+            // console.log(res)
+            if(res.code == 200){
+              this.userAccountDialogFormVisible = false
+              this.getList()
+            }
+          }).catch(err=>{
+            console.log(err)
+          })
+
+        }
+      })
+    },
+    handleUserPhone(row){
+        this.changeBindPhoneDialogVisible = true;
+        this.changeBindPhoneForm.user_id = row.id;
+    },
+    updateBindPhone(){
+      let data = Object.assign({},this.changeBindPhoneForm);
+      changeBindPhone(data).then(res=>{
+        if(res.code==200){
+          this.$message.success(res.msg)
+        }else{
+          this.$message.error(res.msg)
+        }
+        this.changeBindPhoneDialogVisible = false;
+        this.getList();
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
+    handleUnBindAccount(row){
+       let data = {
+         user_id:row.id
+       }
+      unbindAccount(data).then(res=>{
+        if(res.code==200){
+          this.$message.success(res.msg)
+        }else{
+          this.$message.error(res.msg)
+        }
+        this.getList();
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
+    handleSubAccount(row) {
+      this.subAccountForm.pid = row.id;
+      this.subAccountDialogVisible = true;
+    },
+    addSubAccount(){
+      let data = Object.assign({},this.subAccountForm)
+      assignAccount(data).then(res=>{
+        if(res.code==200){
+          this.$message.success(res.msg)
+        }else{
+          this.$message.error(res.msg)
+        }
+        this.subAccountDialogVisible = false;
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
     getUserObjList() {
-      userObjectList({ pid: 71 }).then(res => {
+      userObjectList({pid: 71}).then(res => {
         console.log(res)
         this.popuCityList = res.message
       })
     },
-    handleAddDeals(row) {
-      this.dialogFormDealsVisible = true
-      this.dealsTempData.user_id = row.id
-    },
-    handleAddEvents(row) {
-      this.dialogFormEventsVisible = true
-
-      this.dealsTempData.user_id = row.id
-    },
-    createEvents() {
-      console.log(this.eventsTempData)
-      // console.log(tempData.birthday.getFullYear())
-      const year = this.eventsTempData.date.getFullYear()
-      const month = this.eventsTempData.date.getMonth() + 1
-      const day = this.eventsTempData.date.getDate()
-
-      this.eventsTempData.date = year + '-' + month + '-' + day
-
-      if (this.eventsTempData.is_unregister == 1) {
-        this.eventsTempData.user_id = 1
-      }
-      addEvent(this.eventsTempData).then(response => {
-        console.log(response)
-        if (response.code == 200) {
-          this.$message({
-            message: '操作Success',
-            type: 'success'
-          })
-          this.dialogFormEventsVisible = false
-          this.eventsTempData = {
-            user_id: 1,
-            name: undefined,
-            desc: undefined,
-            is_all: undefined,
-            type_desc: undefined,
-            pay_money: undefined,
-            date: undefined,
-            start_time: undefined,
-            end_time: undefined,
-            file: undefined,
-            location: undefined,
-            city: undefined,
-            is_unregister: 0
-          }
-        }
-      })
-    },
-    createDeals() {
-      console.log(this.dealsTempData)
-      if (this.dealsTempData.is_unregister == 1) {
-        this.dealsTempData.user_id = 1
-      }
-      addDeals(this.dealsTempData).then(response => {
-        console.log(response)
-        if (response.code == 200) {
-          this.$message({
-            message: '操作Success',
-            type: 'success'
-          })
-          this.dialogFormDealsVisible = false
-        }
-      })
-    },
-    uploadFileSuccess(response, file, fileList) {
-      console.log(response)
-      // console.log(file)
-      // console.log(fileList)
-      if (response.code == 200) {
-        this.fileUrl = response.data[0].file_url
-        this.dealsTempData.file = response.data[0].file_url
-      } else {
-        console.log(response.msg)
-      }
-    },
-    uploadEventsFileSuccess(response, file, eventsFileList) {
-      console.log(response)
-      // console.log(file)
-      // console.log(fileList)
-      if (response.code == 200) {
-        this.eventsFileUrl = response.data[0].file_url
-        this.eventsTempData.file = response.data[0].file_url
-      } else {
-        console.log(response.msg)
-      }
+    paginationEvent(e){
+      this.$router.push({path:'/users/index',query:{page:e.page, limit:e.limit}})
+      this.getList()
     },
     getList() {
       this.listLoading = true
       // console.log(this.listQuery)
-      userList(this.listQuery).then(response => {
-        // console.log(response)
-        this.list = response.message.data
-        this.total = response.message.total
-        console.log(this.list)
-        // Just to simulate the time of the request
-        setTimeout(() => {
+      userContactList(this.listQuery).then(res => {
+
+        if(res.code == 200){
+          this.list = res.message.data
+          this.total = res.message.total
           this.listLoading = false
-        }, 1.5 * 1000)
+        }
+
+      }).catch(err=>{
+        console.log(err)
+        this.listLoading = false;
       })
     },
     changeIdentity(e) {
@@ -1143,11 +895,11 @@ export default {
         this.tempUpgrade.levelId = undefined
         this.levelOptions = this.vipList.filter(item => item.identity == 3)
       }
-      console.log(this.levelOptions)
+      // console.log(this.levelOptions)
     },
     getVipList() {
       vipList().then(response => {
-        console.log(response)
+        // console.log(response)
         this.vipList = response.message
       })
     },
@@ -1162,20 +914,6 @@ export default {
       })
       row.status = status
     },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
-    },
     resetTemp() {
       this.temp = {
         id: undefined,
@@ -1187,15 +925,6 @@ export default {
         type: ''
       }
     },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.user_id = row.id
@@ -1252,7 +981,7 @@ export default {
         }
       })
     },
-    handleDelete(row, index) {
+    handleDelete(row) {
       // this.list.splice(index, 1)
       deleteUser({
         user_id: row.id
@@ -1278,23 +1007,25 @@ export default {
         console.log(error)
       })
     },
-    handleMemberLevel(row, index) {
+    handleMemberLevel(row) {
       // this.tempUpgrade = Object.assign({}, row) // copy obj
       this.tempUpgrade.user_id = row.id
-      console.log(row)
+      // console.log(row)
       this.dialogStatus = 'Upgrade'
       this.dialogFormUpgrade = true
       this.tempUpgrade.levelId = undefined
       this.tempUpgrade.identity = undefined
+      this.tempUpgrade.month_num = undefined
+
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },
     upgradeLevel() {
-      var that = this
+      let that = this
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          console.log(this.tempUpgrade)
+          // console.log(this.tempUpgrade)
           const tempData = Object.assign({}, this.tempUpgrade)
           // const tempObj = {}
           // tempObj.username = this.temp.username
@@ -1302,10 +1033,11 @@ export default {
           const data = {
             user_id: tempData.user_id,
             identity: tempData.identity,
-            level_id: tempData.levelId
+            level_id: tempData.levelId,
+            month_num:tempData.month_num
           }
           changeVipLevel(data).then(response => {
-            console.log(response)
+            // console.log(response)
             if (response.code == 200) {
               that.$notify({
                 title: 'Success',
@@ -1321,7 +1053,7 @@ export default {
         }
       })
     },
-    handleRecover(row, index) {
+    handleRecover(row) {
       // this.list.splice(index, 1)
       deleteUser({
         user_id: row.id,
@@ -1353,34 +1085,47 @@ export default {
       this.userDetailData.push(detail)
       console.log(detail)
     },
+    handleAddCustomUser() {
 
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['id', 'name', 'phone', 'is_educator', 'is_business', 'is_vendor', 'is_other', 'is_seeking', 'identity']
-        const filterVal = ['id', 'name', 'phone', 'is_educator', 'is_business', 'is_vendor', 'is_other', 'is_seeking', 'identity']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
     },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
+    selectLevelChange(e){
+      // console.log(e)
+      // console.log(this.levelOptions)
+      let levelOptionsData = this.levelOptions
+
+      let filterData = levelOptionsData.filter(item=>item.id === e)
+      // console.log(filterData)
+      if(filterData.length>0){
+        if(filterData[0]['level'] == 4){
+          this.showMonthNumStatus = false
+        }else{
+          this.showMonthNumStatus = true
         }
-      }))
+      }
+
     },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
+    handleCreateTokenToLogin(row){
+      console.log(row)
+      let params = {
+        user_id:row.id
+      }
+      loginToUser(params).then(res=>{
+        console.log(res)
+        if(res.code == 200){
+
+          let str = encode(JSON.stringify(res.message))
+
+          let routerPath = process.env.VUE_APP_PC_DOMAIN
+
+          window.open(routerPath+'?from_admin='+encodeURIComponent(str),'_blank')
+
+        }
+
+      }).catch(err=>{
+        console.log(err)
+      })
     }
+
   }
 }
 </script>
@@ -1399,4 +1144,95 @@ export default {
   margin-bottom: 0;
   width: 20%;
 }
+
+.xll-container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.xll-item{
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-start;
+  background-color: #eeeeee;
+  //padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.xll-item-l{
+  background-color: #f0dacf;
+  padding: 10px;
+}
+
+.xll-item-r{
+  background-color: #00b3d2;
+  color: #FFFFFF;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.image-container{
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.all-identity-container{
+  padding: 10px;
+
+}
+
+.all-identity-items-bg{
+  margin-bottom: 15px;
+  background-color: #F0F2F5;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.all-identity-items-label{
+  font-size: 18px;
+  font-weight: bold;
+}
+.all-identity-items{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.all-identity-item{
+  background-color: #ffffff;
+  margin: 5px;
+  color: #808080;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.all-identity-item:hover{
+  background-color: #808080;
+  color: #F0F2F5;
+}
+.all-identity-item:hover span{
+  background-color: #808080;
+  color: #F0F2F5;
+}
+
+.all-identity-item-text{
+  /*color: #808080;*/
+}
+
+.all-identity-item span{
+  color: #262626;
+}
+
 </style>

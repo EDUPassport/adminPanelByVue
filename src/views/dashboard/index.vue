@@ -29,7 +29,7 @@ export default {
   mounted() {
     this.driver = new Driver()
     this.driver.defineSteps(steps)
-    this.driver.start()
+    // this.driver.start()
   },
   created() {
     if (!this.roles.includes('admin')) {

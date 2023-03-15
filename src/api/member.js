@@ -8,6 +8,7 @@ export function userList(params) {
   })
 }
 
+
 export function editUserInfo(data) {
   return request({
     url: '/admin/editUserInfo',
@@ -142,6 +143,97 @@ export function subCateList(params) {
 export function subCateLists(params) {
   return request({
     url: '/weixin/subCateLists',
+    method: 'get',
+    params
+  })
+}
+
+export function addUserImg(data) {
+  return request({
+    url: '/admin/addUserImg',
+    method: 'post',
+    data
+  })
+}
+
+export function assignAccount(data) {
+  return request({
+    url: '/admin/assignAccount',
+    method: 'post',
+    data
+  })
+}
+
+export function changeBindPhone(data) {
+  return request({
+    url: '/admin/changeBindPhone',
+    method: 'post',
+    data
+  })
+}
+
+export function unbindAccount(data) {
+  return request({
+    url: '/admin/unbindAccount',
+    method: 'post',
+    data
+  })
+}
+
+
+export function setVipDiscount(data) {
+  return request({
+    url: '/admin/vip/discount',
+    method: 'post',
+    data
+  })
+}
+
+// 2.0 版本的api
+
+export function userContactList(params) {
+  return request({
+    url: '/admin/user/contact/list',
+    method: 'get',
+    params
+  })
+}
+
+export function educatorContactList(params) {
+  return request({
+    url: '/admin/educator/contact/list',
+    method: 'get',
+    params
+  })
+}
+
+export function recruiterList(params) {
+  return request({
+    url: '/admin/recruiting/list',
+    method: 'get',
+    params
+  })
+}
+
+export function schoolList(params) {
+  return request({
+    url: '/admin/school/list',
+    method: 'get',
+    params
+  })
+}
+
+export function otherList(params) {
+  return request({
+    url: '/admin/other/list',
+    method: 'get',
+    params
+  })
+}
+
+export function vendorListV2(params) {
+  return request({
+    url: '/admin/vendor/list',
     method: 'get',
     params
   })

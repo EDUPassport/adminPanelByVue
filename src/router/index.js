@@ -8,8 +8,6 @@ import Layout from '@/layout'
 
 /* Router Modules */
 import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
 
 /**
@@ -84,19 +82,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/documentation',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'Documentation', icon: 'documentation', affix: false }
-      }
-    ]
-  },
-  {
     path: '/guide',
     component: Layout,
     redirect: '/guide/index',
@@ -129,20 +114,63 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/config/system/list',
     alwaysShow: true, // will always show the root menu
-    name: 'Config',
+    name: 'Company assets',
     meta: {
-      title: 'Config',
+      title: 'Company assets',
       icon: 'list'
     },
     children: [
       {
         path: 'system/list',
         component: () => import('@/views/config/system/list'),
-        name: 'listSystem',
+        name: 'MP Image Asset',
         meta: {
-          title: 'System'
+          title: 'MP Image Asset'
         }
-      }
+      },
+
+      {
+        path: 'system/tags',
+        component: () => import('@/views/config/system/tags'),
+        name: 'Tags',
+        meta: {
+          title: 'Tags'
+        }
+      },
+      {
+        path: 'subcate/list',
+        component: () => import('@/views/config/subcate/list'),
+        name: 'Profile & Sub Category',
+        meta: {
+          title: 'Profile & Sub Category'
+        }
+      },
+      {
+        path: 'vip/list',
+        component: () => import('@/views/config/vip/list'),
+        name: 'Membership plans',
+        meta: {
+          title: 'Membership plans'
+        }
+      },
+      {
+        path: 'vip/edit',
+        hidden: true,
+        component: () => import('@/views/config/vip/edit'),
+        name: 'Edit Membership plan',
+        meta: {
+          title: 'Edit Membership plan'
+        }
+      },
+      {
+        path: 'menu/list',
+        component: () => import('@/views/config/menu/list'),
+        name: 'menuList',
+        meta: {
+          title: 'Menu List'
+        }
+      },
+
     ]
   },
   {
@@ -157,11 +185,37 @@ export const constantRoutes = [
     },
     children: [
       {
+        path: 'category/list',
+        component: () => import('@/views/ads/category/list'),
+        name: 'Advertisement Structure',
+        meta: {
+          title: 'Advertisement Structure'
+        }
+      },
+      {
         path: 'list',
         component: () => import('@/views/ads/list'),
         name: 'listAds',
         meta: {
           title: 'Ads List'
+        }
+      },
+      {
+        path: 'purchase/list',
+        component: () => import('@/views/ads/purchase/list'),
+        name: 'Purchased Ads',
+        hidden: true,
+        meta: {
+          title: 'Purchased Ads'
+        }
+      },
+      {
+        path: 'purchase/review',
+        component: () => import('@/views/ads/purchase/review'),
+        name: 'Redeemed Ad Review',
+        hidden: true,
+        meta: {
+          title: 'Redeemed Ad Review'
         }
       },
       {
@@ -189,18 +243,26 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/category/list',
     alwaysShow: true, // will always show the root menu
-    name: 'Category',
+    name: 'Services',
     meta: {
-      title: 'Category',
+      title: 'Services',
       icon: 'list'
     },
     children: [
       {
         path: 'list',
         component: () => import('@/views/category/list'),
-        name: 'listCategory',
+        name: 'Multiple Select Fields',
         meta: {
-          title: 'Category List'
+          title: 'Multiple Select Fields'
+        }
+      },
+      {
+        path: 'subIdentity',
+        component: () => import('@/views/category/subIdentity'),
+        name: 'User Category',
+        meta: {
+          title: 'User Category'
         }
       }
     ]
@@ -210,202 +272,462 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/users/index',
     alwaysShow: true, // will always show the root menu
-    name: 'Users',
+    name: 'All Users',
     meta: {
-      title: 'Users',
+      title: 'All Users',
       icon: 'list'
     },
     children: [
       {
         path: 'index',
         component: () => import('@/views/users/index'),
-        name: 'listUsers',
+        name: 'User List',
         meta: {
-          title: 'Users List'
+          title: 'User List'
         }
-      },
+      }
+    ]
+  },
+  {
+    path: '/educator',
+    component: Layout,
+    redirect: '/educator/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Educators',
+    meta: {
+      title: 'Educators',
+      icon: 'list'
+    },
+    children: [
       {
-        path: 'educator',
-        component: () => import('@/views/users/edu/list'),
-        name: 'listEducator',
+        path: 'list',
+        component: () => import('@/views/educator/list'),
+        name: 'All Educators',
         meta: {
-          title: 'Educator List'
+          title: 'All Educators'
         }
       },
       {
         path: 'editEducator',
-        component: () => import('@/views/users/edu/edit'),
-        name: 'EditEducator',
-        meta: { title: 'Edit Educator', noCache: true, activeMenu: '/users/educator' },
+        component: () => import('@/views/educator/edit'),
+        name: 'edit Educator',
+        meta: { title: 'Edit Educator', noCache: true, activeMenu: '/educator' },
         hidden: true
       },
       {
-        path: 'business',
-        component: () => import('@/views/users/business/list'),
-        name: 'listBusiness',
+        path: 'events/list',
+        component: () => import('@/views/events/list'),
+        name: 'educatorEventsList',
         meta: {
-          title: 'Business List'
+          title: 'Events List'
         }
       },
       {
-        path: 'editBusiness',
-        component: () => import('@/views/users/business/edit'),
-        name: 'EditBusiness',
-        meta: { title: 'Edit Business', noCache: true, activeMenu: '/users/business' },
-        hidden: true
-      },
-      {
-        path: 'vendor',
-        component: () => import('@/views/users/vendor/list'),
-        name: 'listVendor',
+        path: 'events/detail',
+        component: () => import('@/views/events/detail'),
+        hidden: true,
+        name: 'educatorEventDetail',
         meta: {
-          title: 'Vendor List'
+          title: 'Event Detail', noCache: true, activeMenu: '/educator/events/list'
         }
       },
       {
-        path: 'editVendor',
-        component: () => import('@/views/users/vendor/edit'),
-        name: 'EditVendor',
-        meta: { title: 'Edit Vendor', noCache: true, activeMenu: '/users/vendor' },
-        hidden: true
-      }
+        path: 'events/editEvents',
+        component: () => import('@/views/events/add'),
+        hidden: true,
+        name: 'educatorEditEvents',
+        meta: {
+          title: 'Edit Events', noCache: true, activeMenu: '/educator/events/list'
+        }
+      },
+      {
+        path: 'events/addEvents',
+        component: () => import('@/views/events/add'),
+        hidden: true,
+        name: 'educatorAddEvents',
+        meta: {
+          title: 'Add Events', noCache: true, activeMenu: '/educator/events/list'
+        }
+      },
 
     ]
   },
   {
-    path: '/jobs',
+    path: '/business',
     component: Layout,
-    redirect: '/jobs/list',
+    redirect: '/business/list',
     alwaysShow: true, // will always show the root menu
-    name: 'Jobs',
+    name: 'Businesses',
     meta: {
-      title: 'Jobs',
+      title: 'Businesses',
       icon: 'list'
     },
     children: [
       {
         path: 'list',
-        component: () => import('@/views/jobs/list'),
-        name: 'listJobs',
-        meta: {
-          title: 'Jobs List'
-        }
-      },
-      {
-        path: 'service/list',
-        component: () => import('@/views/jobs/service/list'),
-        name: 'listService',
-        meta: {
-          title: 'Services List'
-        }
-      },
-      {
-        path: 'editJobs',
-        component: () => import('@/views/jobs/edit'),
         hidden: true,
-        name: 'EditJobs',
+        component: () => import('@/views/business/list'),
+        name: 'All Businesses',
         meta: {
-          title: 'Edit Jobs', noCache: true, activeMenu: '/jobs/list'
+          title: 'All Businesses'
         }
       },
       {
-        path: 'addJobs',
-        component: () => import('@/views/jobs/edit'),
-        hidden: true,
-        name: 'AddJobs',
+        path: 'recruiter',
+        component: () => import('@/views/business/recruiter'),
+        name: 'recruiterList',
         meta: {
-          title: 'Add Jobs', noCache: true, activeMenu: '/users/business'
+          title: 'All Recruiter'
         }
-      }
+      },
+      {
+        path: 'school',
+        component: () => import('@/views/business/school'),
+        name: 'schoolList',
+        meta: {
+          title: 'All School'
+        }
+      },
+      {
+        path: 'other',
+        component: () => import('@/views/business/other'),
+        name: 'otherList',
+        meta: {
+          title: 'All Other'
+        }
+      },
+      {
+        path: 'filterJobs',
+        component: () => import('@/views/business/filterJobs'),
+        name: 'Business Filter Jobs',
+        hidden: true,
+        meta: {
+          title: 'Business Filter Jobs',
+          activeMenu: '/business/list'
+        }
+      },
+      {
+        path: 'editBusiness',
+        component: () => import('@/views/business/edit'),
+        name: 'EditBusiness',
+        meta: { title: 'Edit Business', noCache: true, activeMenu: '/business/list' },
+        hidden: true
+      },
+      {
+        path: 'jobs/service/list',
+        component: () => import('@/views/business/jobs/service/list'),
+        name: 'Select Fields',
+        meta: {
+          title: 'Select Fields'
+        }
+      },
+
+      {
+        path: 'jobs/list',
+        component: () => import('@/views/business/jobs/list'),
+        name: 'Jobs',
+        meta: {
+          title: 'Jobs'
+        }
+      },
+      {
+        path: 'jobs/editJobs',
+        component: () => import('@/views/business/jobs/edit'),
+        hidden: true,
+        name: 'Edit Job',
+        meta: {
+          title: 'Edit Jobs', noCache: true, activeMenu: '/business/jobs/list'
+        }
+      },
+      {
+        path: 'jobs/addJobs',
+        component: () => import('@/views/business/jobs/edit'),
+        hidden: true,
+        name: 'add job',
+        meta: {
+          title: 'Add Job', noCache: true, activeMenu: '/business/jobs/list'
+        }
+      },
+      {
+        path: 'jobs/resume/list',
+        component: () => import('@/views/business/jobs/resume/list'),
+        hidden: true,
+        name: 'Applications',
+        meta: {
+          title: 'Applications', noCache: true, activeMenu: '/business/jobs/list'
+        }
+      },
+      {
+        path: 'events/list',
+        component: () => import('@/views/events/list'),
+        name: 'businessEventsList',
+        meta: {
+          title: 'Events List'
+        }
+      },
+      {
+        path: 'events/detail',
+        component: () => import('@/views/events/detail'),
+        hidden: true,
+        name: 'businessEventDetail',
+        meta: {
+          title: 'Event Detail', noCache: true, activeMenu: '/business/events/list'
+        }
+      },
+      {
+        path: 'events/editEvents',
+        component: () => import('@/views/events/add'),
+        hidden: true,
+        name: 'businessEditEvents',
+        meta: {
+          title: 'Edit Events', noCache: true, activeMenu: '/business/events/list'
+        }
+      },
+      {
+        path: 'events/addEvents',
+        component: () => import('@/views/events/add'),
+        hidden: true,
+        name: 'businessAddEvents',
+        meta: {
+          title: 'Add Events', noCache: true, activeMenu: '/business/events/list'
+        }
+      },
+
     ]
   },
   {
-    path: '/deals',
+    path: '/vendor',
     component: Layout,
-    redirect: '/deals/list',
+    redirect: '/vendor/list',
     alwaysShow: true, // will always show the root menu
-    name: 'Deals',
+    name: 'Vendor',
     meta: {
-      title: 'Deals',
+      title: 'Vendor',
       icon: 'list'
     },
     children: [
       {
-        path: 'list',
-        component: () => import('@/views/deals/list'),
+        path: 'vendor',
+        component: () => import('@/views/vendor/list'),
+        name: 'All Vendors',
+        meta: {
+          title: 'All Vendors'
+        }
+      },
+      {
+        path: 'editVendor',
+        component: () => import('@/views/vendor/edit'),
+        name: 'EditVendor',
+        meta: { title: 'Edit Vendor', noCache: true, activeMenu: '/vendor/list' },
+        hidden: true
+      },
+      {
+        path: 'deals/list',
+        component: () => import('@/views/vendor/deals/list'),
         name: 'listDeals',
         meta: {
           title: 'Deals List'
         }
       },
       {
-        path: 'editDeals',
-        component: () => import('@/views/deals/add'),
+        path: 'deals/editDeals',
+        component: () => import('@/views/vendor/deals/add'),
         hidden: true,
         name: 'EditDeals',
         meta: {
-          title: 'Edit Deals', noCache: true, activeMenu: '/deals/list'
+          title: 'Edit Deals', noCache: true, activeMenu: '/vendor/deals/list'
         }
       },
       {
-        path: 'addDeals',
-        component: () => import('@/views/deals/add'),
+        path: 'deals/addDeals',
+        component: () => import('@/views/vendor/deals/add'),
         hidden: true,
         name: 'AddDeals',
         meta: {
-          title: 'Add Deals', noCache: true, activeMenu: '/deals/list'
+          title: 'Add Deals', noCache: true, activeMenu: '/vendor/deals/list'
         }
-      }
-    ]
-  },
-  {
-    path: '/events',
-    component: Layout,
-    redirect: '/events/list',
-    alwaysShow: true, // will always show the root menu
-    name: 'Events',
-    meta: {
-      title: 'Events',
-      icon: 'list'
-    },
-    children: [
+      },
       {
-        path: 'list',
+        path: 'events/list',
         component: () => import('@/views/events/list'),
-        name: 'listEvents',
+        name: 'vendorEventsList',
         meta: {
           title: 'Events List'
         }
       },
       {
-        path: 'detail',
+        path: 'events/detail',
         component: () => import('@/views/events/detail'),
         hidden: true,
-        name: 'eventDetail',
+        name: 'vendorEventDetail',
         meta: {
-          title: 'Event Detail', noCache: true, activeMenu: '/events/list'
+          title: 'Event Detail', noCache: true, activeMenu: '/vendor/events/list'
         }
       },
       {
-        path: 'editEvents',
+        path: 'events/editEvents',
         component: () => import('@/views/events/add'),
         hidden: true,
-        name: 'EditEvents',
+        name: 'vendorEditEvents',
         meta: {
-          title: 'Edit Events', noCache: true, activeMenu: '/events/list'
+          title: 'Edit Events', noCache: true, activeMenu: '/vendor/events/list'
         }
       },
       {
-        path: 'addEvents',
+        path: 'events/addEvents',
         component: () => import('@/views/events/add'),
         hidden: true,
-        name: 'AddEvents',
+        name: 'vendorAddEvents',
         meta: {
-          title: 'Add Events', noCache: true, activeMenu: '/events/list'
+          title: 'Add Events', noCache: true, activeMenu: '/vendor/events/list'
+        }
+      },
+      {
+        path: 'logo',
+        component: () => import('@/views/vendor/logo/list'),
+        hidden: false,
+        name: 'logoList',
+        meta: {
+          title: "Logo List", noCache: true, activeMenu: '/vendor/logo/list'
+        }
+      }
+
+    ]
+  },
+  {
+    path: '/admin/user',
+    component: Layout,
+    redirect: '/admin/user/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Admin User',
+    meta: {
+      title: 'Admin User',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'user/list',
+        component: () => import('@/views/admin/user/list'),
+        name: 'Admin Users',
+        meta: {
+          title: 'Admin Users'
+        }
+      }
+
+    ]
+  },
+  {
+    path: '/lama',
+    component: Layout,
+    redirect: '/lama/list',
+    hidden: true,
+    name: 'Lama List',
+    meta: {
+      title: 'Lama',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/lama/list'),
+        name: 'Lama Users',
+        meta: {
+          title: 'Lama Users'
+        }
+      }
+
+    ]
+  },
+  {
+    path: '/promo',
+    component: Layout,
+    redirect: '/promo/code',
+    alwaysShow: true, // will always show the root menu
+    name: 'PromoCode',
+    meta: {
+      title: 'Promo Code',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'code',
+        component: () => import('@/views/promoCode/code'),
+        name: 'promoCode',
+        meta: {
+          title: 'Promo Code'
+        }
+      },
+      {
+        path: 'usedList',
+        component: () => import('@/views/promoCode/usedList'),
+        name: 'usedList',
+        hidden: true,
+        meta: {
+          title: 'Used List'
+        }
+      }
+    ]
+  },
+  {
+    path: '/subscribe',
+    component: Layout,
+    redirect: '/subscribe/email',
+    alwaysShow: true, // will always show the root menu
+    name: 'email',
+    meta: {
+      title: 'Email List',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'email',
+        component: () => import('@/views/subscribe/email/email'),
+        name: 'emailList',
+        meta: {
+          title: 'Email List'
+        }
+      }
+    ]
+  },
+  {
+    path: '/blog',
+    component: Layout,
+    redirect: '/blog/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'blog',
+    meta: {
+      title: 'Blog List',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/blog/list'),
+        name: 'blogList',
+        meta: {
+          title: 'List'
+        }
+      },
+      {
+        path: 'form',
+        component: () => import('@/views/blog/form'),
+        name: 'blogForm',
+        hidden:true,
+        meta: {
+          title: 'Blog Form',noCache: true, activeMenu: '/blog/list'
+        }
+      },
+      {
+        path: 'category/list',
+        component: () => import('@/views/blog/category/list'),
+        name: 'blogCategoryList',
+        meta: {
+          title: 'Category List'
         }
       }
     ]
   }
+
 
 ]
 
@@ -472,57 +794,7 @@ export const asyncRoutes = [
 
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
-  chartsRouter,
   nestedRouter,
-  tableRouter,
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/list',
-    name: 'Example',
-    hidden: true,
-    meta: {
-      title: 'Example',
-      icon: 'el-icon-s-help'
-    },
-    children: [
-      {
-        path: 'create',
-        component: () => import('@/views/example/create'),
-        name: 'CreateArticle',
-        meta: { title: 'Create Article', icon: 'edit' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/example/edit'),
-        name: 'EditArticle',
-        meta: { title: 'Edit Article', noCache: true, activeMenu: '/example/list' },
-        hidden: true
-      },
-      {
-        path: 'list',
-        component: () => import('@/views/example/list'),
-        name: 'ArticleList',
-        meta: { title: 'Article List', icon: 'list' }
-      }
-    ]
-  },
-
-  {
-    path: '/tab',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/tab/index'),
-        name: 'Tab',
-        meta: { title: 'Tab', icon: 'tab' }
-      }
-    ]
-  },
-
   {
     path: '/error',
     component: Layout,
@@ -605,24 +877,6 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/zip',
-    component: Layout,
-    redirect: '/zip/download',
-    alwaysShow: true,
-    name: 'Zip',
-    hidden: true,
-    meta: { title: 'Zip', icon: 'zip' },
-    children: [
-      {
-        path: 'download',
-        component: () => import('@/views/zip/index'),
-        name: 'ExportZip',
-        meta: { title: 'Export Zip' }
-      }
-    ]
-  },
-
-  {
     path: '/pdf',
     component: Layout,
     redirect: '/pdf/index',
@@ -642,33 +896,6 @@ export const asyncRoutes = [
     hidden: true
   },
 
-  {
-    path: '/theme',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/theme/index'),
-        name: 'Theme',
-        meta: { title: 'Theme', icon: 'theme' }
-      }
-    ]
-  },
-
-  {
-    path: '/clipboard',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/clipboard/index'),
-        name: 'ClipboardDemo',
-        meta: { title: 'Clipboard', icon: 'clipboard' }
-      }
-    ]
-  },
 
   {
     path: 'external-link',

@@ -31,9 +31,148 @@ export function categoryList(params) {
     params
   })
 }
+
 export function updateObject(data) {
   return request({
     url: '/admin/updateObject',
+    method: 'post',
+    data
+  })
+}
+
+
+export function addUserObject(data) {
+  return request({
+    url: '/admin/addUserObject',
+    method: 'post',
+    data
+  })
+}
+
+export function addAdminUser(data) {
+  return request({
+    url: '/admin/addAdminUser',
+    method: 'post',
+    data
+  })
+}
+
+export function getAdminList(params) {
+  return request({
+    url: '/admin/getAdminList',
+    method: 'get',
+    params
+  })
+
+}
+
+export function addPromoCode(data) {
+  return request({
+    url: '/admin/addPromoCode',
+    method: 'post',
+    data
+  })
+}
+
+export function approveBusiness(data) {
+  return request({
+    url: '/admin/approveBusiness',
+    method: 'post',
+    data
+  })
+}
+
+export function promoCardList(params) {
+  return request({
+    url: '/admin/promoCardList',
+    method: 'get',
+    params
+  })
+}
+
+export function setFeaturedDeals(data) {
+  return request({
+    url: '/admin/setFeaturedDeals',
+    method: 'post',
+    data
+  })
+}
+
+export function getSixLogo(params) {
+  return request({
+    url: '/admin/getSixLogo',
+    method: 'get',
+    params
+  })
+}
+export function addSixLogo(data) {
+  return request({
+    url: '/admin/addSixLogo',
+    method: 'post',
+    data
+  })
+}
+
+//admin/subscribeEmailList
+export function subscribeEmailList(params) {
+  return request({
+    url: '/admin/subscribeEmailList',
+    method: 'get',
+    params
+  })
+}
+
+export function promoCardUserList(params) {
+  return request({
+    url: '/admin/promoCardUserList',
+    method: 'get',
+    params
+  })
+}
+
+export function addVipLevel(data) {
+  return request({
+    url: '/admin/addVipLevel',
+    method: 'post',
+    data
+  })
+}
+
+export function adminExportBusiness(params) {
+  return request({
+    url: '/admin/export/business',
+    method: 'get',
+    params
+  })
+}
+
+export function adminExportVendor(params) {
+  return request({
+    url: '/admin/export/vendor',
+    method: 'get',
+    params
+  })
+}
+
+export function setPromoCodeDiscount(data) {
+  return request({
+    url: '/admin/promoCard/discount',
+    method: 'post',
+    data
+  })
+}
+
+export function createUserAccount(data) {
+  return request({
+    url: '/admin/addUserAccount',
+    method: 'post',
+    data
+  })
+}
+
+export function loginToUser(data) {
+  return request({
+    url: '/admin/loginToUser',
     method: 'post',
     data
   })

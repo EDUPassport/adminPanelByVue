@@ -7,3 +7,11 @@ export function getAreas(params) {
     params
   })
 }
+
+export function getCountry(params) {
+  return request({
+    url: '/getCountry',
+    method: 'get',
+    params
+  })
+}

@@ -27,6 +27,45 @@
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('userCount')">
+        <div class="card-panel-icon-wrapper icon-people">
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            Educator
+          </div>
+          <count-to :start-val="0" :end-val="educatorCount" :duration="2600" class="card-panel-num" />
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('userCount')">
+        <div class="card-panel-icon-wrapper icon-people">
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+             Business
+          </div>
+          <count-to :start-val="0" :end-val="businessCount" :duration="2600" class="card-panel-num" />
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('userCount')">
+        <div class="card-panel-icon-wrapper icon-people">
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            Vendor
+          </div>
+          <count-to :start-val="0" :end-val="vendorCount" :duration="2600" class="card-panel-num" />
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('deal')">
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="message" class-name="card-panel-icon" />
@@ -82,7 +121,11 @@ export default {
       eventCount: undefined,
       jobCount: undefined,
       newUsers: undefined,
-      userCount: undefined
+      userCount: undefined,
+      educatorCount:undefined,
+      businessCount:undefined,
+      vendorCount:undefined
+
     }
   },
   created() {
@@ -101,6 +144,9 @@ export default {
           this.jobCount = res.message.job_count
           this.newUsers = res.message.new_users
           this.userCount = res.message.user_count
+          this.educatorCount = res.message.educator_count
+          this.businessCount = res.message.business_count
+          this.vendorCount = res.message.vendor_count
         } else {
           this.$message.error(res.msg)
         }

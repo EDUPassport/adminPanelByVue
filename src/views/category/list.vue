@@ -1,7 +1,13 @@
 <template>
   <div>
+    <div class="filter-container">
+<!--      <el-button type="primary">Add+</el-button>-->
+    </div>
     <el-tabs :tab-position="tabPosition" style="height: 900px;" @tab-click="tabClick">
       <el-tab-pane v-for="(item,i) in firstData" :key="i" :name="JSON.stringify(item.id)" :label="item.object_en">
+        <div class="xll-container">
+          <el-button type="primary" @click="addChildren(item)">Add+</el-button>
+        </div>
         <el-table
           :data="listData"
           border
@@ -33,17 +39,19 @@
             </template>
           </el-table-column>
         </el-table>
-        <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getCategory(item.id)" />
+        <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit"
+                    @pagination="getCategory(item.id)"/>
       </el-tab-pane>
     </el-tabs>
 
     <el-dialog title="Update" :visible.sync="dialogFormUpdate">
-      <el-form ref="dataForm" :model="updateObj" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :model="updateObj" label-position="left" label-width="90px"
+               style="width: 400px; margin-left:50px;">
         <el-form-item label="Name (En)" prop="object_en">
-          <el-input v-model="updateObj.object_en" />
+          <el-input v-model="updateObj.object_en"/>
         </el-form-item>
         <el-form-item label="Name (En)" prop="object_cn">
-          <el-input v-model="updateObj.object_cn" />
+          <el-input v-model="updateObj.object_cn"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -56,15 +64,36 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="Add" :visible.sync="addDialogFormUpdate">
+      <el-form ref="dataForm" :model="addTempForm" label-position="left" label-width="90px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="Name (En)" prop="object_en">
+          <el-input v-model="addTempForm.object_en"/>
+        </el-form-item>
+        <el-form-item label="Name (Cn)" prop="object_cn">
+          <el-input v-model="addTempForm.object_cn"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addDialogFormUpdate = false">
+          Cancel
+        </el-button>
+        <el-button type="primary" @click="addCategory()">
+          Confirm
+        </el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { categoryList, updateObject } from '@/api/admin'
+import {categoryList, updateObject, addUserObject} from '@/api/admin'
 import Pagination from '@/components/Pagination'
+
 export default {
   name: 'List',
-  components: { Pagination },
+  components: {Pagination},
   data() {
     return {
       tabPosition: 'left',
@@ -84,7 +113,14 @@ export default {
         p_name_en: undefined,
         is_delete: undefined
       },
-      id: undefined
+      id: undefined,
+      addDialogFormUpdate: false,
+      addTempForm: {
+        object_en: undefined,
+        object_cn: undefined,
+        pid: undefined
+      }
+
     }
   },
   created() {
@@ -103,20 +139,36 @@ export default {
       this.dialogFormUpdate = true
     },
     handleDelete(row) {
-      this.updateObj = Object.assign({}, row)
-      this.updateObj.object_id = row.id
-      this.updateObj.is_delete = 1
-      updateObject(this.updateObj).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          this.getCategory(this.id)
-          this.dialogFormUpdate = false
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        console.log(err)
+
+      this.$confirm('Delete ?', 'Notice', {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+        center: true
+      }).then(() => {
+
+        this.updateObj = Object.assign({}, row)
+        this.updateObj.object_id = row.id
+        this.updateObj.is_delete = 1
+        updateObject(this.updateObj).then(res => {
+          console.log(res)
+          if (res.code === 200) {
+            this.getCategory(this.id)
+            this.dialogFormUpdate = false
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(err => {
+          console.log(err)
+        })
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: 'Undeleted'
+        })
       })
+
     },
     updateCategory() {
       updateObject(this.updateObj).then(res => {
@@ -167,11 +219,33 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    addChildren(item) {
+      console.log(item)
+      this.addDialogFormUpdate = true;
+      this.addTempForm.pid = item.id;
+    },
+    addCategory() {
+      let data = Object.assign({}, this.addTempForm)
+      addUserObject(data).then(res => {
+        console.log(res)
+        if (res.code == 200) {
+          this.getCategory(this.id)
+          this.addDialogFormUpdate = false
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     }
+
   }
 }
 </script>
 
 <style scoped>
-
+.xll-container{
+  padding: 20px;
+}
 </style>
