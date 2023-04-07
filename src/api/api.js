@@ -135,3 +135,10 @@ export function ADMIN_REFRESH_JOBS(params) {
   })
 }
 
+export function ADMIN_COUNT_INDEX(params) {
+  return request({
+    url: '/admin/count/index',
+    method: 'get',
+    params
+  })
+}

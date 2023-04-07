@@ -10,6 +10,7 @@
     "build:internationalprod": "vue-cli-service build --mode internationalprod",
     "build:chinaprod": "vue-cli-service build --mode chinaprod",
     "build:chinadev": "vue-cli-service build --mode chinadev",
+    "build:internationaldev": "vue-cli-service build --mode internationaldev",
     "cip": "vue-cli-service build --mode internationalprod && vue-cli-service build --mode chinaprod",
     "all": "vue-cli-service build --mode internationalprod && vue-cli-service build --mode chinaprod && vue-cli-service build --mode chinadev",
     "preview": "node build/index.js --preview",

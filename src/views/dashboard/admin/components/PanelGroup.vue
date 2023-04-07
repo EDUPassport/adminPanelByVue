@@ -1,13 +1,13 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newUsers')">
+      <div class="card-panel" @click="handleSetLineChartData('userCount')">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            New Users
+            Number of new sign up's per week
           </div>
           <count-to :start-val="0" :end-val="newUsers" :duration="2600" class="card-panel-num" />
         </div>
@@ -20,7 +20,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            User Count
+            All Users
           </div>
           <count-to :start-val="0" :end-val="userCount" :duration="2600" class="card-panel-num" />
         </div>
@@ -33,9 +33,9 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Educator
+            No of Job applications
           </div>
-          <count-to :start-val="0" :end-val="educatorCount" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="applyUserCount" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -46,25 +46,13 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-             Business
+            Rate of Successful Applications
           </div>
-          <count-to :start-val="0" :end-val="businessCount" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="interestedCount" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('userCount')">
-        <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Vendor
-          </div>
-          <count-to :start-val="0" :end-val="vendorCount" :duration="2600" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
+
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('deal')">
         <div class="card-panel-icon-wrapper icon-message">
@@ -110,6 +98,7 @@
 <script>
 import CountTo from 'vue-count-to'
 import { indexCount } from '@/api/admin'
+import {ADMIN_COUNT_INDEX} from "@/api/api";
 
 export default {
   components: {
@@ -117,19 +106,23 @@ export default {
   },
   data() {
     return {
-      dealCount: undefined,
-      eventCount: undefined,
-      jobCount: undefined,
-      newUsers: undefined,
-      userCount: undefined,
-      educatorCount:undefined,
-      businessCount:undefined,
-      vendorCount:undefined
+      dealCount: 0,
+      eventCount: 0,
+      jobCount: 0,
+      newUsers: 0,
+      userCount: 0,
+      applyUserCount:0,
+      interestedCount:0,
+
+      educatorCount:0,
+      businessCount:0,
+      vendorCount:0
 
     }
   },
   created() {
     this.getIndexCount()
+    this.getAdminCountIndex()
   },
   methods: {
     handleSetLineChartData(type) {
@@ -142,18 +135,33 @@ export default {
           this.dealCount = res.message.deal_count
           this.eventCount = res.message.event_count
           this.jobCount = res.message.job_count
-          this.newUsers = res.message.new_users
-          this.userCount = res.message.user_count
-          this.educatorCount = res.message.educator_count
-          this.businessCount = res.message.business_count
-          this.vendorCount = res.message.vendor_count
+          // this.newUsers = res.message.new_users
+          // this.userCount = res.message.user_count
+          // this.educatorCount = res.message.educator_count
+          // this.businessCount = res.message.business_count
+          // this.vendorCount = res.message.vendor_count
         } else {
           this.$message.error(res.msg)
         }
       }).catch(err => {
         console.log(err)
       })
+    },
+    getAdminCountIndex(){
+      ADMIN_COUNT_INDEX().then(res=>{
+        console.log(res)
+        if(res.code === 200){
+          this.newUsers = res.message.one_week_user
+          this.userCount = res.message.all_user
+          this.applyUserCount = res.message.one_week_apply_user
+          this.interestedCount = res.message.happy_user
+        }
+
+      }).catch(err=>{
+        console.log(err)
+      })
     }
+
   }
 }
 </script>
@@ -167,11 +175,16 @@ export default {
   }
 
   .card-panel {
-    height: 108px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    min-height: 100px;
+    border-radius: 14px;
     cursor: pointer;
     font-size: 12px;
-    position: relative;
-    overflow: hidden;
+
     color: #666;
     background: #fff;
     box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
@@ -218,27 +231,26 @@ export default {
     .card-panel-icon-wrapper {
       float: left;
       margin: 14px 0 0 14px;
-      padding: 16px;
+      padding: 4px;
       transition: all 0.38s ease-out;
       border-radius: 6px;
     }
 
     .card-panel-icon {
       float: left;
-      font-size: 48px;
+      font-size: 24px;
     }
 
     .card-panel-description {
       float: right;
       font-weight: bold;
-      margin: 26px;
-      margin-left: 0px;
+      margin: 14px;
 
       .card-panel-text {
-        line-height: 18px;
         color: rgba(0, 0, 0, 0.45);
-        font-size: 16px;
-        margin-bottom: 12px;
+        font-size: 12px;
+        margin-bottom: 14px;
+        min-height: 20px;
       }
 
       .card-panel-num {
