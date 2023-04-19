@@ -46,6 +46,17 @@
       >
         Search
       </el-button>
+
+      <el-button
+        v-waves
+        type="primary"
+        class="filter-item"
+        :disabled="multipleSurvey.length <= 0"
+        @click="handleMultipleSurvey()"
+      >
+        Multiple Survey
+      </el-button>
+
     </div>
 
     <el-table
@@ -57,7 +68,9 @@
       highlight-current-row
       style="width: 100%;"
       @sort-change="sortChange"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column type="expand">
         <template v-slot="props">
           <el-form
@@ -474,6 +487,7 @@ import {addEvent} from '@/api/events'
 import {adCategoryList, buyAd} from "@/api/ads";
 import {loginToUser} from "@/api/admin";
 import {encode} from "js-base64";
+import {ADD_USER_QUESTION} from "@/api/api";
 
 export default {
   name: 'Index',
@@ -612,7 +626,8 @@ export default {
         value: 'id',
         label: 'name_en'
       },
-      showMonthNumStatus:true
+      showMonthNumStatus:true,
+      multipleSurvey: []
 
     }
   },
@@ -650,6 +665,32 @@ export default {
 
   },
   methods: {
+    handleSelectionChange(val){
+      console.log(val)
+      this.multipleSurvey = val;
+    },
+    handleMultipleSurvey(){
+
+      let multiData = this.multipleSurvey
+      let multiParams = []
+      multiData.forEach(item=>{
+        multiParams.push(item.id)
+      })
+
+      console.log(multiParams)
+      let params = {
+        identity:1,
+        company_ids:multiParams.join(',')
+      }
+      ADD_USER_QUESTION(params).then(res=>{
+        if(res.code === 200){
+          this.$message.success('Success')
+        }
+      }).catch(err=>{
+        console.log(err)
+      })
+
+    },
     purchaseConfirm() {
       let data = Object.assign({}, this.purchaseAdsForm)
       // console.log(data)

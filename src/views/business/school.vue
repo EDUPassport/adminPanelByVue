@@ -44,6 +44,17 @@
       <el-button v-loading="exportDataLoading" v-waves  type="primary" @click="exportBusinessAsExcel()">
         Export Data
       </el-button>
+
+      <el-button
+        v-waves
+        type="primary"
+        class="filter-item"
+        :disabled="multipleSurvey.length <= 0"
+        @click="handleMultipleSurvey()"
+      >
+        Multiple Survey
+      </el-button>
+
     </div>
     <el-table
       v-loading="listLoading"
@@ -53,8 +64,10 @@
       stripe
       size="mini"
       highlight-current-row
+      @selection-change="handleSelectionChange"
       style="width: 100%;"
     >
+      <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column fixed type="expand">
         <template v-slot="props">
           <el-form label-position="left" inline class="demo-table-expand">
@@ -407,7 +420,7 @@ import {adCategoryList, buyAd} from "@/api/ads";
 import {approveBusiness, adminExportBusiness, loginToUser} from "@/api/admin"
 import {tree} from "@/utils";
 import {encode} from "js-base64";
-import {SCHOOL_COPY_AS_RECRUITER} from "@/api/api";
+import {ADD_USER_QUESTION, SCHOOL_COPY_AS_RECRUITER} from "@/api/api";
 
 export default {
   name: 'school',
@@ -496,7 +509,8 @@ export default {
         business_id: undefined,
         status: undefined
       },
-      showMonthNumStatus:true
+      showMonthNumStatus:true,
+      multipleSurvey: []
 
     }
   },
@@ -509,6 +523,7 @@ export default {
         token: this.$store.state.user.token
       }
     }
+
   },
   created() {
 
@@ -536,6 +551,33 @@ export default {
     this.getAdsCategoryList()
   },
   methods: {
+
+    handleSelectionChange(val){
+      console.log(val)
+      this.multipleSurvey = val;
+    },
+    handleMultipleSurvey(){
+
+      let multiData = this.multipleSurvey
+      let multiParams = []
+      multiData.forEach(item=>{
+        multiParams.push(item.id)
+      })
+
+      console.log(multiParams)
+      let params = {
+        identity:3,
+        company_ids:multiParams.join(',')
+      }
+      ADD_USER_QUESTION(params).then(res=>{
+        if(res.code === 200){
+          this.$message.success('Success')
+        }
+      }).catch(err=>{
+        console.log(err)
+      })
+
+    },
     handleReview(row) {
       // this.temp = Object.assign({}, row) // copy obj
       this.tempReview.business_id = row.id

@@ -142,3 +142,11 @@ export function ADMIN_COUNT_INDEX(params) {
     params
   })
 }
+
+export function ADD_USER_QUESTION(data) {
+  return request({
+    url: '/admin/add/user/question',
+    method: 'post',
+    data
+  })
+}
