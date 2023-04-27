@@ -20,7 +20,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Number of new sign up's {{value}}
+            Number of new sign up's
           </div>
           <count-to :start-val="0" :end-val="newUsers" :duration="2600" class="card-panel-num" />
         </div>
