@@ -240,6 +240,9 @@
               <el-tag v-if="row.status === 2" :type="row.status | statusFilter">
                 Rejected
               </el-tag>
+              <el-tag v-if="row.status === 3" :type="row.status | statusFilter">
+                Expired
+              </el-tag>
             </template>
           </el-table-column>
           <el-table-column label="Actions" align="center" width="240"
@@ -481,7 +484,7 @@ export default {
       },
       importanceOptions: [1, 2, 3],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: [{ label: 'Pending', value: 0 }, { label: 'Successful', value: 1 }, { label: 'Rejected', value: 2 }],
+      statusOptions: [{ label: 'Pending', value: 0 }, { label: 'Successful', value: 1 }, { label: 'Rejected', value: 2 },{ label: 'Expired', value: 3 }],
       showReviewer: false,
       temp: {
         job_id: undefined,
