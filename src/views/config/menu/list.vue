@@ -40,6 +40,7 @@
           <span v-if="row.identity == 3">School</span>
           <span v-if="row.identity == 4">Other</span>
           <span v-if="row.identity == 5">Vendor</span>
+          <span v-if="row.identity == 6">Contributor</span>
         </template>
       </el-table-column>
       <el-table-column label="Name EN" width="200px" align="center">
@@ -227,7 +228,8 @@ export default {
         {label: 'Recruiter', value: 2},
         {label: 'School', value: 3},
         {label: 'Other', value: 4},
-        {label: 'Vendor', value: 5}
+        {label: 'Vendor', value: 5},
+        {label:'Contributor', value: 6}
       ],
       sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
       statusOptions: ['published', 'draft', 'deleted'],
