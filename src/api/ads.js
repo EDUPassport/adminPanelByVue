@@ -16,6 +16,31 @@ export function adList(params) {
   })
 }
 
+export function advertiseBusiness(params) {
+  return request({
+    url: '/admin/user/contactform/list',
+    method: 'get',
+    params
+  })
+}
+
+export function userContactsList(params) {
+  return request({
+    url: '/admin/userContacts',
+    method: 'get',
+    params
+  })
+}
+
+
+export function updateAdvertiseBusiness(data) {
+  return request({
+    url: '/admin/user/contactform/edit',
+    method: 'post',
+    data
+  })
+}
+
 export function adDetail(params) {
   return request({
     url: '/ad/detail',

@@ -5,7 +5,8 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="getList()">
         Search
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button v-permission="['lei']" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit"
+        @click="handleCreate">
         Add
       </el-button>
     </div>
@@ -18,67 +19,43 @@
             <span>{{ row.id }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Category" width="160px" align="center">
+        <el-table-column label="Name" width="160px" align="center">
           <template v-slot="{ row }">
-            <span>{{ row.category_en }}</span>
+            <span>{{ row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Profile" width="190px" align="center">
+        <el-table-column label="Email" width="190px" align="center">
           <template v-slot="{ row }">
-            <span>{{ row.name_key }}</span>
+            <span>{{ row.email }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Link" width="200px" align="center">
+        <el-table-column label="Phone No" width="200px" align="center">
           <template v-slot="{ row }">
-            <span>{{ row.link }}</span>
+            <span>{{ row.phone_no }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Title" width="200px" align="center">
+        <el-table-column label="Request" width="200px" align="center">
           <template v-slot="{ row }">
-            <span>{{ row.title }}</span>
+            <span>{{ row.request.charAt(0).toUpperCase() + row.request.slice(1).toLowerCase().replace(/_/g, ' ') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Views" width="200px" align="center">
+        <el-table-column label="Other Detail" width="200px" align="center">
           <template v-slot="{ row }">
-            <span>{{ row.views }}</span>
+            <span>{{ row.other }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Clicks" width="200px" align="center">
+        <el-table-column label="Profile" width="200px" align="center">
           <template v-slot="{ row }">
-            <span>{{ row.click }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Page" width="200px" align="center">
-          <template v-slot="{ row }">
-            <span>{{ capitalizeFirstCharacter(row.page) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Relative Link" width="200px" align="center">
-          <template v-slot="{ row }">
-            <span>{{ row.relative_link }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Default Image" width="160px" align="center">
-          <template v-slot="{ row }">
-            <el-image style="width: 100px; height: 50px" :src="row.url" fit="contain" />
-          </template>
-        </el-table-column>
-        <el-table-column label="Ads Banner Image" width="160px" align="center">
-          <template v-slot="{ row }">
-            <el-image style="width: 100px; height: 50px" :src="row.user_url" fit="contain" />
+            <span v-if="row.profile == 1">Educator</span>
+            <span v-else-if="row.profile == 2">EDU Busniess</span>
+            <span v-else-if="row.profile == 4">Other</span>
+            <span v-else-if="row.profile == 5">Vendor</span>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="Actions" align="center" width="230" class-name="small-padding fixed-width">
           <template v-slot="{ row, $index }">
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               Edit
-            </el-button>
-            <el-button v-if="row.is_delete === 1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
-              Recover
-            </el-button>
-            <el-button v-if="row.is_delete === 0" v-permission="['lei']" size="mini" type="danger"
-              @click="handleDelete(row, $index)">
-              Delete
             </el-button>
           </template>
         </el-table-column>
@@ -90,67 +67,33 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="top">
-        <el-form-item label="Category" prop="category">
-          <el-cascader v-model="adsCategoryValue" :options="categoryData"
-            :props="{ checkStrictly: true, emitPath: false, value: 'id', label: 'name_en' }" :show-all-levels="false"
-            @change="pidChange" clearable>
-          </el-cascader>
+        <el-form-item label="Nmae">
+          <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item label="Is Use" prop="is_use">
-          <el-select v-model="temp.is_use" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in isUseList" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
+        <el-form-item label="Email">
+          <el-input v-model="temp.email" />
         </el-form-item>
-        <!-- feature list -->
-        <el-form-item label="Advertiser" prop="contact_user_id">
-          <el-select v-model="temp.contact_user_id" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in isFeatureList" :key="item.id" :label="item.first_name + ' ' + item.last_name"
-              :value="item.id" />
-          </el-select>
+        <el-form-item label="Phone No">
+          <el-input v-model="temp.phone_no" />
         </el-form-item>
-        <!-- feature list -->
-        <el-form-item label="Page" prop="page">
-          <el-select v-model="temp.page" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in isPageList" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
+        <el-form-item label="Request">
+          <el-input v-model="temp.request" />
         </el-form-item>
-        <!-- position -->
-        <el-form-item label="Position" prop="position">
-          <el-select v-model="temp.position" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in isPositionList" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
+        <el-form-item label="Other Detail">
+          <el-input v-model="temp.other" />
         </el-form-item>
-        <el-form-item label="Link">
-          <el-input v-model="temp.link" />
+        <!-- <el-form-item label="Profile">
+          <el-input v-model="temp.profile" />
+        </el-form-item> -->
+        <el-form-item label="Follow Up Detail">
+          <el-input
+          v-model="temp.follow_up_detail"
+          maxlength="5000"
+          placeholder="Please input"
+          show-word-limit
+          type="textarea"
+  />
         </el-form-item>
-        <el-form-item label="Relative Link">
-          <el-input v-model="temp.relative_link" />
-        </el-form-item>
-        <el-form-item label="Description">
-          <!--          <el-input v-model="temp.title"  type="textarea"/>-->
-          <tinymce v-model="temp.title" :height="300" />
-
-        </el-form-item>
-        <el-form-item label="Sort">
-          <el-input v-model="temp.sort" type="number" />
-        </el-form-item>
-        <el-form-item label="Default Banner">
-          <el-upload class="upload-demo" drag :headers="uploadHeaders" name="file[]" action="" multiple
-            list-type="picture" :limit="1" :http-request="bannerHttpRequest" :file-list="fileList"
-            :before-remove="bannerBeforeRemove">
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="Ads Banner Image">
-          <el-upload class="upload-demo" drag :headers="uploadHeaders" name="file[]" action="" multiple
-            list-type="picture" :limit="1" :http-request="adsBannerHttpRequest" :file-list="adsBannerFileList"
-            :before-remove="adsBannerBeforeRemove">
-            <i class="el-icon-upload" />
-            <div class="el-upload__text">Drag the file here, or <em>click to upload</em></div>
-          </el-upload>
-        </el-form-item>
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -166,7 +109,7 @@
 </template>
 
 <script>
-import { add, adList, userContactsList } from '@/api/ads'
+import { add, advertiseBusiness, updateAdvertiseBusiness } from '@/api/ads'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
@@ -203,24 +146,10 @@ export default {
         page: 1,
         limit: 50
       },
-      listContactUser: {
-        identity: 0,
-        page: 1,
-        limit: 50
-      },
       importanceOptions: [1, 2, 3],
       isUseList: [
         { label: 'no', value: 0 },
         { label: 'yes', value: 1 }
-      ],
-      isPageList: [
-        { label: 'Deal', value: 'deal' },
-        { label: 'Job', value: 'job' },
-        { label: 'Event', value: 'event' }
-      ],
-      isPositionList: [
-        { label: 'Top', value: 'top' },
-        { label: 'Bottom', value: 'bottom' },
       ],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
@@ -235,10 +164,7 @@ export default {
         category: undefined,
         sort: undefined,
         ad_id: undefined,
-        relative_link: undefined,
-        contact_user_id: null,
-        page: null,
-        position: null,
+        relative_link: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -258,7 +184,15 @@ export default {
       adsCategoryValue: undefined,
       adsBannerFileList: [],
       adsBannerFileUrl: undefined,
-      isFeatureList: [],
+
+
+      // advertise business edit
+      name: undefined,
+      email: undefined,
+      phone_no: undefined,
+      request: undefined,
+      other: undefined,
+      profile: undefined,
     }
   },
   computed: {
@@ -276,11 +210,6 @@ export default {
     this.getAdsCategoryList()
   },
   methods: {
-    capitalizeFirstCharacter(string) {
-      if (string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-      }
-    },
     pidChange(e) {
       console.log(e)
       this.adsCategoryValue = e;
@@ -308,11 +237,9 @@ export default {
     getList() {
       this.listLoading = true
       this.listQuery.category = this.$route.query.category;
-      adList(this.listQuery).then(response => {
-        // console.log(response)
-        this.list = response.message.data.filter(item => item.is_delete === 0)
+      advertiseBusiness(this.listQuery).then(response => {
+        this.list = response.message.data.filter(item => item)
         this.total = response.message.total
-
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -343,7 +270,7 @@ export default {
         relative_link: undefined
       }
     },
-    async handleCreate() {
+    handleCreate() {
       // console.log(this.adsCategoryValue)
       this.resetTemp()
       this.fileUrl = '';
@@ -352,24 +279,11 @@ export default {
       this.adsBannerFileList = [];
       this.adsCategoryValue = undefined
       this.dialogStatus = 'create'
-      await this.getUserContactList();
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },
-
-    async getUserContactList() {
-      await userContactsList(this.listContactUser).then(response => {
-        response.data.filter(item => {
-          this.isFeatureList.push(item);
-        })
-        if (response.current_page < response.last_page) {
-          this.listContactUser.page = response.current_page + 1;
-        }
-      })
-    },
-
     createData() {
       this.temp.category = this.adsCategoryValue;
       this.$refs['dataForm'].validate((valid) => {
@@ -390,35 +304,20 @@ export default {
         }
       })
     },
-    async handleUpdate(row) {
-      // console.log(row)
-      this.adsCategoryValue = row.category;
-      await this.getUserContactList();
+    handleUpdate(row) {
+      console.log(row)
+      this.name = row.name;
+      this.email = row.email;
+      this.phone_no = row.phone_no;
+      this.profile = row.profile;
+      this.request = row.request;
+      this.other = row.other;
+
+
       this.temp = Object.assign({}, row) // copy obj
       this.temp.ad_id = row.id
-      this.temp.category = row.category;
-
-      this.temp.days = Number(row.days)
-      this.temp.money = Number(row.money)
-      this.fileUrl = row.url
-
-
-      if (row.url != '') {
-        this.fileList = [{ name: '', url: row.url }]
-      } else {
-        this.fileList = []
-      }
-
-      this.adsBannerFileUrl = row.user_url
-      if (row.user_url != '') {
-        this.adsBannerFileList = [{ name: '', url: row.user_url }]
-      } else {
-        this.adsBannerFileList = []
-      }
-
 
       this.dialogStatus = 'update'
-
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
@@ -428,11 +327,9 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.url = this.fileUrl
-          this.temp.user_url = this.adsBannerFileUrl
           const tempData = Object.assign({}, this.temp)
-          // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          add(tempData).then((res) => {
+          // update Advertise Business
+          updateAdvertiseBusiness(tempData).then((res) => {
             console.log(res)
             if (res.code == 200) {
               this.dialogFormVisible = false

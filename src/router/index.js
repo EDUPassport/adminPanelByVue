@@ -201,6 +201,14 @@ export const constantRoutes = [
         }
       },
       {
+        path: 'advertise-business',
+        component: () => import('@/views/ads/advertise/list'),
+        name: 'Advertise Business',
+        meta: {
+          title: 'Advertise Business'
+        }
+      },
+      {
         path: 'purchase/list',
         component: () => import('@/views/ads/purchase/list'),
         name: 'Purchased Ads',
