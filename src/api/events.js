@@ -31,3 +31,11 @@ export function eventDetail(params){
     params
   })
 }
+
+export function addFeaturedEvent(data) {
+  return request({
+    url: '/admin/add/feature/event',
+    method: 'post',
+    data
+  })
+}
