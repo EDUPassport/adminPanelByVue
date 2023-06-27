@@ -108,8 +108,7 @@
             :src="row.file"
             fit="contain"
           />
-<!--          <a :href="row.file">{{ row.file_name }}</a>-->
-          <!--          <span>{{ row.file}}</span>-->
+
         </template>
       </el-table-column>
       <el-table-column
@@ -206,9 +205,30 @@
           >
             Submitted
           </el-tag>
+          <el-tag
+            v-if="row.status === 5"
+            :type="row.status | statusFilter"
+          >
+            Canceled
+          </el-tag>
         </template>
       </el-table-column>
-
+      <el-table-column
+        label="Set Featured"
+        align="center"
+        width="130"
+        class-name="small-padding fixed-width"
+      >
+        <template v-slot="{row}">
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleEventFeatured(row)"
+          >
+            Set
+          </el-button>
+        </template>
+      </el-table-column>
       <el-table-column
         label="Booking List"
         align="center"
@@ -279,6 +299,23 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="Set Featured" :visible.sync="dialogFeaturedVisible">
+       <div>
+         <el-select v-model="featuredValue" class="filter-item" placeholder="Please select">
+           <el-option v-for="item in featuredOptions" :key="item.value" :label="item.label" :value="item.value" />
+         </el-select>
+       </div>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFeaturedVisible = false">
+          Cancel
+        </el-button>
+        <el-button type="primary" @click="submitEventFeatured">
+          Confirm
+        </el-button>
+      </div>
+    </el-dialog>
+
     <el-dialog title="Booking List"
                :visible.sync="bookingDialogVisible">
       <el-table :data="bookingListData"
@@ -295,7 +332,7 @@
 </template>
 
 <script>
-import { eventsList, approveEvent, addEvent } from '@/api/events'
+import {eventsList, approveEvent, addEvent, addFeaturedEvent} from '@/api/events'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { userObjectList } from '@/api/member' // secondary package based on el-pagination
@@ -313,7 +350,8 @@ export default {
         0: 'info',
         2: 'danger',
         3:'warning',
-        4:'warning'
+        4:'warning',
+        5:'danger'
       }
       return statusMap[status]
     }
@@ -341,7 +379,18 @@ export default {
         { label: 'Successful', value: 1 },
         { label: 'Rejected', value: 2 },
         { label: 'Expired', value:3 },
-        { label: 'Submitted', value:4 }
+        { label: 'Submitted', value:4 },
+        { label: 'Canceled', value:4 }
+      ],
+      featuredOptions:[
+        {
+          label:'Yes',
+          value:1
+        },
+        {
+          label:'No',
+          value:0
+        }
       ],
       temp: {
         event_id: undefined,
@@ -397,7 +446,10 @@ export default {
       eventsOne: [{ label: 'Social', value: 1 }, { label: 'Professional', value: 2 }],
       popuCityList: [],
       bookingListData:[],
-      bookingDialogVisible:false
+      bookingDialogVisible:false,
+      featuredValue:0,
+      featuredEventId:0,
+      dialogFeaturedVisible:false
 
     }
   },
@@ -578,6 +630,29 @@ export default {
     handleBookingList(row){
       this.bookingListData = row.applicants
       this.bookingDialogVisible = true;
+    },
+    handleEventFeatured(row){
+      // console.log(row)
+      this.dialogFeaturedVisible = true
+      this.featuredEventId = row.id
+
+    },
+    submitEventFeatured(){
+      let params = {
+        id:this.featuredEventId,
+        is_recommend:this.featuredValue
+      }
+
+      addFeaturedEvent(params).then(res=>{
+        console.log(res)
+        if(res.code === 200){
+          this.$message.success('Success')
+          this.dialogFeaturedVisible = false
+        }
+      }).catch(err=>{
+        console.log(err)
+      })
+
     },
     eventsTempDateChange(e) {
       this.eventsTempData.date = format(e, 'yyyy-MM-dd')
