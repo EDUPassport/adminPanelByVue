@@ -8,6 +8,7 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
       </el-button>
+      
     </div>
 
     <div>
@@ -38,7 +39,7 @@
             <span>{{ row.title }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Views" width="200px" align="center">
+        <el-table-column label="Impressions" width="200px" align="center">
           <template v-slot="{ row }">
             <span>{{ row.views }}</span>
           </template>
@@ -46,6 +47,12 @@
         <el-table-column label="Clicks" width="200px" align="center">
           <template v-slot="{ row }">
             <span>{{ row.click }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Is Featured" width="200px" align="center">
+          <template v-slot="{ row }">
+            <span v-if="row.is_featured == 1">Yes</span>
+            <span v-else="row.is_featured == 0">No</span>
           </template>
         </el-table-column>
         <el-table-column label="Page" width="200px" align="center">
@@ -72,6 +79,8 @@
           <template v-slot="{ row, $index }">
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               Edit
+            </el-button>
+            <el-button v-loading="exportDataLoading"  v-waves class="filter-item"  title="Download Report"  type="primary" icon="el-icon-download" >
             </el-button>
             <el-button v-if="row.is_delete === 1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
               Recover
@@ -118,6 +127,12 @@
         <el-form-item label="Position" prop="position">
           <el-select v-model="temp.position" class="filter-item" placeholder="Please select">
             <el-option v-for="item in isPositionList" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="Is Featured" prop="is_featured">
+          <el-select v-model="temp.is_featured" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in isFeaturedList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="Link">
@@ -192,6 +207,7 @@ export default {
   },
   data() {
     return {
+      exportDataLoading:false,
       uploadRequestUrl: process.env.VUE_APP_UPLOAD_API,
       tableKey: 0,
       list: null,
@@ -239,6 +255,7 @@ export default {
         contact_user_id: null,
         page: null,
         position: null,
+        is_featured:null
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -259,6 +276,11 @@ export default {
       adsBannerFileList: [],
       adsBannerFileUrl: undefined,
       isFeatureList: [],
+
+      isFeaturedList: [
+        { label: 'Yes', value: 1 },
+        { label: 'No', value: 0 },
+      ],
     }
   },
   computed: {
@@ -276,6 +298,18 @@ export default {
     this.getAdsCategoryList()
   },
   methods: {
+    exportBusinessAsExcel(){
+      this.exportDataLoading = true
+      adminExportBusiness().then(res=>{
+        if(res.code == 200){
+          this.exportDataLoading = false
+          window.open(res.message,'_blank')
+        }
+
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
     capitalizeFirstCharacter(string) {
       if (string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -477,121 +511,141 @@ export default {
       this.$loading({
         text: 'uploading...'
       })
-      // console.log(options)
-      new ImageCompressor(options.file, {
-        quality: 0.6,
-        success(file) {
-          // console.log(file)
-          const formData = new FormData();
-
-          // console.log(file)
-          let isInChina = process.env.VUE_APP_CHINA
-          if (isInChina === 'yes') {
-            formData.append('file[]', file, file.name)
-            uploadByAliOSS(formData).then(res => {
-              // console.log(res)
-              if (res.code == 200) {
+      const maxSize = 5 * 1024 * 1024;
+      if (options?.file?.size > maxSize) {
+        this.$notify({
+          title: 'Failed',
+          message: 'File Size Exceeding. Max 5MB Allowed',
+          type: 'warning',
+          duration: 2000
+        })
+        self.$loading().close();
+        self.uploadLoadingStatus = false;
+        this.fileList = [];
+      }
+      else {
+        new ImageCompressor(options.file, {
+          quality: 0.6,
+          success(file) {
+            // console.log(file)
+            const formData = new FormData();
+            // console.log(file)
+            let isInChina = process.env.VUE_APP_CHINA
+            if (isInChina === 'yes') {
+              formData.append('file[]', file, file.name)
+              uploadByAliOSS(formData).then(res => {
+                // console.log(res)
+                if (res.code == 200) {
+                  self.$loading().close();
+                  let myFileUrl = res.data[0]['file_url'];
+                  let myFileName = res.data[0]['file_name']
+                  self.uploadLoadingStatus = false;
+                  self.fileUrl = myFileUrl
+                  self.fileList = [{ name: myFileName, url: myFileUrl }]
+                }
+              }).catch(err => {
+                console.log(err)
                 self.$loading().close();
-                let myFileUrl = res.data[0]['file_url'];
-                let myFileName = res.data[0]['file_name']
-                self.uploadLoadingStatus = false;
-                self.fileUrl = myFileUrl
-                self.fileList = [{ name: myFileName, url: myFileUrl }]
-              }
-            }).catch(err => {
-              console.log(err)
-              self.$loading().close();
-            })
-
-          }
-
-          if (isInChina === 'no') {
-            formData.append('file', file, file.name)
-            uploadByService(formData).then(res => {
-              // console.log(res)
-              if (res.code == 200) {
-                let myFileUrl = res.message.file_path;
-                let myFileName = res.message.file_name;
+              })
+            }
+            if (isInChina === 'no') {
+              formData.append('file', file, file.name)
+              uploadByService(formData).then(res => {
+                // console.log(res)
+                if (res.code == 200) {
+                  let myFileUrl = res.message.file_path;
+                  let myFileName = res.message.file_name;
+                  self.$loading().close();
+                  self.uploadLoadingStatus = false;
+                  self.fileUrl = myFileUrl
+                  self.fileList = [{ name: myFileName, url: myFileUrl }]
+                }
+              }).catch(err => {
+                console.log(err)
                 self.$loading().close();
-                self.uploadLoadingStatus = false;
-                self.fileUrl = myFileUrl
-                self.fileList = [{ name: myFileName, url: myFileUrl }]
-              }
-            }).catch(err => {
-              console.log(err)
-              self.$loading().close();
-            })
-
+              })
+            }
+          },
+          error(err) {
+            console.log(err.message)
+            self.$loading().close();
           }
-
-        },
-        error(err) {
-          console.log(err.message)
-          self.$loading().close();
-        }
-
-      })
-
+        })
+      }
     },
-    adsBannerHttpRequest(options) {
+    adsBannerHttpRequest(options) { 
       let self = this;
       this.$loading({
         text: 'uploading...'
       })
+      const maxSize = 5 * 1024 * 1024;
+      if (options?.file?.size > maxSize) {
+        this.$notify({
+          title: 'Failed',
+          message: 'File Size Exceeding. Max 5MB Allowed',
+          type: 'warning',
+          duration: 2000
+        })
+        self.$loading().close();
+        self.uploadLoadingStatus = false;
+        this.adsBannerFileList = [];
+      }
+
+      else {
+        new ImageCompressor(options.file, {
+          quality: 0.6,
+          success(file) {
+            const formData = new FormData();
+
+            let isInChina = process.env.VUE_APP_CHINA
+            if (isInChina === 'yes') {
+              formData.append('file[]', file, file.name)
+              uploadByAliOSS(formData).then(res => {
+                if (res.code == 200) {
+                  self.$loading().close();
+                  let myFileUrl = res.data[0]['file_url'];
+                  let myFileName = res.data[0]['file_name']
+                  self.uploadLoadingStatus = false;
+                  self.adsBannerFileUrl = myFileUrl
+                  self.adsBannerFileList = [{ name: myFileName, url: myFileUrl }]
+                }
+              }).catch(err => {
+                console.log(err)
+                self.$loading().close();
+              })
+
+            }
+
+            if (isInChina === 'no') {
+              formData.append('file', file, file.name)
+              uploadByService(formData).then(res => {
+                // console.log(res)
+                if (res.code == 200) {
+                  let myFileUrl = res.message.file_path;
+                  let myFileName = res.message.file_name;
+                  self.$loading().close();
+                  self.uploadLoadingStatus = false;
+                  self.adsBannerFileUrl = myFileUrl
+                  self.adsBannerFileList = [{ name: myFileName, url: myFileUrl }]
+                }
+              }).catch(err => {
+                console.log(err)
+                self.$loading().close();
+              })
+
+            }
+
+          },
+          error(err) {
+            console.log(err.message)
+            self.$loading().close();
+          }
+
+        })
+
+      }
+
       // console.log(options)
-      new ImageCompressor(options.file, {
-        quality: 0.6,
-        success(file) {
-          // console.log(file)
-          const formData = new FormData();
-
-          // console.log(file)
-          let isInChina = process.env.VUE_APP_CHINA
-          if (isInChina === 'yes') {
-            formData.append('file[]', file, file.name)
-            uploadByAliOSS(formData).then(res => {
-              // console.log(res)
-              if (res.code == 200) {
-                self.$loading().close();
-                let myFileUrl = res.data[0]['file_url'];
-                let myFileName = res.data[0]['file_name']
-                self.uploadLoadingStatus = false;
-                self.adsBannerFileUrl = myFileUrl
-                self.adsBannerFileList = [{ name: myFileName, url: myFileUrl }]
-              }
-            }).catch(err => {
-              console.log(err)
-              self.$loading().close();
-            })
-
-          }
-
-          if (isInChina === 'no') {
-            formData.append('file', file, file.name)
-            uploadByService(formData).then(res => {
-              // console.log(res)
-              if (res.code == 200) {
-                let myFileUrl = res.message.file_path;
-                let myFileName = res.message.file_name;
-                self.$loading().close();
-                self.uploadLoadingStatus = false;
-                self.adsBannerFileUrl = myFileUrl
-                self.adsBannerFileList = [{ name: myFileName, url: myFileUrl }]
-              }
-            }).catch(err => {
-              console.log(err)
-              self.$loading().close();
-            })
-
-          }
-
-        },
-        error(err) {
-          console.log(err.message)
-          self.$loading().close();
-        }
-
-      })
 
     },
     bannerBeforeRemove(file) {
