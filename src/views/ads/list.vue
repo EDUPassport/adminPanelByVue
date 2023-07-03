@@ -80,7 +80,7 @@
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               Edit
             </el-button>
-            <el-button v-loading="exportDataLoading"  v-waves class="filter-item"  title="Download Report"  type="primary" icon="el-icon-download" >
+            <el-button  v-waves class="filter-item" size="mini"  title="Download Report"  type="primary" icon="el-icon-download" @click="downloadExcel(row)" >
             </el-button>
             <el-button v-if="row.is_delete === 1" v-permission="['lei']" size="mini" @click="handleRecover(row)">
               Recover
@@ -100,13 +100,13 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="top">
         <el-form-item label="Category" prop="category">
-          <el-cascader v-model="adsCategoryValue" :options="categoryData"
+          <el-cascader v-model="adsCategoryValue" :options="categoryData" disabled
             :props="{ checkStrictly: true, emitPath: false, value: 'id', label: 'name_en' }" :show-all-levels="false"
             @change="pidChange" clearable>
           </el-cascader>
         </el-form-item>
         <el-form-item label="Is Use" prop="is_use">
-          <el-select v-model="temp.is_use" class="filter-item" placeholder="Please select">
+          <el-select v-model="temp.is_use" class="filter-item" placeholder="Please select" disabled>
             <el-option v-for="item in isUseList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
@@ -124,8 +124,8 @@
           </el-select>
         </el-form-item>
         <!-- position -->
-        <el-form-item label="Position" prop="position">
-          <el-select v-model="temp.position" class="filter-item" placeholder="Please select">
+        <el-form-item label="Position"  prop="position">
+          <el-select v-model="temp.position" class="filter-item" placeholder="Please select" disabled>
             <el-option v-for="item in isPositionList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
@@ -138,16 +138,16 @@
         <el-form-item label="Link">
           <el-input v-model="temp.link" />
         </el-form-item>
-        <el-form-item label="Relative Link">
-          <el-input v-model="temp.relative_link" />
+        <el-form-item label="Relative Link" >
+          <el-input v-model="temp.relative_link" disabled />
         </el-form-item>
-        <el-form-item label="Description">
+        <el-form-item label="Internal Notes">
           <!--          <el-input v-model="temp.title"  type="textarea"/>-->
           <tinymce v-model="temp.title" :height="300" />
 
         </el-form-item>
-        <el-form-item label="Sort">
-          <el-input v-model="temp.sort" type="number" />
+        <el-form-item label="Sort" >
+          <el-input v-model="temp.sort" type="number"  disabled />
         </el-form-item>
         <el-form-item label="Default Banner">
           <el-upload class="upload-demo" drag :headers="uploadHeaders" name="file[]" action="" multiple
@@ -181,7 +181,7 @@
 </template>
 
 <script>
-import { add, adList, userContactsList } from '@/api/ads'
+import { add, adList, userContactsList, exportExcel } from '@/api/ads'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import permission from '@/directive/permission/permission'
@@ -266,7 +266,6 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-
       },
       downloadLoading: false,
       fileUrl: undefined,
@@ -298,6 +297,22 @@ export default {
     this.getAdsCategoryList()
   },
   methods: {
+    async downloadExcel(row) {
+      exportExcel(row).then((res) => {
+        var fileURL = window.URL.createObjectURL(new Blob([res.data]));
+        var fileLink = document.createElement('a');
+        fileLink.href = fileURL;
+        fileLink.setAttribute('download', 'file.zip');
+        document.body.appendChild(fileLink);
+        fileLink.click();
+        this.$notify({
+          title: 'Success',
+          message: 'Download Successfully',
+          type: 'success',
+          duration: 2000
+        })
+      })
+    },
     exportBusinessAsExcel(){
       this.exportDataLoading = true
       adminExportBusiness().then(res=>{
@@ -410,6 +425,7 @@ export default {
         if (valid) {
           this.temp.url = this.fileUrl
           this.temp.user_url = this.adsBannerFileUrl
+          this.temp.create_request = "create"
           add(this.temp).then((res) => {
             console.log(res)
             this.dialogFormVisible = false
@@ -420,6 +436,8 @@ export default {
               duration: 2000
             })
             this.getList()
+          }).catch(err => {
+                this.$message.error(err.msg)
           })
         }
       })
@@ -479,6 +497,8 @@ export default {
               this.getList()
               this.fileUrl = ''
             }
+          }).catch(err => {
+                this.$message.error(err.msg)
           })
         }
       })
