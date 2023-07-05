@@ -111,3 +111,12 @@ export function setAdsCategoryDiscount(data) {
     data
   })
 }
+
+export function exportExcel(data) {
+  return request({
+    url: '/admin/ExportExcel',
+    method: 'post',
+    data,
+    responseType: 'blob',
+  })
+}
