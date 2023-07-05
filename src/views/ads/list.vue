@@ -8,7 +8,7 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" @click="handleCreate">
         Add
       </el-button>
-      
+
     </div>
 
     <div>
@@ -191,6 +191,7 @@ import { adCategoryList } from "@/api/ads";
 import { uploadByAliOSS, uploadByService } from '@/api/upload.js'
 import ImageCompressor from 'compressorjs'
 import Tinymce from '@/components/Tinymce'
+import {adminExportBusiness} from "@/api/admin";
 
 export default {
   name: 'Index',
@@ -600,7 +601,7 @@ export default {
         })
       }
     },
-    adsBannerHttpRequest(options) { 
+    adsBannerHttpRequest(options) {
       let self = this;
       this.$loading({
         text: 'uploading...'
