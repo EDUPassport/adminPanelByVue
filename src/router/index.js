@@ -247,6 +247,27 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/feature_listing',
+    component: Layout,
+    redirect: '/feature/listing',
+    alwaysShow: true, // will always show the root menu
+    name: 'Feature Listing',
+    meta: {
+      title: 'Feature Listing',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'category/list',
+        component: () => import('@/views/feature/list'),
+        name: 'Feature Listing',
+        meta: {
+          title: 'Featurer Listing'
+        }
+      },
+    ]
+  },
+  {
     path: '/category',
     component: Layout,
     redirect: '/category/list',
