@@ -5,7 +5,7 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="getList()">
         Search
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" @click="handleCreate">
         Add
       </el-button>
       
@@ -19,63 +19,64 @@
             <span>{{ row.id }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Category" width="160px" align="center">
-          <template v-slot="{ row }">
-            <span>{{ row.category_en }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Profile" width="190px" align="center">
-          <template v-slot="{ row }">
-            <span>{{ row.name_key }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Link" width="200px" align="center">
-          <template v-slot="{ row }">
-            <span>{{ row.link }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Title" width="200px" align="center">
-          <template v-slot="{ row }">
-            <span>{{ row.title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Impressions" width="200px" align="center">
-          <template v-slot="{ row }">
-            <span>{{ row.views }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Clicks" width="200px" align="center">
-          <template v-slot="{ row }">
-            <span>{{ row.click }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Is Featured" width="200px" align="center">
-          <template v-slot="{ row }">
-            <span v-if="row.is_featured == 1">Yes</span>
-            <span v-else="row.is_featured == 0">No</span>
-          </template>
-        </el-table-column>
         <el-table-column label="Page" width="200px" align="center">
           <template v-slot="{ row }">
             <span>{{ capitalizeFirstCharacter(row.page) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Relative Link" width="200px" align="center">
+        <!-- <el-table-column label="Category" width="160px" align="center">
+          <template v-slot="{ row }">
+            <span>{{ row.category_en }}</span>
+          </template>
+        </el-table-column> -->
+        <!-- <el-table-column label="Profile" width="190px" align="center">
+          <template v-slot="{ row }">
+            <span>{{ row.name_key }}</span>
+          </template>
+        </el-table-column> -->
+        <el-table-column label="Link" align="center">
+          <template v-slot="{ row }">
+            <span>{{ row.link }}</span>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column label="Title" align="center">
+          <template v-slot="{ row }">
+            <span>{{ row.title }}</span>
+          </template>
+        </el-table-column> -->
+        <el-table-column label="Impressions" align="center">
+          <template v-slot="{ row }">
+            <span>{{ row.views }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Clicks" align="center">
+          <template v-slot="{ row }">
+            <span>{{ row.click }}</span>
+          </template>
+        </el-table-column>
+        <!-- unnessary field, need to remoe in future  -->
+        <el-table-column label="Is Featured" align="center" v-if="false">
+          <template v-slot="{ row }">
+            <span v-if="row.is_featured == 1">Yes</span>
+            <span v-else="row.is_featured == 0">No</span>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column label="Relative Link" align="center">
           <template v-slot="{ row }">
             <span>{{ row.relative_link }}</span>
           </template>
-        </el-table-column>
-        <el-table-column label="Default Image" width="160px" align="center">
+        </el-table-column> -->
+        <el-table-column label="Default Image" align="center">
           <template v-slot="{ row }">
             <el-image style="width: 100px; height: 50px" :src="row.url" fit="contain" />
           </template>
         </el-table-column>
-        <el-table-column label="Ads Banner Image" width="160px" align="center">
+        <el-table-column label="Ads Banner Image" align="center">
           <template v-slot="{ row }">
             <el-image style="width: 100px; height: 50px" :src="row.user_url" fit="contain" />
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="Actions" align="center" width="230" class-name="small-padding fixed-width">
+        <el-table-column fixed="right" label="Actions" align="center"  class-name="small-padding fixed-width">
           <template v-slot="{ row, $index }">
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               Edit
@@ -118,7 +119,7 @@
           </el-select>
         </el-form-item>
         <!-- feature list -->
-        <el-form-item label="Page" prop="page">
+        <el-form-item label="Page" prop="page" >
           <el-select v-model="temp.page" class="filter-item" placeholder="Please select">
             <el-option v-for="item in isPageList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
@@ -129,13 +130,13 @@
             <el-option v-for="item in isPositionList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-
-        <el-form-item label="Is Featured" prop="is_featured">
+          <!-- unnessary field, need to remoe in future  -->
+        <el-form-item label="Is Featured" prop="is_featured" v-if="false">
           <el-select v-model="temp.is_featured" class="filter-item" placeholder="Please select">
             <el-option v-for="item in isFeaturedList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Link">
+        <el-form-item label="Link" prop="link">
           <el-input v-model="temp.link" />
         </el-form-item>
         <el-form-item label="Relative Link" >
@@ -266,6 +267,12 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
+        page:[
+          {required:true,message:'Please Select The Page',trigger:'change'},
+        ],
+        link:[
+          {required:true,message:'Please Enter The Link',trigger:'change'},
+        ]
       },
       downloadLoading: false,
       fileUrl: undefined,
