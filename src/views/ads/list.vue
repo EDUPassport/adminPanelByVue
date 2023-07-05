@@ -8,7 +8,7 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
       </el-button>
-      
+
     </div>
 
     <div>
@@ -52,7 +52,7 @@
         <el-table-column label="Is Featured" width="200px" align="center">
           <template v-slot="{ row }">
             <span v-if="row.is_featured == 1">Yes</span>
-            <span v-else="row.is_featured == 0">No</span>
+            <span v-else>No</span>
           </template>
         </el-table-column>
         <el-table-column label="Page" width="200px" align="center">
@@ -190,6 +190,7 @@ import { adCategoryList } from "@/api/ads";
 import { uploadByAliOSS, uploadByService } from '@/api/upload.js'
 import ImageCompressor from 'compressorjs'
 import Tinymce from '@/components/Tinymce'
+import {adminExportBusiness} from "@/api/admin";
 
 export default {
   name: 'Index',
@@ -593,7 +594,7 @@ export default {
         })
       }
     },
-    adsBannerHttpRequest(options) { 
+    adsBannerHttpRequest(options) {
       let self = this;
       this.$loading({
         text: 'uploading...'
