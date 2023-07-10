@@ -268,6 +268,27 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/insight-program',
+    component: Layout,
+    redirect: '/insight/program',
+    alwaysShow: true,
+    name: 'Insight Program',
+    meta: {
+      title: 'Insight Program',
+      icon: 'list'
+    },
+    children: [
+      {
+        path: 'insight/program',
+        component: () => import('@/views/insightProgram/list'),
+        name: 'Insight Program',
+        meta: {
+          title: 'Insight Program'
+        }
+      },
+    ]
+  },
+  {
     path: '/category',
     component: Layout,
     redirect: '/category/list',
