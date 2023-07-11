@@ -306,21 +306,24 @@ export default {
   },
   methods: {
     async downloadExcel(row) {
-      exportExcel(row).then((res) => {
-        var fileURL = window.URL.createObjectURL(new Blob([res.data]));
-        var fileLink = document.createElement('a');
-        fileLink.href = fileURL;
-        fileLink.setAttribute('download', 'file.zip');
-        document.body.appendChild(fileLink);
-        fileLink.click();
-        this.$notify({
-          title: 'Success',
-          message: 'Download Successfully',
-          type: 'success',
-          duration: 2000
+      exportExcel(row)
+        .then(response => {
+          var fileURL = window.URL.createObjectURL(new Blob([response]));
+          var fileLink = document.createElement('a');
+          fileLink.href = fileURL;
+          fileLink.setAttribute('download', 'ads.xlsx');
+          document.body.appendChild(fileLink);
+          fileLink.click();
+          this.$notify({
+            title: 'Success',
+            message: 'Download Successfully',
+            type: 'success',
+            duration: 2000
+          })
         })
-      })
     },
+    
+    
     exportBusinessAsExcel(){
       this.exportDataLoading = true
       adminExportBusiness().then(res=>{

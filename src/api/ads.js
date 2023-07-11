@@ -117,6 +117,6 @@ export function exportExcel(data) {
     url: '/admin/ExportExcel',
     method: 'post',
     data,
-    responseType: 'blob',
+    responseType: 'arraybuffer',
   })
 }
