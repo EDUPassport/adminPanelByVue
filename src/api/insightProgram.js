@@ -25,3 +25,13 @@ export function update(data) {
         data
     })
 }
+
+export function excelExport(data) {
+    return request({
+        url: '/admin/insightExcelExport',
+        method: 'post',
+        responseType: 'arraybuffer',
+        data
+    })
+}
+
